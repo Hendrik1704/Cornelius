@@ -79,23 +79,23 @@ class Line : public GeneralGeometryElement {
   void calculate_centroid();
 
   /**
-   * @brief Retrieves the start point of the line.
+   * @brief Retrieves the start point of the line in 4D.
    *
    * @return Reference to the array representing the start point
    */
   std::array<double, GeneralGeometryElement::DIM>& get_start_point();
 
   /**
-   * @brief Retrieves the end point of the line.
+   * @brief Retrieves the end point of the line in 4D.
    *
    * @return Reference to the array representing the end point
    */
   std::array<double, GeneralGeometryElement::DIM>& get_end_point();
 
   /**
-   * @brief Retrieves the output point of the line.
+   * @brief Retrieves the point which is always outside in 4D.
    *
-   * @return Reference to the array representing the output point
+   * @return Reference to the array representing the outside point
    */
   std::array<double, GeneralGeometryElement::DIM>& get_out_point();
 };
