@@ -20,11 +20,16 @@ if(NOT googletest_POPULATED)
 endif()
 
 add_library(GeneralGeometryElement STATIC src/GeneralGeometryElement.cpp)
+add_library(Line STATIC src/Line.cpp)
 
 add_executable(Cornelius src/main.cpp)
-target_link_libraries(Cornelius GeneralGeometryElement)
+target_link_libraries(Cornelius GeneralGeometryElement Line)
 
 
-add_executable(testRunner src_test/TestGeneralGeometryElement.cpp)
-target_link_libraries(testRunner GeneralGeometryElement gtest_main gmock_main)
-target_include_directories(testRunner PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_executable(testGeneralGeometryElement src_test/TestGeneralGeometryElement.cpp)
+target_link_libraries(testGeneralGeometryElement GeneralGeometryElement gtest_main gmock_main)
+target_include_directories(testGeneralGeometryElement PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+add_executable(testLine src_test/TestLine.cpp)
+target_link_libraries(testLine Line GeneralGeometryElement gtest_main gmock_main)
+target_include_directories(testLine PRIVATE ${CMAKE_SOURCE_DIR}/src)
