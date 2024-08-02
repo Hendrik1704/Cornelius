@@ -1,3 +1,5 @@
+#ifndef GENERAL_GEOMETRY_ELEMENT_H
+#define GENERAL_GEOMETRY_ELEMENT_H
 
 #include <array>
 
@@ -82,3 +84,5 @@ public:
      */
     void flip_normal_if_needed(std::array<double, DIM> &normal, std::array<double, DIM> &reference_normal);
 };
+
+#endif // GENERAL_GEOMETRY_ELEMENT_H

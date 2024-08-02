@@ -3,10 +3,7 @@
 #include <numeric>
 #include "GeneralGeometryElement.h"
 
-GeneralGeometryElement::GeneralGeometryElement() {
-    normal_calculated = false;
-    centroid_calculated = false;
-}
+GeneralGeometryElement::GeneralGeometryElement() : normal_calculated(false), centroid_calculated(false) {}
 
 GeneralGeometryElement::~GeneralGeometryElement() {}
 
