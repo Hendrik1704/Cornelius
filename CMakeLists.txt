@@ -22,9 +22,16 @@ endif()
 add_library(GeneralGeometryElement STATIC src/GeneralGeometryElement.cpp)
 add_library(Line STATIC src/Line.cpp)
 add_library(Polygon STATIC src/Polygon.cpp)
+add_library(Polyhedron STATIC src/Polyhedron.cpp)
+add_library(Square STATIC src/Square.cpp)
+add_library(Cube STATIC src/Cube.cpp)
+add_library(Hypercube STATIC src/Hypercube.cpp)
+add_library(Cornelius STATIC src/Cornelius.cpp)
 
-add_executable(Cornelius src/main.cpp)
-target_link_libraries(Cornelius GeneralGeometryElement Line Polygon)
+
+add_executable(main src/main.cpp)
+target_link_libraries(main GeneralGeometryElement Line Polygon Polyhedron
+                      Square Cube Hypercube Cornelius)
 
 add_executable(testGeneralGeometryElement
                src_test/TestGeneralGeometryElement.cpp)
@@ -42,3 +49,28 @@ add_executable(testPolygon src_test/TestPolygon.cpp)
 target_link_libraries(testPolygon Polygon GeneralGeometryElement Line
                       gtest_main gmock_main)
 target_include_directories(testPolygon PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+add_executable(testPolyhedron src_test/TestPolyhedron.cpp)
+target_link_libraries(testPolyhedron Polyhedron GeneralGeometryElement Polygon
+                      Line gtest_main gmock_main)
+target_include_directories(testPolyhedron PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+add_executable(testSquare src_test/TestSquare.cpp)
+target_link_libraries(testSquare Square GeneralGeometryElement Line
+                      gtest_main gmock_main)
+target_include_directories(testSquare PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+add_executable(testCube src_test/TestCube.cpp)
+target_link_libraries(testCube Cube GeneralGeometryElement Square Line
+                      gtest_main gmock_main)
+target_include_directories(testCube PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+add_executable(testHypercube src_test/TestHypercube.cpp)
+target_link_libraries(testHypercube Hypercube GeneralGeometryElement Cube
+                      Square Line gtest_main gmock_main)
+target_include_directories(testHypercube PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+add_executable(testCornelius src_test/TestCornelius.cpp)
+target_link_libraries(testCornelius Cornelius GeneralGeometryElement Hypercube
+                      Cube Square Line Polygon Polyhedron gtest_main gmock_main)
+target_include_directories(testCornelius PRIVATE ${CMAKE_SOURCE_DIR}/src)
