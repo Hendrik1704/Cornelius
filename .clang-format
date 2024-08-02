@@ -1,0 +1,48 @@
+BasedOnStyle: Google
+
+# If true, if (a) return; can be put on a single line.
+AllowShortIfStatementsOnASingleLine: false
+
+# If true, while (true) continue; can be put on a single line.
+AllowShortLoopsOnASingleLine: false
+
+# Dependent on the value, int f() { return 0; } can be put on a single line.
+AllowShortFunctionsOnASingleLine: true
+
+# The column limit.
+# A column limit of 0 means that there is no column limit. In this case, clang-format will respect the input’s line breaking decisions within statements.
+ColumnLimit: 80
+
+# If true, format braced lists as best suited for C++11 braced lists.
+Cpp11BracedListStyle: true
+
+# Format compatible with this standard, e.g. use A<A<int> > instead of A<A<int>> for LS_Cpp03.
+# Possible values:
+#     LS_Cpp03 (in configuration: Cpp03) Use C++03-compatible syntax.
+#     LS_Cpp11 (in configuration: Cpp11) Use features of C++11 (e.g. A<A<int>> instead of A<A<int> >).
+#     LS_Auto (in configuration: Auto) Automatic detection based on the input.
+Standard: Cpp11
+
+# Regular expressions denoting the different #include categories used for ordering #includes.
+#  - POSIX extended regular expressions are supported.
+#  - These regular expressions are matched against the filename of an include (including the <> or "") in order.
+#  - The value belonging to the first matching regular expression is assigned and #includes are sorted
+#    first according to increasing category number and then alphabetically within each category.
+#  - If none of the regular expressions match, INT_MAX is assigned as category.
+#  - The main header for a source file automatically gets category 0 so that it is generally kept at
+#    the beginning of the #includes (https://llvm.org/docs/CodingStandards.html#include-style).
+#    However, you can also assign negative priorities if you have certain headers that always need to be first.
+#
+# NOTE: Include here all regex to fulfill Google style guide -> https://google.github.io/styleguide/cppguide.html#Names_and_Order_of_Includes
+# Minimal include categories setup
+IncludeCategories:
+  - Regex:           '^<.*>'
+    Priority:        1
+    CaseSensitive:   false
+  - Regex:           '^".*'
+    Priority:        2
+    CaseSensitive:   false
+  - Regex:           '.*'
+    Priority:        3
+    CaseSensitive:   false
+
