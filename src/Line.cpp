@@ -90,6 +90,6 @@ std::array<double, GeneralGeometryElement::DIM>& Line::get_end_point() {
   return corners[end_point];
 }
 
-std::array<double, GeneralGeometryElement::DIM>& Line::get_out_point() {
+std::array<double, GeneralGeometryElement::DIM>& Line::get_outside_point() {
   return out;
 }

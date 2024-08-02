@@ -97,7 +97,7 @@ class Line : public GeneralGeometryElement {
    *
    * @return Reference to the array representing the outside point
    */
-  std::array<double, GeneralGeometryElement::DIM>& get_out_point();
+  std::array<double, GeneralGeometryElement::DIM>& get_outside_point();
 };
 
 #endif  // LINE_H

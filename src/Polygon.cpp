@@ -1,6 +1,9 @@
 
 #include "Polygon.h"
 
+#include <cmath>
+#include <vector>
+
 Polygon::Polygon() {
   // Initialize a GeneralGeometryElement object
   GeneralGeometryElement();
@@ -73,6 +76,8 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
   }
 }
 
+int Polygon::get_number_lines() { return number_lines; }
+
 void Polygon::calculate_centroid() {
   // Array of 0s to store the mean values
   std::array<double, DIM> mean_values = {0};
@@ -101,7 +106,97 @@ void Polygon::calculate_centroid() {
   // In the case where there are more than 3 lines, we form triangles from the
   // lines and the mean point
 
-  // CONTINUE HERE
+  // Array to store the areas of the triangles
+  std::array<double, DIM> sum_up = {0};
+  double sum_down = 0.0;  // Sum of the areas of the triangles
+  // Arrays a and b to store the vectors of the triangles
+  std::array<double, DIM> a = {0};
+  std::array<double, DIM> b = {0};
+  // Centroid of the triangle (always on the plane)
+  std::array<double, DIM> triangle_centroid = {0};
+  for (int l = 0; l < number_lines; l++) {
+    // Form the vectors of the triangle
+    for (int j = 0; j < DIM; j++) {
+      a[j] = lines[l].get_start_point()[j] - mean_values[j];
+      b[j] = lines[l].get_end_point()[j] - mean_values[j];
+      triangle_centroid[j] = (lines[l].get_start_point()[j] +
+                              lines[l].get_end_point()[j] + mean_values[j]) /
+                             3.0;
+    }
+    // Calculate the area of the triangle
+    double A_l = 0.5 * std::sqrt(std::pow(a[x2] * b[x3] - a[x3] * b[x2], 2.0) +
+                                 std::pow(a[x1] * b[x3] - a[x3] * b[x1], 2.0) +
+                                 std::pow(a[x2] * b[x1] - a[x1] * b[x2], 2.0));
+    // Store the area and update the total area
+    for (int j = 0; j < DIM; j++) {
+      sum_up[j] += A_l * triangle_centroid[j];
+    }
+    sum_down += A_l;
+  }
+  // Determine centroid as a weighted average of the centroids of the triangles
+  for (int j = 0; j < DIM; j++) {
+    centroid[j] = sum_up[j] / sum_down;
+  }
+  centroid_calculated = true;
 }
 
-int Polygon::get_number_lines() { return number_lines; }
+void Polygon::calculate_normal() {
+  // Check if the centroid is calculated
+  if (!centroid_calculated) {
+    calculate_centroid();
+  }
+  // Find the normal vector for all the triangles formed from one edge of the
+  // centroid
+  std::vector<std::array<double, DIM>> normals(number_lines,
+                                               std::array<double, DIM>{0});
+  std::array<double, DIM> v_out = {0};  // point always outside
+
+  // Arrays a and b to define the vectors of the triangles
+  std::array<double, DIM> a = {0};
+  std::array<double, DIM> b = {0};
+  // Loop over all triangles
+  for (int i = 0; i < number_lines; i++) {
+    for (int j = 0; j < DIM; j++) {
+      a[j] = lines[i].get_start_point()[j] - centroid[j];
+      b[j] = lines[i].get_end_point()[j] - centroid[j];
+    }
+    // Calculate the normal vector of the triangle with cross product
+    normals[i][x1] = 0.5 * (a[x2] * b[x3] - a[x3] * b[x2]);
+    normals[i][x2] = -0.5 * (a[x1] * b[x3] - a[x3] * b[x1]);
+    normals[i][x3] = 0.5 * (a[x1] * b[x2] - a[x2] * b[x1]);
+    normals[i][const_i] = 0.0;
+
+    // Construct the vector pointing outside the polygon
+    std::array<double, DIM> o = lines[i].get_outside_point();
+    for (int j = 0; j < DIM; j++) {
+      v_out[j] += o[j] - centroid[j];
+    }
+    // Check if the normal is pointing in the correct direction
+    flip_normal_if_needed(normals[i], v_out);
+  }
+  // The normal is the sum of the normals of the triangles
+  for (int j = 0; j < DIM; j++) {
+    normal[j] = 0.0;
+  }
+  for (int i = 0; i < number_lines; i++) {
+    for (int j = 0; j < DIM; j++) {
+      normal[j] += normals[i][j];
+    }
+  }
+  normal_calculated = true;
+}
+
+std::array<Line, Polygon::MAX_LINES>& Polygon::get_lines() { return lines; }
+
+void Polygon::print(std::ofstream& file, std::array<double, DIM> position) {
+  // Print the polygon to the file
+  for (int i = 0; i < number_lines; i++) {
+    std::array<double, DIM> p1 = lines[i].get_start_point();
+    std::array<double, DIM> p2 = lines[i].get_end_point();
+    file << position[x1] + p1[x1] << " " << position[x2] + p1[x2] << " "
+         << position[x3] + p1[x3] << " " << position[x1] + p2[x1] << " "
+         << position[x2] + p2[x2] << " " << position[x3] + p2[x3] << " "
+         << position[x1] + centroid[x1] << " " << position[x2] + centroid[x2]
+         << " " << position[x3] + centroid[x3] << std::endl;
+  }
+}

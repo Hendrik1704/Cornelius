@@ -39,6 +39,6 @@ target_link_libraries(testLine Line GeneralGeometryElement gtest_main
 target_include_directories(testLine PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 add_executable(testPolygon src_test/TestPolygon.cpp)
-target_link_libraries(testPolygon Polygon GeneralGeometryElement gtest_main
-                      gmock_main)
+target_link_libraries(testPolygon Polygon GeneralGeometryElement Line
+                      gtest_main gmock_main)
 target_include_directories(testPolygon PRIVATE ${CMAKE_SOURCE_DIR}/src)

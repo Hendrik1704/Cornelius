@@ -22,10 +22,10 @@ TEST(LineTest, init_line) {
   ASSERT_EQ(line.get_end_point()[2], 1);
   ASSERT_EQ(line.get_end_point()[3], 1);
 
-  ASSERT_EQ(line.get_out_point()[0], 2);
-  ASSERT_EQ(line.get_out_point()[1], 1);
-  ASSERT_EQ(line.get_out_point()[2], 1);
-  ASSERT_EQ(line.get_out_point()[3], 1);
+  ASSERT_EQ(line.get_outside_point()[0], 2);
+  ASSERT_EQ(line.get_outside_point()[1], 1);
+  ASSERT_EQ(line.get_outside_point()[2], 1);
+  ASSERT_EQ(line.get_outside_point()[3], 1);
 
   // flip start and end points
   line.flip_start_end();
