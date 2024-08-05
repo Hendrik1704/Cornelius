@@ -94,6 +94,7 @@ target_link_libraries(
   Square
   Line
   Polygon
+  Polyhedron
   gtest_main
   gmock_main)
 target_include_directories(testHypercube PRIVATE ${CMAKE_SOURCE_DIR}/src)
