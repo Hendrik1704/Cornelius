@@ -80,6 +80,7 @@ target_link_libraries(
   GeneralGeometryElement
   Square
   Line
+  Polygon
   gtest_main
   gmock_main)
 target_include_directories(testCube PRIVATE ${CMAKE_SOURCE_DIR}/src)
@@ -92,6 +93,7 @@ target_link_libraries(
   Cube
   Square
   Line
+  Polygon
   gtest_main
   gmock_main)
 target_include_directories(testHypercube PRIVATE ${CMAKE_SOURCE_DIR}/src)

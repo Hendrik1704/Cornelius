@@ -7,7 +7,7 @@ TEST(SquareTest, init_square) {
   std::array<std::array<double, 2>, 2> sq = {{{0, 0}, {1, 1}}};
   std::array<int, 2> c_i = {2, 3};
   std::array<double, 2> c_v = {0, 0};
-  std::array<double, 2> dx = {0.1, 0.1};
+  std::array<double, 4> dx = {0.1, 0.1, 0.1, 0.1};
   square.init_square(sq, c_i, c_v, dx);
 
   EXPECT_EQ(square.get_number_lines(), 0);
@@ -19,7 +19,7 @@ TEST(SquareTest, construct_lines) {
   std::array<std::array<double, 2>, 2> sq = {{{0, 0}, {1, 1}}};
   std::array<int, 2> c_i = {2, 3};
   std::array<double, 2> c_v = {0, 0};
-  std::array<double, 2> dx = {0.1, 0.1};
+  std::array<double, 4> dx = {0.1, 0.1, 0.1, 0.1};
   square.init_square(sq, c_i, c_v, dx);
   square.construct_lines(0.5);
 

@@ -31,7 +31,7 @@ class Square : public GeneralGeometryElement {
   std::array<double, DIM - SQUARE_DIM>
       const_value;                    ///< Values for constraints.
   int x1, x2;                         ///< Indices for dimensions of the square.
-  std::array<double, MAX_LINES> dx;   ///< Delta values for lines.
+  std::array<double, DIM> dx;         ///< Delta values for lines.
   int number_cuts;                    ///< Number of cuts.
   int number_lines;                   ///< Number of lines.
   std::array<Line, MAX_LINES> lines;  ///< Lines in the square.
@@ -58,7 +58,7 @@ class Square : public GeneralGeometryElement {
   void init_square(std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM> sq,
                    std::array<int, DIM - SQUARE_DIM> c_i,
                    std::array<double, DIM - SQUARE_DIM> c_v,
-                   std::array<double, MAX_LINES> dx);
+                   std::array<double, DIM> dx);
 
   /**
    * @brief Constructs lines within the square based on a given value.
@@ -108,6 +108,8 @@ class Square : public GeneralGeometryElement {
    * @return A reference to the array of lines.
    */
   std::array<Line, MAX_LINES>& get_lines();
+
+  friend class Cube;
 };
 
 #endif  // SQUARE_H

@@ -9,8 +9,7 @@ Square::~Square() {}
 void Square::init_square(
     std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM> sq,
     std::array<int, DIM - SQUARE_DIM> c_i,
-    std::array<double, DIM - SQUARE_DIM> c_v,
-    std::array<double, MAX_LINES> dx) {
+    std::array<double, DIM - SQUARE_DIM> c_v, std::array<double, DIM> dx) {
   points = sq;
   const_i = c_i;
   const_value = c_v;
