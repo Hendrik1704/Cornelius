@@ -110,6 +110,7 @@ class Square : public GeneralGeometryElement {
   std::array<Line, MAX_LINES>& get_lines();
 
   friend class Cube;
+  friend class Cornelius;
 };
 
 #endif  // SQUARE_H

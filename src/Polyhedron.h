@@ -105,6 +105,8 @@ class Polyhedron : public GeneralGeometryElement {
    * @return The number of tetrahedrons in the polyhedron.
    */
   int get_number_tetrahedrons() { return number_tetrahedrons; }
+
+  friend class Cornelius;
 };
 
 #endif  // POLYHEDRON_H

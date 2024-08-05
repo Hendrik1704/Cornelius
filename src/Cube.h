@@ -90,6 +90,8 @@ class Cube : public GeneralGeometryElement {
    * @return A reference to the array of polygons.
    */
   std::array<Polygon, MAX_POLY>& get_polygons();
+
+  friend class Cornelius;
 };
 
 #endif  // CUBE_H

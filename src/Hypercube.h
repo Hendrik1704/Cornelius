@@ -91,6 +91,8 @@ class Hypercube : public GeneralGeometryElement {
    * @return True if the hypercube is ambiguous, false otherwise.
    */
   bool is_ambiguous();
+
+  friend class Cornelius;
 };
 
 #endif  // HYPERCUBE_H
