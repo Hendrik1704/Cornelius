@@ -14,7 +14,7 @@
  * to manage and calculate properties related to polygons.
  */
 class Polygon : public GeneralGeometryElement {
- private:
+ protected:
   static const int MAX_LINES = 24;  ///< Maximum number of lines in a polygon
   static const int POLYGON_DIM =
       3;  ///< Dimension for polygon-specific properties
@@ -93,6 +93,8 @@ class Polygon : public GeneralGeometryElement {
    * @param position The position offset for printing the polygon.
    */
   void print(std::ofstream& file, std::array<double, DIM> position);
+
+  friend class Polyhedron;
 };
 
 #endif  // POLYGON_H
