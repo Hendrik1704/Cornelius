@@ -8,38 +8,87 @@
 
 class Cube : public GeneralGeometryElement {
  private:
-  static const int DIM = 4;
-  static const int CUBE_DIM = 4;
-  static const int MAX_POLY = 8;
-  static const int NSQUARES = 6;
-  static const int STEPS = 2;
+  static const int DIM = 4;       ///< Dimension of the space.
+  static const int CUBE_DIM = 4;  ///< Dimension of the cube.
+  static const int MAX_POLY = 8;  ///< Maximum number of polygons.
+  static const int NSQUARES = 6;  ///< Number of squares in the cube.
+  static const int STEPS = 2;     ///< Number of steps.
 
-  std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cube;
-  std::array<Line, NSQUARES * 2> lines;
-  std::array<Polygon, MAX_POLY> polygons;
-  std::array<Square, NSQUARES> squares;
+  std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>
+      cube;                                ///< 3D array representing the cube.
+  std::array<Line, NSQUARES * 2> lines;    ///< Array of lines in the cube.
+  std::array<Polygon, MAX_POLY> polygons;  ///< Array of polygons in the cube.
+  std::array<Square, NSQUARES> squares;    ///< Array of squares in the cube.
 
-  int number_lines;
-  int number_polygons;
-  bool ambiguous;
-  int const_i;
-  double const_value;
-  int x1, x2, x3;
-  std::array<double, DIM> dx;
+  int number_lines;            ///< Number of lines in the cube.
+  int number_polygons;         ///< Number of polygons in the cube.
+  bool ambiguous;              ///< Indicates if the cube is ambiguous.
+  int const_i;                 ///< Index for the constant dimension.
+  double const_value;          ///< Value for the constant dimension.
+  int x1, x2, x3;              ///< Indices for dimensions.
+  std::array<double, DIM> dx;  ///< Delta values for discretization.
 
  public:
+  /**
+   * @brief Default constructor for the Cube class.
+   */
   Cube();
+
+  /**
+   * @brief Destructor for the Cube class.
+   */
   ~Cube();
 
+  /**
+   * @brief Initializes the cube with given parameters.
+   * @param cu 3D array representing the cube.
+   * @param new_const_i Index for the constant dimension.
+   * @param new_const_value Value for the constant dimension.
+   * @param new_dx Delta values for discretization.
+   */
   void init_cube(
       std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>& cu,
       int new_const_i, double new_const_value, std::array<double, DIM>& new_dx);
+
+  /**
+   * @brief Constructs polygons within the cube based on a given value.
+   * @param value The value used to construct polygons.
+   */
   void construct_polygons(double value);
+
+  /**
+   * @brief Splits the cube into squares.
+   */
   void split_to_squares();
+
+  /**
+   * @brief Checks if the cube is ambiguous based on the number of lines.
+   * @param number_lines The number of lines in the cube.
+   */
   void check_ambiguity(int number_lines);
+
+  /**
+   * @brief Checks if the cube is ambiguous.
+   * @return True if the cube is ambiguous, false otherwise.
+   */
   bool is_ambiguous();
+
+  /**
+   * @brief Gets the number of polygons in the cube.
+   * @return The number of polygons.
+   */
   int get_number_polygons();
+
+  /**
+   * @brief Gets the number of lines in the cube.
+   * @return The number of lines.
+   */
   int get_number_lines();
+
+  /**
+   * @brief Gets the polygons in the cube.
+   * @return A reference to the array of polygons.
+   */
   std::array<Polygon, MAX_POLY>& get_polygons();
 };
 
