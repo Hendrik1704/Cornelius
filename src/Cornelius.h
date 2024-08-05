@@ -1,6 +1,36 @@
 #ifndef CORNELIUS_H
 #define CORNELIUS_H
 
+/**
+ * This code is based on cornelius++ version 1.3: 
+ * Copyright 2012 
+ * Pasi Huovinen and Hannu Holopainen
+ *
+ * This subroutine is aimed to be used as a part of the fluid dynamical models
+ * of the heavy-ion physics community. Permission to use it for any purpose
+ * except for any commercial purpose is granted, provided that any publication
+ * cites the paper describing the algorithm:
+ *   P. Huovinen and H. Petersen, arXiv:1206.3371 [nucl-th]
+ *   Eur.Phys.J.A 48 (2012) 171
+ *
+ * Permission to distribute this subroutine is granted, provided that no fee is
+ * charged, and that this copyright and permission notice appear in all the
+ * copies. Permission to modify this subroutine is granted provided that the
+ * modified subroutine is made publicly available latest when any results obtained
+ * using the modified subroutine are published, the modified subroutine is
+ * distributed under terms similar to this notice, and the modified code carries
+ * both the original copyright notice and notices stating that you modified it,
+ * and a relevant date/year.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * Last update 03.08.2012 Hannu Holopainen
+ * 
+ * Last update 05.08.2024 Hendrik Roch: Modernized the code to C++17 features.
+ *
+ */
+
 #include <ostream>
 #include <vector>
 
