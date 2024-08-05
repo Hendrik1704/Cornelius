@@ -11,7 +11,7 @@ Line::~Line() {}
 
 void Line::init_line(std::array<std::array<double, DIM>, LINE_DIM> new_corners,
                      std::array<double, DIM> new_out,
-                     std::array<double, DIM - LINE_DIM> new_const_i) {
+                     std::array<int, DIM - LINE_DIM> new_const_i) {
   // Copy the new values into the class variables
   corners = new_corners;
   out = new_out;

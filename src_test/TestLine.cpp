@@ -8,7 +8,7 @@ TEST(LineTest, init_line) {
 
   std::array<std::array<double, 4>, 2> corners = {{{0, 0, 0, 0}, {1, 1, 1, 1}}};
   std::array<double, 4> out = {2, 1, 1, 1};
-  std::array<double, 2> const_i = {0, 1};
+  std::array<int, 2> const_i = {0, 1};
 
   line.init_line(corners, out, const_i);
 
@@ -45,7 +45,7 @@ TEST(LineTest, calculate_centroid) {
 
   std::array<std::array<double, 4>, 2> corners = {{{0, 0, 0, 0}, {1, 1, 1, 1}}};
   std::array<double, 4> out = {2, 1, 1, 1};
-  std::array<double, 2> const_i = {0, 1};
+  std::array<int, 2> const_i = {0, 1};
 
   line.init_line(corners, out, const_i);
 
@@ -62,7 +62,7 @@ TEST(LineTest, calculate_normal) {
 
   std::array<std::array<double, 4>, 2> corners = {{{0, 0, 0, 0}, {1, 1, 1, 1}}};
   std::array<double, 4> out = {2, 1, 1, 1};
-  std::array<double, 2> const_i = {0, 1};
+  std::array<int, 2> const_i = {0, 1};
 
   line.init_line(corners, out, const_i);
 

@@ -21,7 +21,7 @@ TEST(PolyhedronTest, lines_are_equal) {
   std::array<std::array<double, 4>, 2> corners1 = {
       {{0, 0, 0, 0}, {1, 1, 1, 1}}};
   std::array<double, 4> out = {2, 1, 1, 1};
-  std::array<double, 2> const_i = {0, 1};
+  std::array<int, 2> const_i = {0, 1};
   line1.init_line(corners1, out, const_i);
 
   std::array<std::array<double, 4>, 2> corners2 = {
@@ -66,7 +66,7 @@ TEST(PolyhedronTest, add_polygon) {
   std::array<std::array<double, 4>, 2> corners1 = {
       {{0, 0, 0, 0}, {1, 1, 1, 1}}};
   std::array<double, 4> out = {2, 1, 1, 1};
-  std::array<double, 2> const_i = {0, 1};
+  std::array<int, 2> const_i = {0, 1};
   line1.init_line(corners1, out, const_i);
 
   std::array<std::array<double, 4>, 2> corners2 = {
@@ -101,7 +101,7 @@ TEST(PolyhedronTest, calculate_centroid) {
   std::array<std::array<double, 4>, 2> corners1 = {
       {{5, 1, 2, 3}, {1, 3, 5, 6}}};
   std::array<double, 4> out = {2, 1, 1, 1};
-  std::array<double, 2> const_i = {0, 1};
+  std::array<int, 2> const_i = {0, 1};
   line1.init_line(corners1, out, const_i);
 
   std::array<std::array<double, 4>, 2> corners2 = {
@@ -144,7 +144,7 @@ TEST(PolyhedronTest, calculate_normal) {
   std::array<std::array<double, 4>, 2> corners1 = {
       {{5, 1, 2, 3}, {1, 3, 5, 6}}};
   std::array<double, 4> out = {2, 1, 1, 1};
-  std::array<double, 2> const_i = {0, 1};
+  std::array<int, 2> const_i = {0, 1};
   line1.init_line(corners1, out, const_i);
 
   std::array<std::array<double, 4>, 2> corners2 = {
