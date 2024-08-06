@@ -7,6 +7,16 @@ project(Cornelius VERSION 1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Set build type
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+# Set compiler options for different build types
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+
 # get the google test framework
 include(FetchContent)
 FetchContent_Declare(
@@ -27,6 +37,7 @@ add_library(Square STATIC src/Square.cpp)
 add_library(Cube STATIC src/Cube.cpp)
 add_library(Hypercube STATIC src/Hypercube.cpp)
 add_library(Cornelius STATIC src/Cornelius.cpp)
+add_library(CorneliusOld STATIC src_old/cornelius_old.cpp)
 
 add_executable(main src/main.cpp)
 target_link_libraries(
@@ -38,7 +49,8 @@ target_link_libraries(
   Square
   Cube
   Hypercube
-  Cornelius)
+  Cornelius
+  CorneliusOld)
 
 add_executable(testGeneralGeometryElement
                src_test/TestGeneralGeometryElement.cpp)
@@ -110,6 +122,14 @@ target_link_libraries(
   Line
   Polygon
   Polyhedron
+  CorneliusOld
   gtest_main
   gmock_main)
 target_include_directories(testCornelius PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(testCornelius PRIVATE ${CMAKE_SOURCE_DIR}/src_old)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src_test/cornelius_test_data_3D
+     DESTINATION ${CMAKE_BINARY_DIR})
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src_test/cornelius_test_data_4D
+     DESTINATION ${CMAKE_BINARY_DIR})
