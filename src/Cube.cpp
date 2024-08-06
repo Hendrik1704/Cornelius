@@ -52,7 +52,7 @@ void Cube::split_to_squares() {
       c_i[1] = i;
       for (int j = 0; j < STEPS; j++) {
         c_v[0] = const_value;
-        c_v[1] = i;
+        c_v[1] = j * dx[i];
         for (int ci1 = 0; ci1 < STEPS; ci1++) {
           for (int ci2 = 0; ci2 < STEPS; ci2++) {
             if (i == x1) {

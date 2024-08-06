@@ -8,11 +8,11 @@
 
 class Cube : public GeneralGeometryElement {
  private:
-  static const int DIM = 4;       ///< Dimension of the space.
-  static const int CUBE_DIM = 4;  ///< Dimension of the cube.
-  static const int MAX_POLY = 8;  ///< Maximum number of polygons.
-  static const int NSQUARES = 6;  ///< Number of squares in the cube.
-  static const int STEPS = 2;     ///< Number of steps.
+  static constexpr int DIM = 4;       ///< Dimension of the space.
+  static constexpr int CUBE_DIM = 4;  ///< Dimension of the cube.
+  static constexpr int MAX_POLY = 8;  ///< Maximum number of polygons.
+  static constexpr int NSQUARES = 6;  ///< Number of squares in the cube.
+  static constexpr int STEPS = 2;     ///< Number of steps.
 
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>
       cube;                                ///< 3D array representing the cube.

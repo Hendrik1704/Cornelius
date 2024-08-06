@@ -15,8 +15,9 @@
  */
 class Polygon : public GeneralGeometryElement {
  protected:
-  static const int MAX_LINES = 24;  ///< Maximum number of lines in a polygon
-  static const int POLYGON_DIM =
+  static constexpr int MAX_LINES =
+      24;  ///< Maximum number of lines in a polygon
+  static constexpr int POLYGON_DIM =
       3;  ///< Dimension for polygon-specific properties
 
   std::array<Line, MAX_LINES> lines;  ///< Array of lines in the polygon
@@ -69,14 +70,14 @@ class Polygon : public GeneralGeometryElement {
    * This method calculates the normal vector based on the lines and centroid of
    * the polygon.
    */
-  void calculate_normal();
+  void calculate_normal() override;
 
   /**
    * @brief Calculates the centroid of the polygon.
    *
    * This method calculates the centroid based on the vertices of the polygon.
    */
-  void calculate_centroid();
+  void calculate_centroid() override;
 
   /**
    * @brief Gets the lines that form the polygon.

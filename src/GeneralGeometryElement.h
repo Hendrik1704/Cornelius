@@ -15,7 +15,7 @@
 class GeneralGeometryElement {
  protected:
   /// Dimension of the geometric space (e.g., 4 for 4D space).
-  static const int DIM = 4;
+  static constexpr int DIM = 4;
 
   /// Flag indicating if the normal has been calculated.
   bool normal_calculated;

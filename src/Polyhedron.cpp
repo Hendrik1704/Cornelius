@@ -1,6 +1,8 @@
 #include "Polyhedron.h"
 
+#include <algorithm>
 #include <cmath>
+#include <numeric>
 #include <vector>
 
 Polyhedron::Polyhedron() {
@@ -100,18 +102,20 @@ void Polyhedron::calculate_centroid() {
   std::array<double, DIM> mean_values = {0};
 
   // Determine the mean values of the corner points, all points appear twice
-  for (int i = 0; i < number_polygons; i++) {
-    int number_lines = polygons[i].get_number_lines();
-    std::array<Line, Polygon::MAX_LINES> lines = polygons[i].get_lines();
-    for (int j = 0; j < number_lines; j++) {
-      for (int k = 0; k < DIM; k++) {
-        mean_values[k] +=
-            lines[j].get_start_point()[k] + lines[j].get_end_point()[k];
-      }
-    }
-  }
   for (int k = 0; k < DIM; k++) {
-    mean_values[k] /= (2.0 * number_tetrahedrons);
+    mean_values[k] =
+        std::transform_reduce(
+            polygons.begin(), polygons.begin() + number_polygons, 0.0,
+            std::plus<>(),
+            [k](Polygon polygon) {
+              return std::transform_reduce(
+                  polygon.get_lines().begin(),
+                  polygon.get_lines().begin() + polygon.get_number_lines(), 0.0,
+                  std::plus<>(), [k](Line line) {
+                    return line.get_start_point()[k] + line.get_end_point()[k];
+                  });
+            }) /
+        (2.0 * number_tetrahedrons);
   }
   // Temporary arrays
   std::array<double, DIM> a = {0};
@@ -137,30 +141,26 @@ void Polyhedron::calculate_centroid() {
             4.0;
       }
       // Compute the defining vectors of the tetrahedron
-      for (int k = 0; k < DIM; k++) {
-        a[k] = start_point[k] - mean_values[k];
-        b[k] = end_point[k] - mean_values[k];
-        c[k] = centroid[k] - mean_values[k];
-      }
+      std::transform(start_point.begin(), start_point.end(),
+                     mean_values.begin(), a.begin(), std::minus<>());
+      std::transform(end_point.begin(), end_point.end(), mean_values.begin(),
+                     b.begin(), std::minus<>());
+      std::transform(centroid.begin(), centroid.end(), mean_values.begin(),
+                     c.begin(), std::minus<>());
       // Calculate the volume of the tetrahedron
       tetrahedron_volume(a, b, c, n);
-      double V_i = 0.0;
-      for (int k = 0; k < DIM; k++) {
-        V_i += n[k] * n[k];
-      }
-      V_i = std::sqrt(V_i);
+      double V_i =
+          std::sqrt(std::inner_product(n.begin(), n.end(), n.begin(), 0.0));
       // Add the contribution to the sum
-      for (int k = 0; k < DIM; k++) {
-        sum_up[k] += V_i * cm_i[k];
-      }
+      std::transform(sum_up.begin(), sum_up.end(), cm_i.begin(), sum_up.begin(),
+                     [V_i](double sum, double cm) { return sum + V_i * cm; });
       sum_down += V_i;
     }
   }
   // Centroid of the polygon is the volume weighted average of the individual
   // tetrahedrons
-  for (int k = 0; k < DIM; k++) {
-    centroid[k] = sum_up[k] / sum_down;
-  }
+  std::transform(sum_up.begin(), sum_up.end(), centroid.begin(),
+                 [sum_down](double sum) { return sum / sum_down; });
   centroid_calculated = true;
 }
 
@@ -186,18 +186,18 @@ void Polyhedron::calculate_normal() {
       std::array<double, DIM> start_point = lines[j].get_start_point();
       std::array<double, DIM> end_point = lines[j].get_end_point();
       // Compute the defining vectors of the tetrahedron
-      for (int k = 0; k < DIM; k++) {
-        a[k] = start_point[k] - centroid[k];
-        b[k] = end_point[k] - centroid[k];
-        c[k] = cent[k] - centroid[k];
-      }
+      std::transform(start_point.begin(), start_point.end(), centroid.begin(),
+                     a.begin(), std::minus<>());
+      std::transform(end_point.begin(), end_point.end(), centroid.begin(),
+                     b.begin(), std::minus<>());
+      std::transform(cent.begin(), cent.end(), centroid.begin(), c.begin(),
+                     std::minus<>());
       // Normal vector is calculated with the same function as the volume
       tetrahedron_volume(a, b, c, normals[index_tetrahedron]);
       // Construct the vector pointing outside the polygon
       std::array<double, DIM> o = lines[j].get_outside_point();
-      for (int k = 0; k < DIM; k++) {
-        Vout[k] += o[k] - centroid[k];
-      }
+      std::transform(o.begin(), o.end(), centroid.begin(), Vout.begin(),
+                     std::minus<>());
       // Check if the normal is pointing in the correct direction
       flip_normal_if_needed(normals[index_tetrahedron], Vout);
       index_tetrahedron++;

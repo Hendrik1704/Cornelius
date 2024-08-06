@@ -16,10 +16,10 @@
  */
 class Hypercube : public GeneralGeometryElement {
  private:
-  static const int DIM = 4;        ///< Dimension of the space.
-  static const int MAX_POLY = 10;  ///< Maximum number of polyhedra.
-  static const int NCUBES = 8;     ///< Number of cubes in the hypercube.
-  static const int STEPS = 2;      ///< Number of steps for discretization.
+  static constexpr int DIM = 4;        ///< Dimension of the space.
+  static constexpr int MAX_POLY = 10;  ///< Maximum number of polyhedra.
+  static constexpr int NCUBES = 8;     ///< Number of cubes in the hypercube.
+  static constexpr int STEPS = 2;      ///< Number of steps for discretization.
 
   std::array<std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
              STEPS>

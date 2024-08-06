@@ -2,8 +2,8 @@
 #define CORNELIUS_H
 
 /**
- * This code is based on cornelius++ version 1.3: 
- * Copyright 2012 
+ * This code is based on cornelius++ version 1.3:
+ * Copyright 2012
  * Pasi Huovinen and Hannu Holopainen
  *
  * This subroutine is aimed to be used as a part of the fluid dynamical models
@@ -16,17 +16,18 @@
  * Permission to distribute this subroutine is granted, provided that no fee is
  * charged, and that this copyright and permission notice appear in all the
  * copies. Permission to modify this subroutine is granted provided that the
- * modified subroutine is made publicly available latest when any results obtained
- * using the modified subroutine are published, the modified subroutine is
- * distributed under terms similar to this notice, and the modified code carries
- * both the original copyright notice and notices stating that you modified it,
- * and a relevant date/year.
+ * modified subroutine is made publicly available latest when any results
+ * obtained using the modified subroutine are published, the modified subroutine
+ * is distributed under terms similar to this notice, and the modified code
+ * carries both the original copyright notice and notices stating that you
+ * modified it, and a relevant date/year.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of FITNESS FOR A PARTICULAR PURPOSE. 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of FITNESS FOR A PARTICULAR
+ * PURPOSE.
  *
  * Last update 03.08.2012 Hannu Holopainen
- * 
+ *
  * Last update 05.08.2024 Hendrik Roch: Modernized the code to C++17 features.
  *
  */
@@ -53,9 +54,9 @@
  */
 class Cornelius : public GeneralGeometryElement {
  private:
-  static const int STEPS = 2; /**< Number of steps for the discretization */
-  static const int DIM = 4;   /**< Dimension of the space (default is 4D) */
-  static const int MAX_ELEMENTS =
+  static constexpr int STEPS = 2; /**< Number of steps for the discretization */
+  static constexpr int DIM = 4;   /**< Dimension of the space (default is 4D) */
+  static constexpr int MAX_ELEMENTS =
       10; /**< Maximum number of elements to store */
 
   int number_elements; /**< Number of surface elements found */

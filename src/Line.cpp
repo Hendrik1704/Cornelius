@@ -1,5 +1,6 @@
 #include "Line.h"
 
+#include <algorithm>
 #include <array>
 
 Line::Line() {
@@ -7,7 +8,7 @@ Line::Line() {
   GeneralGeometryElement();
 }
 
-Line::~Line() {}
+Line::~Line() = default;
 
 void Line::init_line(std::array<std::array<double, DIM>, LINE_DIM> new_corners,
                      std::array<double, DIM> new_out,
@@ -74,9 +75,9 @@ void Line::calculate_normal() {
 }
 
 void Line::calculate_centroid() {
-  for (int i = 0; i < DIM; i++) {
-    centroid[i] = (corners[0][i] + corners[1][i]) / 2.0;
-  }
+  std::transform(corners[0].begin(), corners[0].end(), corners[1].begin(),
+                 centroid.begin(),
+                 [](double a, double b) { return 0.5 * (a + b); });
   centroid_calculated = true;
 }
 

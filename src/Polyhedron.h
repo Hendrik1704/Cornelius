@@ -16,7 +16,7 @@
  */
 class Polyhedron : public GeneralGeometryElement {
  private:
-  static const int MAX_POLYGONS =
+  static constexpr int MAX_POLYGONS =
       24;  ///< Maximum number of polygons in a polyhedron
   std::array<Polygon, MAX_POLYGONS>
       polygons;             ///< Array of polygons in the polyhedron
@@ -82,7 +82,7 @@ class Polyhedron : public GeneralGeometryElement {
    * Computes the centroid as the volume-weighted average of the individual
    * tetrahedrons.
    */
-  void calculate_centroid();
+  void calculate_centroid() override;
 
   /**
    * @brief Calculates the normal of the polyhedron.
@@ -90,7 +90,7 @@ class Polyhedron : public GeneralGeometryElement {
    * Computes the normal as the sum of the normals of the individual
    * tetrahedrons.
    */
-  void calculate_normal();
+  void calculate_normal() override;
 
   /**
    * @brief Retrieves the number of polygons in the polyhedron.

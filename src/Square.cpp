@@ -1,5 +1,6 @@
 #include "Square.h"
 
+#include <algorithm>
 #include <iostream>
 
 Square::Square() { ambiguous = false; }
@@ -9,13 +10,22 @@ Square::~Square() {}
 void Square::init_square(
     std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM> sq,
     std::array<int, DIM - SQUARE_DIM> c_i,
-    std::array<double, DIM - SQUARE_DIM> c_v, std::array<double, DIM> dx) {
+    std::array<double, DIM - SQUARE_DIM> c_v, std::array<double, DIM> dex) {
   points = sq;
   const_i = c_i;
   const_value = c_v;
-  dx = dx;
+  dx = dex;
   x1 = -1;
   x2 = -1;
+  for (int i = 0; i < DIM; i++) {
+    if (i != const_i[0] && i != const_i[1]) {
+      if (x1 < 0) {
+        x1 = i;
+      } else {
+        x2 = i;
+      }
+    }
+  }
   number_cuts = 0;
   number_lines = 0;
   ambiguous = false;
@@ -145,9 +155,7 @@ void Square::find_outside(double value) {
     if ((points[0][0] < value && value_middle < value) ||
         (points[0][0] > value && value_middle > value)) {
       for (int i = 0; i < 2; i++) {
-        double temp = cuts[1][i];
-        cuts[1][i] = cuts[2][i];
-        cuts[2][i] = temp;
+        std::swap(cuts[1][i], cuts[2][i]);
       }
     }
     // The center is below, so the middle point is always outside the surface

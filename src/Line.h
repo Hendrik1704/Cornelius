@@ -15,8 +15,9 @@
  */
 class Line : public GeneralGeometryElement {
  protected:
-  static const int LINE_DIM = 2;  ///< Dimension for line-specific properties
-  static const int LINE_CORNERS = 2;  ///< Number of corners for a line
+  static constexpr int LINE_DIM =
+      2;  ///< Dimension for line-specific properties
+  static constexpr int LINE_CORNERS = 2;  ///< Number of corners for a line
 
   int x1, x2;       ///< Indices representing the line's dimensions
   int start_point;  ///< Index of the start point
@@ -67,7 +68,7 @@ class Line : public GeneralGeometryElement {
    * Computes the normal vector for the line. This function must be implemented
    * based on the specific geometric context of the line.
    */
-  void calculate_normal();
+  void calculate_normal() override;
 
   /**
    * @brief Calculates the centroid of the line.
@@ -75,7 +76,7 @@ class Line : public GeneralGeometryElement {
    * Computes the centroid point of the line. This function must be implemented
    * based on the specific geometric context of the line.
    */
-  void calculate_centroid();
+  void calculate_centroid() override;
 
   /**
    * @brief Retrieves the start point of the line in 4D.

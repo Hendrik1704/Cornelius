@@ -1,7 +1,9 @@
 
 #include "Polygon.h"
 
+#include <algorithm>
 #include <cmath>
+#include <numeric>
 #include <vector>
 
 Polygon::Polygon() {
@@ -52,12 +54,17 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
     std::array<double, DIM> last_end_point =
         lines[number_lines - 1].get_end_point();
 
-    double difference1 = 0.0;
-    double difference2 = 0.0;
-    for (int i = 0; i < DIM; i++) {
-      difference1 += std::abs(start_point[i] - last_end_point[i]);
-      difference2 += std::abs(end_point[i] - last_end_point[i]);
-    }
+    // Lambda function to calculate the difference between two points
+    auto calc_difference = [](std::array<double, DIM>& p1,
+                              std::array<double, DIM>& p2) {
+      return std::transform_reduce(
+          p1.begin(), p1.end(), p2.begin(), 0.0, std::plus<double>(),
+          [](double a, double b) { return std::abs(a - b); });
+    };
+
+    double difference1 = calc_difference(start_point, last_end_point);
+    double difference2 = calc_difference(end_point, last_end_point);
+
     // If start or end point is the same as the end point of previous line,
     // line is connected to polygon and it is added
     if (difference1 < epsilon || difference2 < epsilon) {
@@ -83,16 +90,15 @@ void Polygon::calculate_centroid() {
   std::array<double, DIM> mean_values = {0};
 
   // Determine the mean values of the corner points, all points appear twice
-  for (int i = 0; i < number_lines; i++) {
-    for (int j = 0; j < DIM; j++) {
-      mean_values[j] +=
-          lines[i].get_start_point()[j] + lines[i].get_end_point()[j];
-    }
+  for (int k = 0; k < DIM; ++k) {
+    mean_values[k] =
+        std::transform_reduce(
+            lines.begin(), lines.begin() + number_lines, 0.0, std::plus<>(),
+            [k](Line line) {
+              return line.get_start_point()[k] + line.get_end_point()[k];
+            }) /
+        (2.0 * number_lines);
   }
-  for (int j = 0; j < DIM; j++) {
-    mean_values[j] /= (2.0 * number_lines);
-  }
-
   // In the case there are only 3 lines, the centroid is the mean of the corner
   // points and the Polygon is on a plane
   if (number_lines == 3) {
@@ -128,15 +134,14 @@ void Polygon::calculate_centroid() {
                                  std::pow(a[x1] * b[x3] - a[x3] * b[x1], 2.0) +
                                  std::pow(a[x2] * b[x1] - a[x1] * b[x2], 2.0));
     // Store the area and update the total area
-    for (int j = 0; j < DIM; j++) {
-      sum_up[j] += A_l * triangle_centroid[j];
-    }
+    std::transform(
+        sum_up.begin(), sum_up.end(), triangle_centroid.begin(), sum_up.begin(),
+        [A_l](double sum, double coord) { return sum + A_l * coord; });
     sum_down += A_l;
   }
   // Determine centroid as a weighted average of the centroids of the triangles
-  for (int j = 0; j < DIM; j++) {
-    centroid[j] = sum_up[j] / sum_down;
-  }
+  std::transform(sum_up.begin(), sum_up.end(), centroid.begin(),
+                 [sum_down](double sum) { return sum / sum_down; });
   centroid_calculated = true;
 }
 
@@ -156,9 +161,12 @@ void Polygon::calculate_normal() {
   std::array<double, DIM> b = {0};
   // Loop over all triangles
   for (int i = 0; i < number_lines; i++) {
+    auto& line = lines[i];
+    a = line.get_start_point();
+    b = line.get_end_point();
     for (int j = 0; j < DIM; j++) {
-      a[j] = lines[i].get_start_point()[j] - centroid[j];
-      b[j] = lines[i].get_end_point()[j] - centroid[j];
+      a[j] -= centroid[j];
+      b[j] -= centroid[j];
     }
     // Calculate the normal vector of the triangle with cross product
     normals[i][x1] = 0.5 * (a[x2] * b[x3] - a[x3] * b[x2]);
@@ -168,9 +176,8 @@ void Polygon::calculate_normal() {
 
     // Construct the vector pointing outside the polygon
     std::array<double, DIM> o = lines[i].get_outside_point();
-    for (int j = 0; j < DIM; j++) {
-      v_out[j] += o[j] - centroid[j];
-    }
+    std::transform(o.begin(), o.end(), centroid.begin(), v_out.begin(),
+                   std::minus<>());
     // Check if the normal is pointing in the correct direction
     flip_normal_if_needed(normals[i], v_out);
   }

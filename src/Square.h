@@ -14,10 +14,10 @@
  */
 class Square : public GeneralGeometryElement {
  private:
-  static const int DIM = 4;         ///< Dimension of the space.
-  static const int SQUARE_DIM = 2;  ///< Dimension of the square.
-  static const int MAX_POINTS = 4;  ///< Maximum number of points.
-  static const int MAX_LINES = 2;   ///< Maximum number of lines.
+  static constexpr int DIM = 4;         ///< Dimension of the space.
+  static constexpr int SQUARE_DIM = 2;  ///< Dimension of the square.
+  static constexpr int MAX_POINTS = 4;  ///< Maximum number of points.
+  static constexpr int MAX_LINES = 2;   ///< Maximum number of lines.
   std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>
       points;  ///< Points of the square.
   std::array<std::array<double, SQUARE_DIM>, MAX_POINTS>
@@ -53,12 +53,12 @@ class Square : public GeneralGeometryElement {
    * @param sq Points defining the square.
    * @param c_i Constant indices for the square.
    * @param c_v Values for the constant indices.
-   * @param dx Delta values for lines.
+   * @param dex Delta values for lines.
    */
   void init_square(std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM> sq,
                    std::array<int, DIM - SQUARE_DIM> c_i,
                    std::array<double, DIM - SQUARE_DIM> c_v,
-                   std::array<double, DIM> dx);
+                   std::array<double, DIM> dex);
 
   /**
    * @brief Constructs lines within the square based on a given value.
