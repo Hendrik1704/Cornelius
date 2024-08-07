@@ -4,10 +4,7 @@
 #include <numeric>
 #include <vector>
 
-Hypercube::Hypercube() {
-  number_polyhedra = 0;
-  ambiguous = false;
-}
+Hypercube::Hypercube() : number_polyhedra(0), ambiguous(false) {}
 
 Hypercube::~Hypercube() {}
 
@@ -32,8 +29,9 @@ void Hypercube::split_to_cubes() {
     // i is the index which is kept constant, thus we ignore the index which
     // is constant in this cube
     int c_i = i;
+    double c_v;
     for (int j = 0; j < STEPS; j++) {
-      double c_v = j * dx[i];
+      c_v = j * dx[i];
       for (int ci1 = 0; ci1 < STEPS; ci1++) {
         for (int ci2 = 0; ci2 < STEPS; ci2++) {
           for (int ci3 = 0; ci3 < STEPS; ci3++) {
@@ -49,8 +47,7 @@ void Hypercube::split_to_cubes() {
           }
         }
       }
-      cubes[number_cubes].init_cube(cube, c_i, c_v, dx);
-      number_cubes++;
+      cubes[number_cubes++].init_cube(cube, c_i, c_v, dx);
     }
   }
 }
@@ -65,8 +62,7 @@ void Hypercube::construct_polyhedra(double value) {
   // Store the reference to the polygons
   for (int i = 0; i < NCUBES; i++) {
     for (int j = 0; j < cubes[i].get_number_polygons(); j++) {
-      polygons[number_polygons] = cubes[i].get_polygons()[j];
-      number_polygons++;
+      polygons[number_polygons++] = cubes[i].get_polygons()[j];
     }
   }
   check_ambiguity(value);
@@ -112,10 +108,10 @@ void Hypercube::check_ambiguity(double value) {
     }
   }
 
-  int number_lines = 0;
-  for (int i = 0; i < NCUBES; i++) {
-    number_lines += cubes[i].get_number_lines();
-  }
+  int number_lines = std::accumulate(
+      cubes.begin(), cubes.end(), 0,
+      [](int sum, Cube& cube) { return sum + cube.get_number_lines(); });
+
   int number_points = std::accumulate(
       hypercube.begin(), hypercube.end(), 0, [&](int sum, const auto& array3d) {
         return sum +
