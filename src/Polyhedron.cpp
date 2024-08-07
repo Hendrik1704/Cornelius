@@ -30,26 +30,23 @@ void Polyhedron::init_polyhedron() {
 bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
   // For the first polygon, we don't need to check
   if (number_polygons == 0 || perform_no_check) {
-    polygons[number_polygons] = new_polygon;
-    number_polygons++;
+    polygons[number_polygons++] = new_polygon;
     number_tetrahedrons += new_polygon.get_number_lines();
     return true;
   } else {
     // Check if the current polygon is connected to the last polygon, since
     // the polygons are ordered
     for (int i = 0; i < number_polygons; i++) {
-      int number_lines1 = new_polygon.get_number_lines();
-      int number_lines2 = polygons[i].get_number_lines();
-      // Get the lines from the polygons as arrays
-      std::array<Line, Polygon::MAX_LINES> lines1 = new_polygon.get_lines();
-      std::array<Line, Polygon::MAX_LINES> lines2 = polygons[i].get_lines();
+      auto& lines1 = new_polygon.get_lines();
+      auto& lines2 = polygons[i].get_lines();
+      const int number_lines1 = new_polygon.get_number_lines();
+      const int number_lines2 = polygons[i].get_number_lines();
       // Check if the lines are equal
       for (int j = 0; j < number_lines1; j++) {
         for (int k = 0; k < number_lines2; k++) {
           if (lines_are_connected(lines1[j], lines2[k])) {
-            polygons[number_polygons] = new_polygon;
-            number_polygons++;
-            number_tetrahedrons += new_polygon.get_number_lines();
+            polygons[number_polygons++] = new_polygon;
+            number_tetrahedrons += number_lines1;
             return true;
           }
         }
@@ -61,23 +58,29 @@ bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
 }
 
 bool Polyhedron::lines_are_connected(Line& line1, Line& line2) {
-  double epsilon = 1e-10;
+  constexpr double epsilon = 1e-10;
   // Get the start and end points of the lines
-  std::array<double, DIM> start_point1 = line1.get_start_point();
-  std::array<double, DIM> end_point1 = line1.get_end_point();
-  std::array<double, DIM> start_point2 = line2.get_start_point();
-  // Check if the start or end points are equal
-  double difference1 = 0.0;
-  double difference2 = 0.0;
-  for (int i = 0; i < DIM; i++) {
-    difference1 += std::abs(start_point1[i] - start_point2[i]);
-    difference2 += std::abs(end_point1[i] - start_point2[i]);
-    if (difference1 > epsilon && difference2 > epsilon) {
+  auto& start_point1 = line1.get_start_point();
+  auto& end_point1 = line1.get_end_point();
+  auto& start_point2 = line2.get_start_point();
+
+  // Check if any point pairs are close enough
+  bool start_equal = true;
+  bool end_equal = true;
+  for (int i = 0; i < DIM; ++i) {
+    if (std::abs(start_point1[i] - start_point2[i]) > epsilon) {
+      start_equal = false;
+    }
+    if (std::abs(end_point1[i] - start_point2[i]) > epsilon) {
+      end_equal = false;
+    }
+    // If both differences are greater than epsilon, exit early
+    if (!start_equal && !end_equal) {
       return false;
     }
   }
-  // If the start or end points are equal, return true
-  return true;
+  // If either start or end points are close enough, return true
+  return start_equal || end_equal;
 }
 
 void Polyhedron::tetrahedron_volume(std::array<double, DIM>& v1,
@@ -107,11 +110,11 @@ void Polyhedron::calculate_centroid() {
         std::transform_reduce(
             polygons.begin(), polygons.begin() + number_polygons, 0.0,
             std::plus<>(),
-            [k](Polygon polygon) {
+            [k](Polygon& polygon) {
               return std::transform_reduce(
                   polygon.get_lines().begin(),
                   polygon.get_lines().begin() + polygon.get_number_lines(), 0.0,
-                  std::plus<>(), [k](Line line) {
+                  std::plus<>(), [k](Line& line) {
                     return line.get_start_point()[k] + line.get_end_point()[k];
                   });
             }) /
@@ -128,12 +131,12 @@ void Polyhedron::calculate_centroid() {
   // Loop over all polygons
   for (int i = 0; i < number_polygons; i++) {
     int number_lines = polygons[i].get_number_lines();
-    std::array<Line, Polygon::MAX_LINES> lines = polygons[i].get_lines();
-    std::array<double, DIM> centroid = polygons[i].get_centroid();
+    auto& lines = polygons[i].get_lines();
+    auto& centroid = polygons[i].get_centroid();
     // Loop over all lines in the polygon
     for (int j = 0; j < number_lines; j++) {
-      std::array<double, DIM> start_point = lines[j].get_start_point();
-      std::array<double, DIM> end_point = lines[j].get_end_point();
+      auto& start_point = lines[j].get_start_point();
+      auto& end_point = lines[j].get_end_point();
       // Center of mass of the tetrahedron
       for (int k = 0; k < DIM; k++) {
         cm_i[k] =
@@ -179,12 +182,12 @@ void Polyhedron::calculate_normal() {
   // Loop over all polygons
   for (int i = 0; i < number_polygons; i++) {
     int number_lines = polygons[i].get_number_lines();
-    std::array<Line, Polygon::MAX_LINES> lines = polygons[i].get_lines();
-    std::array<double, DIM> cent = polygons[i].get_centroid();
+    auto& lines = polygons[i].get_lines();
+    auto& cent = polygons[i].get_centroid();
     // Loop over all lines in the polygon
     for (int j = 0; j < number_lines; j++) {
-      std::array<double, DIM> start_point = lines[j].get_start_point();
-      std::array<double, DIM> end_point = lines[j].get_end_point();
+      auto& start_point = lines[j].get_start_point();
+      auto& end_point = lines[j].get_end_point();
       // Compute the defining vectors of the tetrahedron
       std::transform(start_point.begin(), start_point.end(), centroid.begin(),
                      a.begin(), std::minus<>());
@@ -195,7 +198,7 @@ void Polyhedron::calculate_normal() {
       // Normal vector is calculated with the same function as the volume
       tetrahedron_volume(a, b, c, normals[index_tetrahedron]);
       // Construct the vector pointing outside the polygon
-      std::array<double, DIM> o = lines[j].get_outside_point();
+      auto& o = lines[j].get_outside_point();
       std::transform(o.begin(), o.end(), centroid.begin(), Vout.begin(),
                      std::minus<>());
       // Check if the normal is pointing in the correct direction
@@ -204,13 +207,10 @@ void Polyhedron::calculate_normal() {
     }
   }
   // The normal is the sum of the normals of the tetrahedrons
-  for (int k = 0; k < DIM; k++) {
-    normal[k] = 0.0;
-  }
-  for (int i = 0; i < number_tetrahedrons; i++) {
-    for (int k = 0; k < DIM; k++) {
-      normal[k] += normals[i][k];
-    }
+  std::fill(normal.begin(), normal.end(), 0.0);
+  for (const auto& norm : normals) {
+    std::transform(normal.begin(), normal.end(), norm.begin(), normal.begin(),
+                   std::plus<>());
   }
   normal_calculated = true;
 }

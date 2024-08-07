@@ -33,7 +33,7 @@ void GeneralGeometryElement::calculate_centroid() {
 }
 
 std::array<double, GeneralGeometryElement::DIM>
-GeneralGeometryElement::get_normal() {
+    &GeneralGeometryElement::get_normal() {
   if (!normal_calculated) {
     calculate_normal();
   }
@@ -41,7 +41,7 @@ GeneralGeometryElement::get_normal() {
 }
 
 std::array<double, GeneralGeometryElement::DIM>
-GeneralGeometryElement::get_centroid() {
+    &GeneralGeometryElement::get_centroid() {
   if (!centroid_calculated) {
     calculate_centroid();
   }

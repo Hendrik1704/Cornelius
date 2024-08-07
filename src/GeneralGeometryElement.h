@@ -65,14 +65,14 @@ class GeneralGeometryElement {
    *
    * @return A constant array representing the normal vector.
    */
-  std::array<double, DIM> get_normal();
+  std::array<double, DIM>& get_normal();
 
   /**
    * @brief Gets the centroid of the geometric element.
    *
    * @return A constant array representing the centroid.
    */
-  std::array<double, DIM> get_centroid();
+  std::array<double, DIM>& get_centroid();
 
   /**
    * @brief Adjusts the normal vector if needed based on a reference normal.
@@ -83,8 +83,8 @@ class GeneralGeometryElement {
    * @param normal The normal vector to be checked and maybe adjusted.
    * @param reference_normal The reference normal vector used for comparison.
    */
-  void flip_normal_if_needed(std::array<double, DIM> &normal,
-                             std::array<double, DIM> &reference_normal);
+  void flip_normal_if_needed(std::array<double, DIM>& normal,
+                             std::array<double, DIM>& reference_normal);
 };
 
 #endif  // GENERAL_GEOMETRY_ELEMENT_H
