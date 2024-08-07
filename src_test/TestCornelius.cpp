@@ -33,18 +33,13 @@ TEST(CorneliusTest, throw_errors_out_of_range) {
   std::array<double, 4> new_dx = {1.0, 1.0, 1.0, 1.0};
   cornelius.init_cornelius(2, 1.0, new_dx);
 
-  // Test for exit(1) when calling get_centroid_element with index out of range
-  EXPECT_EXIT(cornelius.get_centroid_element(1, 0),
-              ::testing::ExitedWithCode(1),
-              "Cornelius error: asking for an element which does not exist.");
-  EXPECT_EXIT(cornelius.get_centroid_element(0, 10),
-              ::testing::ExitedWithCode(1),
-              "Cornelius error: asking for an element which does not exist.");
+  // Test for throw when calling get_centroid_element with index out of range
+  EXPECT_THROW(cornelius.get_centroid_element(1, 0), std::out_of_range);
+  EXPECT_THROW(cornelius.get_centroid_element(0, 10), std::out_of_range);
 
-  EXPECT_EXIT(cornelius.get_normal_element(1, 0), ::testing::ExitedWithCode(1),
-              "Cornelius error: asking for an element which does not exist.");
-  EXPECT_EXIT(cornelius.get_normal_element(0, 10), ::testing::ExitedWithCode(1),
-              "Cornelius error: asking for an element which does not exist.");
+  // Test for throw when calling get_normal_element with index out of range
+  EXPECT_THROW(cornelius.get_normal_element(1, 0), std::out_of_range);
+  EXPECT_THROW(cornelius.get_normal_element(0, 10), std::out_of_range);
 
   // Test get_number_elements == 0
   EXPECT_EQ(cornelius.get_number_elements(), 0);

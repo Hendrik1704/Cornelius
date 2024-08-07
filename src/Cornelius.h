@@ -87,8 +87,8 @@ class Cornelius : public GeneralGeometryElement {
    * printed.
    */
   void surface_3d(
-      std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cu,
-      std::array<double, DIM> position, bool do_print);
+      std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>& cu,
+      std::array<double, DIM>& position, bool do_print);
 
  public:
   /**
@@ -125,7 +125,7 @@ class Cornelius : public GeneralGeometryElement {
    * @param cu Values at the corners of the cube as a 2d table so that value
    *                  [0][0] is at (0,0,0) and [1][1] is at (dx1,dx2).
    */
-  void find_surface_2d(std::array<std::array<double, STEPS>, STEPS> cu);
+  void find_surface_2d(std::array<std::array<double, STEPS>, STEPS>& cu);
 
   /**
    * @brief Finds surface elements in a 3D cube.
@@ -134,7 +134,7 @@ class Cornelius : public GeneralGeometryElement {
    *                  [0][0][0] is at (0,0,0) and [1][1][1] is at (dx1,dx2,dx3).
    */
   void find_surface_3d(
-      std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cu);
+      std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>& cu);
 
   /**
    * @brief Finds the surface elements in 3-dimensional case and prints the
@@ -146,8 +146,8 @@ class Cornelius : public GeneralGeometryElement {
    * (0,x1,x2,x3).
    */
   void find_surface_3d_print(
-      std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cu,
-      std::array<double, DIM> position);
+      std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>& cu,
+      std::array<double, DIM>& position);
 
   /**
    * @brief Finds surface elements in a 4D hypercube.
@@ -159,8 +159,7 @@ class Cornelius : public GeneralGeometryElement {
   void find_surface_4d(
       std::array<
           std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
-          STEPS>
-          cu);
+          STEPS>& cu);
 
   /**
    * @brief Gets the number of surface elements found.

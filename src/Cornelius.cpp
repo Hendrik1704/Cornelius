@@ -5,12 +5,11 @@
 #include <numeric>
 #include <vector>
 
-Cornelius::Cornelius() {
-  number_elements = 0;
-  cube_dimension = 0;
-  initialized = false;
-  print_initialized = false;
-}
+Cornelius::Cornelius()
+    : number_elements(0),
+      cube_dimension(0),
+      initialized(false),
+      print_initialized(false) {}
 
 Cornelius::~Cornelius() {
   // Close the file if it is open
@@ -24,11 +23,7 @@ void Cornelius::init_cornelius(int dimension, double new_value,
   cube_dimension = dimension;
   value = new_value;
   for (int i = 0; i < DIM; i++) {
-    if (i < DIM - cube_dimension) {
-      dx[i] = 1;
-    } else {
-      dx[i] = new_dx[i - (DIM - cube_dimension)];
-    }
+    dx[i] = (i < DIM - cube_dimension) ? 1 : new_dx[i - (DIM - cube_dimension)];
   }
   initialized = true;
 }
@@ -39,21 +34,17 @@ void Cornelius::init_print_cornelius(std::string filename) {
 }
 
 void Cornelius::find_surface_2d(
-    std::array<std::array<double, STEPS>, STEPS> cu) {
+    std::array<std::array<double, STEPS>, STEPS>& cu) {
   if (!initialized || cube_dimension != 2) {
     std::cerr << "Cornelius not initialized for 2D case." << std::endl;
     exit(1);
   }
-  std::array<int, 2> c_i;
-  std::array<double, 2> c_v;
-  c_i[0] = 0;
-  c_i[1] = 1;
-  c_v[0] = 0;
-  c_v[1] = 0;
+  std::array<int, 2> c_i = {0, 1};
+  std::array<double, 2> c_v = {0, 0};
   cube_2d.init_square(cu, c_i, c_v, dx);
   cube_2d.construct_lines(value);
   number_elements = cube_2d.get_number_lines();
-  std::array<Line, Square::MAX_LINES> lines = cube_2d.get_lines();
+  auto& lines = cube_2d.get_lines();
   for (int i = 0; i < number_elements; i++) {
     for (int j = 0; j < DIM; j++) {
       normals[i][j] = lines[i].get_normal()[j];
@@ -63,20 +54,20 @@ void Cornelius::find_surface_2d(
 }
 
 void Cornelius::find_surface_3d(
-    std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cu) {
+    std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>& cu) {
   std::array<double, DIM> position = {0};
   surface_3d(cu, position, false);
 }
 
 void Cornelius::find_surface_3d_print(
-    std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cu,
-    std::array<double, DIM> position) {
+    std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>& cu,
+    std::array<double, DIM>& position) {
   surface_3d(cu, position, true);
 }
 
 void Cornelius::surface_3d(
-    std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cu,
-    std::array<double, DIM> position, bool do_print) {
+    std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>& cu,
+    std::array<double, DIM>& position, bool do_print) {
   if (!initialized || cube_dimension != 3) {
     std::cerr << "Cornelius not initialized for 3D case." << std::endl;
     exit(1);
@@ -109,7 +100,7 @@ void Cornelius::surface_3d(
   cube_3d.construct_polygons(value);
   // Obtain the information about the elements
   number_elements = cube_3d.get_number_polygons();
-  std::array<Polygon, Cube::MAX_POLY> polygons = cube_3d.get_polygons();
+  auto& polygons = cube_3d.get_polygons();
   for (int i = 0; i < number_elements; i++) {
     // Always work with 4 dimensions
     for (int j = 0; j < DIM; j++) {
@@ -125,8 +116,7 @@ void Cornelius::surface_3d(
 
 void Cornelius::find_surface_4d(
     std::array<std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
-               STEPS>
-        cu) {
+               STEPS>& cu) {
   if (!initialized || cube_dimension != 4) {
     std::cerr << "Cornelius not initialized for 4D case." << std::endl;
     exit(1);
@@ -164,8 +154,7 @@ void Cornelius::find_surface_4d(
   cube_4d.construct_polyhedra(value);
   // Obtain the information about the elements
   number_elements = cube_4d.get_number_polyhedra();
-  std::array<Polyhedron, Hypercube::MAX_POLY> polyhedra =
-      cube_4d.get_polyhedra();
+  auto& polyhedra = cube_4d.get_polyhedra();
   for (int i = 0; i < number_elements; i++) {
     for (int j = 0; j < DIM; j++) {
       centroids[i][j] = polyhedra[i].get_centroid()[j];
@@ -177,60 +166,50 @@ void Cornelius::find_surface_4d(
 int Cornelius::get_number_elements() { return number_elements; }
 
 std::vector<std::vector<double>> Cornelius::get_normals_4d() {
-  std::vector<std::vector<double>> normals_vector(number_elements);
+  std::vector<std::vector<double>> normals_vector(number_elements,
+                                                  std::vector<double>(DIM));
   for (int i = 0; i < number_elements; i++) {
-    std::vector<double> normal(DIM);
-    for (int j = 0; j < DIM; j++) {
-      normal[j] = normals[i][j];
-    }
-    normals_vector[i] = normal;
+    std::copy(normals[i].begin(), normals[i].end(), normals_vector[i].begin());
   }
   return normals_vector;
 }
 
 std::vector<std::vector<double>> Cornelius::get_centroids_4d() {
-  std::vector<std::vector<double>> centroids_vector(number_elements);
+  std::vector<std::vector<double>> centroids_vector(number_elements,
+                                                    std::vector<double>(DIM));
   for (int i = 0; i < number_elements; i++) {
-    std::vector<double> centroid(DIM);
-    for (int j = 0; j < DIM; j++) {
-      centroid[j] = centroids[i][j];
-    }
-    centroids_vector[i] = centroid;
+    std::copy(centroids[i].begin(), centroids[i].end(),
+              centroids_vector[i].begin());
   }
   return centroids_vector;
 }
 
 std::vector<std::vector<double>> Cornelius::get_normals() {
-  std::vector<std::vector<double>> normals_vector(number_elements);
+  std::vector<std::vector<double>> normals_vector(
+      number_elements, std::vector<double>(cube_dimension));
   for (int i = 0; i < number_elements; i++) {
-    std::vector<double> normal(cube_dimension);
-    for (int j = 0; j < cube_dimension; j++) {
-      normal[j] = normals[i][j + (DIM - cube_dimension)];
-    }
-    normals_vector[i] = normal;
+    std::copy(normals[i].begin() + (DIM - cube_dimension),
+              normals[i].begin() + DIM, normals_vector[i].begin());
   }
   return normals_vector;
 }
 
 std::vector<std::vector<double>> Cornelius::get_centroids() {
-  std::vector<std::vector<double>> centroids_vector(number_elements);
+  std::vector<std::vector<double>> centroids_vector(
+      number_elements, std::vector<double>(cube_dimension));
   for (int i = 0; i < number_elements; i++) {
-    std::vector<double> centroid(cube_dimension);
-    for (int j = 0; j < cube_dimension; j++) {
-      centroid[j] = centroids[i][j + (DIM - cube_dimension)];
-    }
-    centroids_vector[i] = centroid;
+    std::copy(centroids[i].begin() + (DIM - cube_dimension),
+              centroids[i].begin() + DIM, centroids_vector[i].begin());
   }
   return centroids_vector;
 }
 
 double Cornelius::get_centroid_element(int index_surface_element,
                                        int element_centroid) {
-  if ((index_surface_element >= number_elements) ||
-      (element_centroid >= cube_dimension)) {
-    std::cerr << "Cornelius error: asking for an element which does not exist."
-              << std::endl;
-    exit(1);
+  if (index_surface_element >= number_elements ||
+      element_centroid >= cube_dimension) {
+    throw std::out_of_range(
+        "Cornelius error: asking for an element which does not exist.");
   }
   return centroids[index_surface_element]
                   [element_centroid + (DIM - cube_dimension)];
@@ -238,11 +217,10 @@ double Cornelius::get_centroid_element(int index_surface_element,
 
 double Cornelius::get_normal_element(int index_surface_element,
                                      int element_normal) {
-  if ((index_surface_element >= number_elements) ||
-      (element_normal >= cube_dimension)) {
-    std::cerr << "Cornelius error: asking for an element which does not exist."
-              << std::endl;
-    exit(1);
+  if (index_surface_element >= number_elements ||
+      element_normal >= cube_dimension) {
+    throw std::out_of_range(
+        "Cornelius error: asking for an element which does not exist.");
   }
   return normals[index_surface_element]
                 [element_normal + (DIM - cube_dimension)];
