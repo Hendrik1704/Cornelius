@@ -2,15 +2,16 @@
 
 #include <algorithm>
 #include <iostream>
+#include <numeric>
 
-Square::Square() { ambiguous = false; }
+Square::Square() : ambiguous(false) {}
 
 Square::~Square() {}
 
 void Square::init_square(
-    std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM> sq,
-    std::array<int, DIM - SQUARE_DIM> c_i,
-    std::array<double, DIM - SQUARE_DIM> c_v, std::array<double, DIM> dex) {
+    std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>& sq,
+    std::array<int, DIM - SQUARE_DIM>& c_i,
+    std::array<double, DIM - SQUARE_DIM>& c_v, std::array<double, DIM>& dex) {
   points = sq;
   const_i = c_i;
   const_value = c_v;
@@ -19,11 +20,7 @@ void Square::init_square(
   x2 = -1;
   for (int i = 0; i < DIM; i++) {
     if (i != const_i[0] && i != const_i[1]) {
-      if (x1 < 0) {
-        x1 = i;
-      } else {
-        x2 = i;
-      }
+      (x1 < 0 ? x1 : x2) = i;
     }
   }
   number_cuts = 0;
@@ -33,14 +30,12 @@ void Square::init_square(
 
 void Square::construct_lines(double value) {
   // Check the corner points to see if there are lines
-  int above = 0;
-  for (int i = 0; i < DIM - SQUARE_DIM; i++) {
-    for (int j = 0; j < DIM - SQUARE_DIM; j++) {
-      if (points[i][j] >= value) {
-        above++;
-      }
-    }
-  }
+  int above =
+      std::count_if(points.begin(), points.end(), [value](const auto& row) {
+        return std::count_if(row.begin(), row.end(), [value](double point) {
+                 return point >= value;
+               }) > 0;
+      });
   // If all corners are above or below this value, there are no lines in this
   // square
   if (above == 0 || above == 4) {
@@ -85,7 +80,7 @@ void Square::ends_of_edge(double value) {
     cuts[number_cuts][1] = 0;
     number_cuts++;
   } else if (points[1][0] == value && points[0][0] < value) {
-    cuts[number_cuts][0] = (1.0 - 1e-9) * dx[x1];
+    cuts[number_cuts][0] = ALMOST_ONE * dx[x1];
     cuts[number_cuts][1] = 0;
     number_cuts++;
   }
@@ -101,7 +96,7 @@ void Square::ends_of_edge(double value) {
     number_cuts++;
   } else if (points[0][1] == value && points[0][0] < value) {
     cuts[number_cuts][0] = 0;
-    cuts[number_cuts][1] = (1.0 - 1e-9) * dx[x2];
+    cuts[number_cuts][1] = ALMOST_ONE * dx[x2];
     number_cuts++;
   }
   // Edge 3
@@ -116,7 +111,7 @@ void Square::ends_of_edge(double value) {
     number_cuts++;
   } else if (points[1][1] == value && points[1][0] < value) {
     cuts[number_cuts][0] = dx[x1];
-    cuts[number_cuts][1] = (1.0 - 1e-9) * dx[x2];
+    cuts[number_cuts][1] = ALMOST_ONE * dx[x2];
     number_cuts++;
   }
   // Edge 4
@@ -130,7 +125,7 @@ void Square::ends_of_edge(double value) {
     cuts[number_cuts][1] = dx[x2];
     number_cuts++;
   } else if (points[1][1] == value && points[0][1] < value) {
-    cuts[number_cuts][0] = (1.0 - 1e-9) * dx[x1];
+    cuts[number_cuts][0] = ALMOST_ONE * dx[x1];
     cuts[number_cuts][1] = dx[x2];
     number_cuts++;
   }
@@ -147,16 +142,19 @@ void Square::find_outside(double value) {
     ambiguous = true;
     // Compute the value in the middle of the square
     double value_middle =
-        (points[0][0] + points[1][0] + points[0][1] + points[1][1]) / 4.0;
+        std::accumulate(points.begin(), points.end(), 0.0,
+                        [](double sum, const auto& row) {
+                          return sum +
+                                 std::accumulate(row.begin(), row.end(), 0.0);
+                        }) /
+        4.0;
 
     // The default is that cuts are connected as \\ here.
     // If both value_middle and (0,0) are above or below the criterion
     // the cuts should be like // and we have to switch order in cuts
     if ((points[0][0] < value && value_middle < value) ||
         (points[0][0] > value && value_middle > value)) {
-      for (int i = 0; i < 2; i++) {
-        std::swap(cuts[1][i], cuts[2][i]);
-      }
+      std::swap(cuts[1], cuts[2]);
     }
     // The center is below, so the middle point is always outside the surface
     if ((value_middle - value) < 0) {
@@ -188,11 +186,7 @@ void Square::find_outside(double value) {
     }
   } else {
     // This is the normal case (not ambiguous)
-    for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < 2; j++) {
-        out[i][j] = 0;
-      }
-    }
+    std::fill(out.begin(), out.end(), std::array<double, 2>{0, 0});
     int number_out = 0;
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 2; j++) {
@@ -204,10 +198,9 @@ void Square::find_outside(double value) {
       }
     }
     if (number_out > 0) {
-      for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < 2; j++) {
-          out[i][j] = out[i][j] / double(number_out);
-        }
+      for (auto& elem : out) {
+        std::transform(elem.begin(), elem.end(), elem.begin(),
+                       [number_out](double val) { return val / number_out; });
       }
     }
   }

@@ -14,10 +14,11 @@
  */
 class Square : public GeneralGeometryElement {
  private:
-  static constexpr int DIM = 4;         ///< Dimension of the space.
-  static constexpr int SQUARE_DIM = 2;  ///< Dimension of the square.
-  static constexpr int MAX_POINTS = 4;  ///< Maximum number of points.
-  static constexpr int MAX_LINES = 2;   ///< Maximum number of lines.
+  static constexpr int DIM = 4;          ///< Dimension of the space.
+  static constexpr int SQUARE_DIM = 2;   ///< Dimension of the square.
+  static constexpr int MAX_POINTS = 4;   ///< Maximum number of points.
+  static constexpr int MAX_LINES = 2;    ///< Maximum number of lines.
+  const double ALMOST_ONE = 1.0 - 1e-9;  ///< Almost one value.
   std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>
       points;  ///< Points of the square.
   std::array<std::array<double, SQUARE_DIM>, MAX_POINTS>
@@ -55,10 +56,10 @@ class Square : public GeneralGeometryElement {
    * @param c_v Values for the constant indices.
    * @param dex Delta values for lines.
    */
-  void init_square(std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM> sq,
-                   std::array<int, DIM - SQUARE_DIM> c_i,
-                   std::array<double, DIM - SQUARE_DIM> c_v,
-                   std::array<double, DIM> dex);
+  void init_square(std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>& sq,
+                   std::array<int, DIM - SQUARE_DIM>& c_i,
+                   std::array<double, DIM - SQUARE_DIM>& c_v,
+                   std::array<double, DIM>& dex);
 
   /**
    * @brief Constructs lines within the square based on a given value.
