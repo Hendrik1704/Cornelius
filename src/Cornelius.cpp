@@ -134,7 +134,7 @@ void Cornelius::find_surface_4d(
   // Check if the cube actually contains surface elements.
   // If all or none of the elements are below the criterion, no surface
   // elements exist.
-  int number_elements = std::accumulate(
+  int value_greater = std::accumulate(
       cu.begin(), cu.end(), 0, [this](int sum, const auto& array3d) {
         return sum +
                std::accumulate(
@@ -153,7 +153,7 @@ void Cornelius::find_surface_4d(
                                 });
                    });
       });
-  if (number_elements == 0 || number_elements == 16) {
+  if (value_greater == 0 || value_greater == 16) {
     // No elements in this cube
     number_elements = 0;
     return;
