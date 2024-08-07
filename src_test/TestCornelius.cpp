@@ -107,6 +107,10 @@ TEST(CorneliusTest, apply_to_3D_surface) {
       std::cout << "Elapsed time for find_surface_3d new: "
                 << elapsed_seconds.count() << "s\n";
 
+      // print the size of the Cornelius object
+      std::cout << "Size of the Cornelius object: "
+                << sizeof(*cornelius_ptr.get()) << " bytes\n";
+
       // timing of the old cornelius version
       start = std::chrono::high_resolution_clock::now();
       std::unique_ptr<CorneliusOld> cornelius_old_ptr(new CorneliusOld());
@@ -116,6 +120,10 @@ TEST(CorneliusTest, apply_to_3D_surface) {
       elapsed_seconds = end - start;
       std::cout << "Elapsed time for find_surface_3d old: "
                 << elapsed_seconds.count() << "s\n";
+
+      // print the size of the CorneliusOld object
+      std::cout << "Size of the CorneliusOld object: "
+                << sizeof(*cornelius_old_ptr.get()) << " bytes\n";
 
       std::string filename_expected_output =
           "cornelius_3D_expected_output_" + std::to_string(cube_file) + ".dat";
