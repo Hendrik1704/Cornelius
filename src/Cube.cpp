@@ -3,11 +3,7 @@
 #include <iostream>
 #include <vector>
 
-Cube::Cube() {
-  number_lines = 0;
-  number_polygons = 0;
-  ambiguous = false;
-}
+Cube::Cube() : number_lines(0), number_polygons(0), ambiguous(false) {}
 
 Cube::~Cube() {}
 
@@ -39,8 +35,8 @@ void Cube::init_cube(
 
 void Cube::split_to_squares() {
   std::array<std::array<double, STEPS>, STEPS> square;
-  std::array<int, STEPS> c_i;
-  std::array<double, STEPS> c_v;
+  std::array<int, STEPS> c_i = {const_i, 0};
+  std::array<double, STEPS> c_v = {const_value, 0.0};
   int number_squares = 0;
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
@@ -48,10 +44,8 @@ void Cube::split_to_squares() {
     if (i == const_i) {
       continue;
     } else {
-      c_i[0] = const_i;
       c_i[1] = i;
       for (int j = 0; j < STEPS; j++) {
-        c_v[0] = const_value;
         c_v[1] = j * dx[i];
         for (int ci1 = 0; ci1 < STEPS; ci1++) {
           for (int ci2 = 0; ci2 < STEPS; ci2++) {
@@ -64,8 +58,7 @@ void Cube::split_to_squares() {
             }
           }
         }
-        squares[number_squares].init_square(square, c_i, c_v, dx);
-        number_squares++;
+        squares[number_squares++].init_square(square, c_i, c_v, dx);
       }
     }
   }
@@ -81,10 +74,9 @@ void Cube::construct_polygons(double value) {
   number_lines = 0;
   for (int i = 0; i < NSQUARES; i++) {
     int number_lines_temp = squares[i].get_number_lines();
-    std::array<Line, Square::MAX_LINES>& lines_temp = squares[i].get_lines();
+    const auto& lines_temp = squares[i].get_lines();
     for (int j = 0; j < number_lines_temp; j++) {
-      lines[number_lines] = lines_temp[j];
-      number_lines++;
+      lines[number_lines++] = lines_temp[j];
     }
   }
 
@@ -110,10 +102,10 @@ void Cube::construct_polygons(double value) {
       polygons[number_polygons].init_polygon(const_i);
       // Go through all lines and try to add them to the polygon
       for (int i = 0; i < number_lines; i++) {
-        if (not_used.at(i)) {
+        if (not_used[i]) {
           // add_line returns true if line is successfully added
           if (polygons[number_polygons].add_line(lines[i], false)) {
-            not_used.at(i) = false;
+            not_used[i] = false;
             used++;
             // If line is successfully added we start the loop from the
             // beginning
@@ -146,7 +138,7 @@ void Cube::check_ambiguity(int number_lines) {
   // If the surface is not ambiguous already, it is still possible to
   // have a ambiguous case if we have exactly 6 lines, i.e. the surface
   // elements are at the opposite corners
-  if (ambiguous == false && number_lines == 6) {
+  if (!ambiguous && number_lines == 6) {
     ambiguous = true;
   }
 }
