@@ -10,9 +10,10 @@ Line::Line() {
 
 Line::~Line() = default;
 
-void Line::init_line(std::array<std::array<double, DIM>, LINE_DIM> new_corners,
-                     std::array<double, DIM> new_out,
-                     std::array<int, DIM - LINE_DIM> new_const_i) {
+void Line::init_line(
+    const std::array<std::array<double, DIM>, LINE_DIM>& new_corners,
+    const std::array<double, DIM>& new_out,
+    const std::array<int, DIM - LINE_DIM>& new_const_i) {
   // Copy the new values into the class variables
   corners = new_corners;
   out = new_out;
@@ -59,16 +60,20 @@ void Line::calculate_normal() {
     calculate_centroid();
   }
   // The normal is given by (-dy, dx)
-  normal[x1] = -(corners[1][x2] - corners[0][x2]);
-  normal[x2] = corners[1][x1] - corners[0][x1];
-  normal[const_i[0]] = 0;
-  normal[const_i[1]] = 0;
+  double dx = corners[1][x1] - corners[0][x1];
+  double dy = corners[1][x2] - corners[0][x2];
+  normal[x1] = -dy;
+  normal[x2] = dx;
+  normal[const_i[0]] = 0.0;
+  normal[const_i[1]] = 0.0;
 
   // Check if the normal is pointing in the correct direction
   std::array<double, DIM> reference_normal;
-  for (int j = 0; j < DIM; j++) {
-    reference_normal[j] = out[j] - centroid[j];
-  }
+  std::transform(out.begin(), out.end(), centroid.begin(),
+                 reference_normal.begin(),
+                 [](double out_val, double centroid_val) {
+                   return out_val - centroid_val;
+                 });
   flip_normal_if_needed(normal, reference_normal);
 
   normal_calculated = true;

@@ -50,9 +50,10 @@ class Line : public GeneralGeometryElement {
    * @param new_out Point outside the surface
    * @param new_const_i Array of constant indices
    */
-  void init_line(std::array<std::array<double, DIM>, LINE_DIM> new_corners,
-                 std::array<double, DIM> new_out,
-                 std::array<int, DIM - LINE_DIM> new_const_i);
+  void init_line(
+      const std::array<std::array<double, DIM>, LINE_DIM>& new_corners,
+      const std::array<double, DIM>& new_out,
+      const std::array<int, DIM - LINE_DIM>& new_const_i);
 
   /**
    * @brief Flips the start and end points of the line.

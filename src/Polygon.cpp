@@ -40,7 +40,7 @@ void Polygon::init_polygon(int new_const_i) {
 }
 
 bool Polygon::add_line(Line& new_line, bool perform_no_check) {
-  double epsilon = 1e-10;
+  constexpr double epsilon = 1e-10;
   // For the first line, we don't need to check
   if (number_lines == 0 || perform_no_check) {
     lines[number_lines] = new_line;
@@ -49,14 +49,12 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
   } else {
     // Check if the current line is connected to the last line, since
     // the lines are ordered
-    std::array<double, DIM> start_point = new_line.get_start_point();
-    std::array<double, DIM> end_point = new_line.get_end_point();
-    std::array<double, DIM> last_end_point =
-        lines[number_lines - 1].get_end_point();
+    const auto& start_point = new_line.get_start_point();
+    const auto& end_point = new_line.get_end_point();
+    const auto& last_end_point = lines[number_lines - 1].get_end_point();
 
     // Lambda function to calculate the difference between two points
-    auto calc_difference = [](std::array<double, DIM>& p1,
-                              std::array<double, DIM>& p2) {
+    auto calc_difference = [](const auto& p1, const auto& p2) {
       return std::transform_reduce(
           p1.begin(), p1.end(), p2.begin(), 0.0, std::plus<double>(),
           [](double a, double b) { return std::abs(a - b); });
@@ -94,7 +92,7 @@ void Polygon::calculate_centroid() {
     mean_values[k] =
         std::transform_reduce(
             lines.begin(), lines.begin() + number_lines, 0.0, std::plus<>(),
-            [k](Line line) {
+            [k](Line& line) {
               return line.get_start_point()[k] + line.get_end_point()[k];
             }) /
         (2.0 * number_lines);
@@ -102,9 +100,7 @@ void Polygon::calculate_centroid() {
   // In the case there are only 3 lines, the centroid is the mean of the corner
   // points and the Polygon is on a plane
   if (number_lines == 3) {
-    for (int j = 0; j < DIM; j++) {
-      centroid[j] = mean_values[j];
-    }
+    centroid = mean_values;
     centroid_calculated = true;
     return;
   }
@@ -116,10 +112,10 @@ void Polygon::calculate_centroid() {
   std::array<double, DIM> sum_up = {0};
   double sum_down = 0.0;  // Sum of the areas of the triangles
   // Arrays a and b to store the vectors of the triangles
-  std::array<double, DIM> a = {0};
-  std::array<double, DIM> b = {0};
+  std::array<double, DIM> a;
+  std::array<double, DIM> b;
   // Centroid of the triangle (always on the plane)
-  std::array<double, DIM> triangle_centroid = {0};
+  std::array<double, DIM> triangle_centroid;
   for (int l = 0; l < number_lines; l++) {
     // Form the vectors of the triangle
     for (int j = 0; j < DIM; j++) {
@@ -157,13 +153,13 @@ void Polygon::calculate_normal() {
   std::array<double, DIM> v_out = {0};  // point always outside
 
   // Arrays a and b to define the vectors of the triangles
-  std::array<double, DIM> a = {0};
-  std::array<double, DIM> b = {0};
+  std::array<double, DIM> a;
+  std::array<double, DIM> b;
   // Loop over all triangles
   for (int i = 0; i < number_lines; i++) {
-    auto& line = lines[i];
-    a = line.get_start_point();
-    b = line.get_end_point();
+    a = lines[i].get_start_point();
+    b = lines[i].get_end_point();
+
     for (int j = 0; j < DIM; j++) {
       a[j] -= centroid[j];
       b[j] -= centroid[j];
@@ -175,19 +171,17 @@ void Polygon::calculate_normal() {
     normals[i][const_i] = 0.0;
 
     // Construct the vector pointing outside the polygon
-    std::array<double, DIM> o = lines[i].get_outside_point();
+    const auto& o = lines[i].get_outside_point();
     std::transform(o.begin(), o.end(), centroid.begin(), v_out.begin(),
                    std::minus<>());
     // Check if the normal is pointing in the correct direction
     flip_normal_if_needed(normals[i], v_out);
   }
   // The normal is the sum of the normals of the triangles
-  for (int j = 0; j < DIM; j++) {
-    normal[j] = 0.0;
-  }
-  for (int i = 0; i < number_lines; i++) {
-    for (int j = 0; j < DIM; j++) {
-      normal[j] += normals[i][j];
+  std::fill(normal.begin(), normal.end(), 0.0);
+  for (const auto& n : normals) {
+    for (int j = 0; j < DIM; ++j) {
+      normal[j] += n[j];
     }
   }
   normal_calculated = true;
