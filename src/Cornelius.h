@@ -28,7 +28,9 @@
  *
  * Last update 03.08.2012 Hannu Holopainen
  *
- * Last update 05.08.2024 Hendrik Roch: Modernized the code to C++17 features.
+ * Last update 08.08.2024 Hendrik Roch: Modernized the code to C++17 features,
+ * more memory efficient and faster. Added unit tests and also tests to ensure
+ * that the new code is compatible with the old one.
  *
  */
 
@@ -49,7 +51,8 @@
  * Algorithm by Pasi Huovinen. This code is based on the original FORTRAN
  * code by Pasi Huovinen.
  *
- * It was updated in 2024 by Hendrik Roch to modern C++17.
+ * 23.04.2012 Hannu Holopainen
+ * 08.08.2024 Hendrik Roch
  *
  */
 class Cornelius : public GeneralGeometryElement {

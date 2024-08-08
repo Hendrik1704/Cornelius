@@ -15,6 +15,9 @@
  * The Hypercube class provides methods to initialize a hypercube, split into
  * cubes, check for ambiguities, construct polyhedra, and access geometric
  * elements.
+ *
+ * 13.10.2011 Hannu Holopainen
+ * 08.08.2024 Hendrik Roch
  */
 class Hypercube : public GeneralGeometryElement {
  private:

@@ -8,6 +8,19 @@
 #include "Polygon.h"
 #include "Square.h"
 
+/**
+ * @class Cube
+ * @brief Represents a cube in a geometric space, derived from
+ * GeneralGeometryElement.
+ *
+ * The Cube class encapsulates the properties and operations related to a cube
+ * in a geometric space. It provides methods to initialize the cube, construct
+ * polygons within the cube, split the cube into squares, and check for
+ * ambiguity.
+ *
+ * 13.10.2011 Hannu Holopainen
+ * 08.08.2024 Hendrik Roch
+ */
 class Cube : public GeneralGeometryElement {
  private:
   static constexpr int DIM = 4;       ///< Dimension of the space.

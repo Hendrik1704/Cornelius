@@ -13,6 +13,9 @@
  * This class handles squares. Finds the edges of the surface and also
  * the points which are always outside the surface so that we can determine
  * correct direction for normal vector.
+ *
+ * 13.10.2011 Hannu Holopainen
+ * 08.08.2024 Hendrik Roch
  */
 class Square : public GeneralGeometryElement {
  private:
