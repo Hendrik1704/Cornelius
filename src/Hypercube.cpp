@@ -15,6 +15,7 @@ void Hypercube::init_hypercube(
   x3 = 2;
   x4 = 3;
   number_polyhedra = 0;
+  polyhedra.clear();
   ambiguous = false;
 }
 

@@ -21,6 +21,8 @@ void Cornelius::init_cornelius(int dimension, double new_value,
     dx[i] = (i < DIM - cube_dimension) ? 1 : new_dx[i - (DIM - cube_dimension)];
   }
   initialized = true;
+  normals.clear();
+  centroids.clear();
 }
 
 void Cornelius::init_print_cornelius(std::string filename) {

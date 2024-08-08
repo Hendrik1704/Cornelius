@@ -28,6 +28,7 @@ void Cube::init_cube(
   number_lines = 0;
   number_polygons = 0;
   ambiguous = false;
+  polygons.clear();
 }
 
 void Cube::split_to_squares(std::vector<Square>& squares) {

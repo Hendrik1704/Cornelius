@@ -28,6 +28,7 @@ void Polygon::init_polygon(int new_const_i) {
   centroid_calculated = false;
   // Reset the number of lines in the polygon
   number_lines = 0;
+  lines.clear();
 }
 
 bool Polygon::add_line(Line& new_line, bool perform_no_check) {

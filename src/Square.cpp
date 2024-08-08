@@ -22,6 +22,9 @@ void Square::init_square(
   number_cuts = 0;
   number_lines = 0;
   ambiguous = false;
+  cuts.clear();
+  out.clear();
+  lines.clear();
 }
 
 void Square::construct_lines(double value) {
@@ -45,7 +48,6 @@ void Square::construct_lines(double value) {
   if (number_cuts > 0) {
     find_outside(value);
   }
-  lines.clear();
   // Then we go through the cut points and form the line elements
   std::array<std::array<double, DIM>, SQUARE_DIM> points_temp;
   std::array<double, DIM> out_temp;

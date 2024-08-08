@@ -10,8 +10,9 @@
 int main(int argc, char const *argv[]) {
   int number_of_cubes_to_test =
       10;  // 10 is the maximum, since there are only 10 test files
-  int number_of_tests = 100000;  // number of times the test is repeated for one
-                                 // cube to get a more accurate time measurement
+  int number_of_tests =
+      1000000;  // number of times the test is repeated for one
+                // cube to get a more accurate time measurement
   bool print_intermediate_times = false;
   // Initialize all the variables for the comparison
   double grid_dt = 0.1;

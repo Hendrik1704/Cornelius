@@ -14,6 +14,7 @@ void Polyhedron::init_polyhedron() {
   // Reset the number of polygons and tetrahedrons in the polyhedron
   number_polygons = 0;
   number_tetrahedrons = 0;
+  polygons.clear();
   // Set the flags for normal and centroid calculations to false
   normal_calculated = false;
   centroid_calculated = false;
