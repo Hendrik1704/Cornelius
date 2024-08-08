@@ -5,10 +5,7 @@
 #include <numeric>
 #include <vector>
 
-Polyhedron::Polyhedron() {
-  // Initialize a GeneralGeometryElement object
-  GeneralGeometryElement();
-}
+Polyhedron::Polyhedron() {}
 
 Polyhedron::~Polyhedron() {}
 
@@ -30,7 +27,8 @@ void Polyhedron::init_polyhedron() {
 bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
   // For the first polygon, we don't need to check
   if (number_polygons == 0 || perform_no_check) {
-    polygons[number_polygons++] = new_polygon;
+    polygons.push_back(new_polygon);
+    number_polygons++;
     number_tetrahedrons += new_polygon.get_number_lines();
     return true;
   } else {
@@ -45,7 +43,8 @@ bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
       for (int j = 0; j < number_lines1; j++) {
         for (int k = 0; k < number_lines2; k++) {
           if (lines_are_connected(lines1[j], lines2[k])) {
-            polygons[number_polygons++] = new_polygon;
+            polygons.push_back(new_polygon);
+            number_polygons++;
             number_tetrahedrons += number_lines1;
             return true;
           }
@@ -108,8 +107,7 @@ void Polyhedron::calculate_centroid() {
   for (int k = 0; k < DIM; k++) {
     mean_values[k] =
         std::transform_reduce(
-            polygons.begin(), polygons.begin() + number_polygons, 0.0,
-            std::plus<>(),
+            polygons.begin(), polygons.end(), 0.0, std::plus<>(),
             [k](Polygon& polygon) {
               return std::transform_reduce(
                   polygon.get_lines().begin(),
@@ -129,10 +127,10 @@ void Polyhedron::calculate_centroid() {
   std::array<double, DIM> sum_up = {0};
   double sum_down = 0.0;
   // Loop over all polygons
-  for (int i = 0; i < number_polygons; i++) {
-    int number_lines = polygons[i].get_number_lines();
-    auto& lines = polygons[i].get_lines();
-    auto& centroid = polygons[i].get_centroid();
+  for (auto& polygon : polygons) {
+    int number_lines = polygon.get_number_lines();
+    auto& lines = polygon.get_lines();
+    auto& centroid = polygon.get_centroid();
     // Loop over all lines in the polygon
     for (int j = 0; j < number_lines; j++) {
       auto& start_point = lines[j].get_start_point();
@@ -180,10 +178,10 @@ void Polyhedron::calculate_normal() {
                                                std::array<double, DIM>{0});
   int index_tetrahedron = 0;
   // Loop over all polygons
-  for (int i = 0; i < number_polygons; i++) {
-    int number_lines = polygons[i].get_number_lines();
-    auto& lines = polygons[i].get_lines();
-    auto& cent = polygons[i].get_centroid();
+  for (auto& polygon : polygons) {
+    int number_lines = polygon.get_number_lines();
+    auto& lines = polygon.get_lines();
+    auto& cent = polygon.get_centroid();
     // Loop over all lines in the polygon
     for (int j = 0; j < number_lines; j++) {
       auto& start_point = lines[j].get_start_point();

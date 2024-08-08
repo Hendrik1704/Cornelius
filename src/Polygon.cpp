@@ -6,10 +6,7 @@
 #include <numeric>
 #include <vector>
 
-Polygon::Polygon() {
-  // Initialize a GeneralGeometryElement object
-  GeneralGeometryElement();
-}
+Polygon::Polygon() {}
 
 Polygon::~Polygon() {}
 
@@ -43,7 +40,7 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
   constexpr double epsilon = 1e-10;
   // For the first line, we don't need to check
   if (number_lines == 0 || perform_no_check) {
-    lines[number_lines] = new_line;
+    lines.push_back(new_line);
     number_lines++;
     return true;
   } else {
@@ -71,7 +68,7 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
       if (difference2 < epsilon) {
         new_line.flip_start_end();
       }
-      lines[number_lines] = new_line;
+      lines.push_back(new_line);
       number_lines++;
       return true;
     } else {
@@ -90,11 +87,11 @@ void Polygon::calculate_centroid() {
   // Determine the mean values of the corner points, all points appear twice
   for (int k = 0; k < DIM; ++k) {
     mean_values[k] =
-        std::transform_reduce(
-            lines.begin(), lines.begin() + number_lines, 0.0, std::plus<>(),
-            [k](Line& line) {
-              return line.get_start_point()[k] + line.get_end_point()[k];
-            }) /
+        std::transform_reduce(lines.begin(), lines.end(), 0.0, std::plus<>(),
+                              [k](Line& line) {
+                                return line.get_start_point()[k] +
+                                       line.get_end_point()[k];
+                              }) /
         (2.0 * number_lines);
   }
   // In the case there are only 3 lines, the centroid is the mean of the corner
@@ -187,7 +184,7 @@ void Polygon::calculate_normal() {
   normal_calculated = true;
 }
 
-std::array<Line, Polygon::MAX_LINES>& Polygon::get_lines() { return lines; }
+std::vector<Line>& Polygon::get_lines() { return lines; }
 
 void Polygon::print(std::ofstream& file, std::array<double, DIM> position) {
   // Print the polygon to the file

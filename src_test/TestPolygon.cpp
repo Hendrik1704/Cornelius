@@ -163,7 +163,7 @@ TEST(PolygonTest, get_lines) {
   polygon.add_line(line2, false);
   polygon.add_line(line3, false);
 
-  std::array<Line, 24> lines = polygon.get_lines();
+  auto lines = polygon.get_lines();
 
   ASSERT_EQ(lines[0].get_start_point()[0], 0);
   ASSERT_EQ(lines[0].get_start_point()[1], 0);

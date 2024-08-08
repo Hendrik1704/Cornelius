@@ -1,6 +1,8 @@
 #ifndef POLYHEDRON_H
 #define POLYHEDRON_H
 
+#include <vector>
+
 #include "GeneralGeometryElement.h"
 #include "Line.h"
 #include "Polygon.h"
@@ -16,12 +18,9 @@
  */
 class Polyhedron : public GeneralGeometryElement {
  private:
-  static constexpr int MAX_POLYGONS =
-      24;  ///< Maximum number of polygons in a polyhedron
-  std::array<Polygon, MAX_POLYGONS>
-      polygons;             ///< Array of polygons in the polyhedron
-  int number_polygons;      ///< Number of polygons in the polyhedron
-  int number_tetrahedrons;  ///< Number of tetrahedrons in the polyhedron
+  std::vector<Polygon> polygons;  ///< Vector of polygons in the polyhedron
+  int number_polygons;            ///< Number of polygons in the polyhedron
+  int number_tetrahedrons;        ///< Number of tetrahedrons in the polyhedron
   int x1, x2, x3, x4;  ///< Indices representing the polyhedron's dimensions
 
  public:
@@ -105,8 +104,6 @@ class Polyhedron : public GeneralGeometryElement {
    * @return The number of tetrahedrons in the polyhedron.
    */
   int get_number_tetrahedrons() { return number_tetrahedrons; }
-
-  friend class Cornelius;
 };
 
 #endif  // POLYHEDRON_H

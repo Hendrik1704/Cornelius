@@ -44,12 +44,19 @@ void Cornelius::find_surface_2d(
   cube_2d.init_square(cu, c_i, c_v, dx);
   cube_2d.construct_lines(value);
   number_elements = cube_2d.get_number_lines();
+  normals.clear();
+  normals.reserve(number_elements);
+  centroids.clear();
+  centroids.reserve(number_elements);
   auto& lines = cube_2d.get_lines();
   for (int i = 0; i < number_elements; i++) {
+    std::array<double, DIM> normal, centroid;
     for (int j = 0; j < DIM; j++) {
-      normals[i][j] = lines[i].get_normal()[j];
-      centroids[i][j] = lines[i].get_centroid()[j];
+      normal[j] = lines[i].get_normal()[j];
+      centroid[j] = lines[i].get_centroid()[j];
     }
+    normals.emplace_back(normal);
+    centroids.emplace_back(centroid);
   }
 }
 
@@ -100,13 +107,20 @@ void Cornelius::surface_3d(
   cube_3d.construct_polygons(value);
   // Obtain the information about the elements
   number_elements = cube_3d.get_number_polygons();
+  normals.clear();
+  normals.reserve(number_elements);
+  centroids.clear();
+  centroids.reserve(number_elements);
   auto& polygons = cube_3d.get_polygons();
   for (int i = 0; i < number_elements; i++) {
     // Always work with 4 dimensions
+    std::array<double, DIM> normal, centroid;
     for (int j = 0; j < DIM; j++) {
-      centroids[i][j] = polygons[i].get_centroid()[j];
-      normals[i][j] = polygons[i].get_normal()[j];
+      centroid[j] = polygons[i].get_centroid()[j];
+      normal[j] = polygons[i].get_normal()[j];
     }
+    normals.emplace_back(normal);
+    centroids.emplace_back(centroid);
     // If the triangles should be printed, print them
     if (print_initialized && do_print) {
       polygons[i].print(output_file, position);
@@ -154,12 +168,19 @@ void Cornelius::find_surface_4d(
   cube_4d.construct_polyhedra(value);
   // Obtain the information about the elements
   number_elements = cube_4d.get_number_polyhedra();
+  normals.clear();
+  normals.reserve(number_elements);
+  centroids.clear();
+  centroids.reserve(number_elements);
   auto& polyhedra = cube_4d.get_polyhedra();
   for (int i = 0; i < number_elements; i++) {
+    std::array<double, DIM> normal, centroid;
     for (int j = 0; j < DIM; j++) {
-      centroids[i][j] = polyhedra[i].get_centroid()[j];
-      normals[i][j] = polyhedra[i].get_normal()[j];
+      centroid[j] = polyhedra[i].get_centroid()[j];
+      normal[j] = polyhedra[i].get_normal()[j];
     }
+    normals.emplace_back(normal);
+    centroids.emplace_back(centroid);
   }
 }
 

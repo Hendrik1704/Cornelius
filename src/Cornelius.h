@@ -56,14 +56,12 @@ class Cornelius : public GeneralGeometryElement {
  private:
   static constexpr int STEPS = 2; /**< Number of steps for the discretization */
   static constexpr int DIM = 4;   /**< Dimension of the space (default is 4D) */
-  static constexpr int MAX_ELEMENTS =
-      10; /**< Maximum number of elements to store */
 
   int number_elements; /**< Number of surface elements found */
-  std::array<std::array<double, DIM>, MAX_ELEMENTS>
-      normals; /**< Array to store normals of surface elements */
-  std::array<std::array<double, DIM>, MAX_ELEMENTS>
-      centroids;      /**< Array to store centroids of surface elements */
+  std::vector<std::array<double, DIM>>
+      normals; /**< Vector to store the normals of the surface elements */
+  std::vector<std::array<double, DIM>>
+      centroids; /**< Vector to store the centroids of the surface elements */
   int cube_dimension; /**< Dimension of the cube (2, 3, or 4) */
   bool initialized;   /**< Flag to indicate if Cornelius has been initialized */
   bool print_initialized; /**< Flag to indicate if printing is initialized */

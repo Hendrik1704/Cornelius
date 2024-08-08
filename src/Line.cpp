@@ -3,10 +3,7 @@
 #include <algorithm>
 #include <array>
 
-Line::Line() {
-  // Initialize a GeneralGeometryElement object
-  GeneralGeometryElement();
-}
+Line::Line() {}
 
 Line::~Line() = default;
 

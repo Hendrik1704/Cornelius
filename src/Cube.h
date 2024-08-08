@@ -1,6 +1,8 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <vector>
+
 #include "GeneralGeometryElement.h"
 #include "Line.h"
 #include "Polygon.h"
@@ -10,15 +12,14 @@ class Cube : public GeneralGeometryElement {
  private:
   static constexpr int DIM = 4;       ///< Dimension of the space.
   static constexpr int CUBE_DIM = 4;  ///< Dimension of the cube.
-  static constexpr int MAX_POLY = 8;  ///< Maximum number of polygons.
   static constexpr int NSQUARES = 6;  ///< Number of squares in the cube.
   static constexpr int STEPS = 2;     ///< Number of steps.
 
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>
-      cube;                                ///< 3D array representing the cube.
-  std::array<Line, NSQUARES * 2> lines;    ///< Array of lines in the cube.
-  std::array<Polygon, MAX_POLY> polygons;  ///< Array of polygons in the cube.
-  std::array<Square, NSQUARES> squares;    ///< Array of squares in the cube.
+      cube;                              ///< 3D array representing the cube.
+  std::array<Line, NSQUARES * 2> lines;  ///< Array of lines in the cube.
+  std::vector<Polygon> polygons;         ///< Vector of polygons in the cube.
+  std::array<Square, NSQUARES> squares;  ///< Array of squares in the cube.
 
   int number_lines;            ///< Number of lines in the cube.
   int number_polygons;         ///< Number of polygons in the cube.
@@ -89,9 +90,7 @@ class Cube : public GeneralGeometryElement {
    * @brief Gets the polygons in the cube.
    * @return A reference to the array of polygons.
    */
-  std::array<Polygon, MAX_POLY>& get_polygons();
-
-  friend class Cornelius;
+  std::vector<Polygon>& get_polygons();
 };
 
 #endif  // CUBE_H

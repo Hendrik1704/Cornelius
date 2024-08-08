@@ -99,30 +99,32 @@ void Cube::construct_polygons(double value) {
         exit(1);
       }
       // Initialize a new polygon
-      polygons[number_polygons].init_polygon(const_i);
+      Polygon new_polygon;
+      new_polygon.init_polygon(const_i);
       // Go through all lines and try to add them to the polygon
       for (int i = 0; i < number_lines; i++) {
-        if (not_used[i]) {
-          // add_line returns true if line is successfully added
-          if (polygons[number_polygons].add_line(lines[i], false)) {
-            not_used[i] = false;
-            used++;
-            // If line is successfully added we start the loop from the
-            // beginning
-            i = 0;
-          }
+        // add_line returns true if line is successfully added
+        if (not_used[i] && new_polygon.add_line(lines[i], false)) {
+          not_used[i] = false;
+          used++;
+          // If line is successfully added we start the loop from the
+          // beginning
+          i = 0;
         }
       }
       // When we have reached this point one complete polygon is formed
+      polygons.push_back(new_polygon);
       number_polygons++;
     } while (used < number_lines);
   } else {
     // Surface is not ambiguous, so we have only one polygon and all lines
     // can be added to it without ordering them
-    polygons[number_polygons].init_polygon(const_i);
+    Polygon new_polygon;
+    new_polygon.init_polygon(const_i);
     for (int i = 0; i < number_lines; i++) {
-      polygons[number_polygons].add_line(lines[i], true);
+      new_polygon.add_line(lines[i], true);
     }
+    polygons.push_back(new_polygon);
     number_polygons++;
   }
 }
@@ -149,4 +151,4 @@ int Cube::get_number_lines() { return number_lines; }
 
 int Cube::get_number_polygons() { return number_polygons; }
 
-std::array<Polygon, Cube::MAX_POLY>& Cube::get_polygons() { return polygons; }
+std::vector<Polygon>& Cube::get_polygons() { return polygons; }

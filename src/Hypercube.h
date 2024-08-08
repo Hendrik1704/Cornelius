@@ -1,6 +1,8 @@
 #ifndef HYPERCUBE_H
 #define HYPERCUBE_H
 
+#include <vector>
+
 #include "Cube.h"
 #include "GeneralGeometryElement.h"
 #include "Polyhedron.h"
@@ -16,19 +18,16 @@
  */
 class Hypercube : public GeneralGeometryElement {
  private:
-  static constexpr int DIM = 4;        ///< Dimension of the space.
-  static constexpr int MAX_POLY = 10;  ///< Maximum number of polyhedra.
-  static constexpr int NCUBES = 8;     ///< Number of cubes in the hypercube.
-  static constexpr int STEPS = 2;      ///< Number of steps for discretization.
+  static constexpr int DIM = 4;    ///< Dimension of the space.
+  static constexpr int STEPS = 2;  ///< Number of steps for discretization.
 
   std::array<std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
              STEPS>
       hypercube;  ///< 4D array representing the hypercube.
-  std::array<Polyhedron, MAX_POLY>
-      polyhedra;  ///< Array of polyhedra in the hypercube.
-  std::array<Polygon, NCUBES * 10>
-      polygons;                    ///< Array of polygons in the hypercube.
-  std::array<Cube, NCUBES> cubes;  ///< Array of cubes in the hypercube.
+  std::vector<Polyhedron>
+      polyhedra;  ///< Vector to store the polyhedra in the hypercube.
+  std::vector<Polygon> polygons;  ///< Array of polygons in the hypercube.
+  std::vector<Cube> cubes;        ///< Array of cubes in the hypercube.
 
   int number_polyhedra;        ///< Number of polyhedra in the hypercube.
   bool ambiguous;              ///< Indicates if the hypercube is ambiguous.
@@ -82,17 +81,15 @@ class Hypercube : public GeneralGeometryElement {
 
   /**
    * @brief Gets the polyhedra in the hypercube.
-   * @return A reference to the array of polyhedra.
+   * @return A reference to the vector of polyhedra.
    */
-  std::array<Polyhedron, MAX_POLY>& get_polyhedra();
+  std::vector<Polyhedron>& get_polyhedra();
 
   /**
    * @brief Checks if the hypercube is ambiguous.
    * @return True if the hypercube is ambiguous, false otherwise.
    */
   bool is_ambiguous();
-
-  friend class Cornelius;
 };
 
 #endif  // HYPERCUBE_H

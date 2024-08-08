@@ -1,6 +1,8 @@
 #ifndef SQUARE_H
 #define SQUARE_H
 
+#include <vector>
+
 #include "GeneralGeometryElement.h"
 #include "Line.h"
 
@@ -16,27 +18,24 @@ class Square : public GeneralGeometryElement {
  private:
   static constexpr int DIM = 4;          ///< Dimension of the space.
   static constexpr int SQUARE_DIM = 2;   ///< Dimension of the square.
-  static constexpr int MAX_POINTS = 4;   ///< Maximum number of points.
-  static constexpr int MAX_LINES = 2;    ///< Maximum number of lines.
   const double ALMOST_ONE = 1.0 - 1e-9;  ///< Almost one value.
   std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>
-      points;  ///< Points of the square.
-  std::array<std::array<double, SQUARE_DIM>, MAX_POINTS>
-      cuts;  ///< Points of cuts.
-  std::array<std::array<double, SQUARE_DIM>, MAX_POINTS>
+      points;                                        ///< Points of the square.
+  std::vector<std::array<double, SQUARE_DIM>> cuts;  ///< Points of the cuts.
+  std::vector<std::array<double, SQUARE_DIM>>
       out;  ///< Points outside the square.
   std::array<std::array<double, DIM>, SQUARE_DIM>
       points_temp;                            ///< Temporary points.
   std::array<double, DIM> out_temp;           ///< Temporary outside points.
   std::array<int, DIM - SQUARE_DIM> const_i;  ///< Indices for constraints.
   std::array<double, DIM - SQUARE_DIM>
-      const_value;                    ///< Values for constraints.
-  int x1, x2;                         ///< Indices for dimensions of the square.
-  std::array<double, DIM> dx;         ///< Delta values for lines.
-  int number_cuts;                    ///< Number of cuts.
-  int number_lines;                   ///< Number of lines.
-  std::array<Line, MAX_LINES> lines;  ///< Lines in the square.
-  bool ambiguous;                     ///< Indicates if the square is ambiguous.
+      const_value;             ///< Values for constraints.
+  int x1, x2;                  ///< Indices for dimensions of the square.
+  std::array<double, DIM> dx;  ///< Delta values for lines.
+  int number_cuts;             ///< Number of cuts.
+  int number_lines;            ///< Number of lines.
+  std::vector<Line> lines;     ///< Lines in the square.
+  bool ambiguous;              ///< Indicates if the square is ambiguous.
 
  public:
   /**
@@ -108,10 +107,7 @@ class Square : public GeneralGeometryElement {
    * @brief Gets the lines in the square.
    * @return A reference to the array of lines.
    */
-  std::array<Line, MAX_LINES>& get_lines();
-
-  friend class Cube;
-  friend class Cornelius;
+  std::vector<Line>& get_lines();
 };
 
 #endif  // SQUARE_H

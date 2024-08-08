@@ -49,6 +49,7 @@ void Square::construct_lines(double value) {
   if (number_cuts > 0) {
     find_outside(value);
   }
+  lines.clear();
   // Then we go through the cut points and form the line elements
   for (int i = 0; i < number_cuts; i++) {
     points_temp[i % 2][x1] = cuts[i][0];
@@ -56,13 +57,14 @@ void Square::construct_lines(double value) {
     points_temp[i % 2][const_i[0]] = const_value[0];
     points_temp[i % 2][const_i[1]] = const_value[1];
     // If we inserted both endpoints we insert the outside point
-    //  and we are ready to create the line element
+    // and we are ready to create the line element
     if (i % 2 == 1) {
       out_temp[x1] = out[i / 2][0];
       out_temp[x2] = out[i / 2][1];
       out_temp[const_i[0]] = const_value[0];
       out_temp[const_i[1]] = const_value[1];
-      lines[i / 2].init_line(points_temp, out_temp, const_i);
+      lines.emplace_back(Line());
+      lines.back().init_line(points_temp, out_temp, const_i);
       number_lines++;
     }
   }
@@ -71,64 +73,80 @@ void Square::construct_lines(double value) {
 void Square::ends_of_edge(double value) {
   // Edge 1
   if ((points[0][0] - value) * (points[1][0] - value) < 0) {
-    cuts[number_cuts][0] =
+    cuts.emplace_back();
+    cuts.back()[0] =
         (points[0][0] - value) / (points[0][0] - points[1][0]) * dx[x1];
-    cuts[number_cuts][1] = 0;
+    cuts.back()[1] = 0;
     number_cuts++;
   } else if (points[0][0] == value && points[1][0] < value) {
-    cuts[number_cuts][0] = 1e-9 * dx[x1];
-    cuts[number_cuts][1] = 0;
+    cuts.emplace_back();
+    cuts.back()[0] = 1e-9 * dx[x1];
+    cuts.back()[1] = 0;
     number_cuts++;
   } else if (points[1][0] == value && points[0][0] < value) {
-    cuts[number_cuts][0] = ALMOST_ONE * dx[x1];
-    cuts[number_cuts][1] = 0;
+    cuts.emplace_back();
+    cuts.back()[0] = ALMOST_ONE * dx[x1];
+    cuts.back()[1] = 0;
     number_cuts++;
   }
+
   // Edge 2
   if ((points[0][0] - value) * (points[0][1] - value) < 0) {
-    cuts[number_cuts][0] = 0;
-    cuts[number_cuts][1] =
+    cuts.emplace_back();
+    cuts.back()[0] = 0;
+    cuts.back()[1] =
         (points[0][0] - value) / (points[0][0] - points[0][1]) * dx[x2];
     number_cuts++;
   } else if (points[0][0] == value && points[0][1] < value) {
-    cuts[number_cuts][0] = 0;
-    cuts[number_cuts][1] = 1e-9 * dx[x2];
+    cuts.emplace_back();
+    cuts.back()[0] = 0;
+    cuts.back()[1] = 1e-9 * dx[x2];
     number_cuts++;
   } else if (points[0][1] == value && points[0][0] < value) {
-    cuts[number_cuts][0] = 0;
-    cuts[number_cuts][1] = ALMOST_ONE * dx[x2];
+    cuts.emplace_back();
+    cuts.back()[0] = 0;
+    cuts.back()[1] = ALMOST_ONE * dx[x2];
     number_cuts++;
   }
+
   // Edge 3
   if ((points[1][0] - value) * (points[1][1] - value) < 0) {
-    cuts[number_cuts][0] = dx[x1];
-    cuts[number_cuts][1] =
+    cuts.emplace_back();
+    cuts.back()[0] = dx[x1];
+    cuts.back()[1] =
         (points[1][0] - value) / (points[1][0] - points[1][1]) * dx[x2];
     number_cuts++;
   } else if (points[1][0] == value && points[1][1] < value) {
-    cuts[number_cuts][0] = dx[x1];
-    cuts[number_cuts][1] = 1e-9 * dx[x2];
+    cuts.emplace_back();
+    cuts.back()[0] = dx[x1];
+    cuts.back()[1] = 1e-9 * dx[x2];
     number_cuts++;
   } else if (points[1][1] == value && points[1][0] < value) {
-    cuts[number_cuts][0] = dx[x1];
-    cuts[number_cuts][1] = ALMOST_ONE * dx[x2];
+    cuts.emplace_back();
+    cuts.back()[0] = dx[x1];
+    cuts.back()[1] = ALMOST_ONE * dx[x2];
     number_cuts++;
   }
+
   // Edge 4
   if ((points[0][1] - value) * (points[1][1] - value) < 0) {
-    cuts[number_cuts][0] =
+    cuts.emplace_back();
+    cuts.back()[0] =
         (points[0][1] - value) / (points[0][1] - points[1][1]) * dx[x1];
-    cuts[number_cuts][1] = dx[x2];
+    cuts.back()[1] = dx[x2];
     number_cuts++;
   } else if (points[0][1] == value && points[1][1] < value) {
-    cuts[number_cuts][0] = 1e-9 * dx[x1];
-    cuts[number_cuts][1] = dx[x2];
+    cuts.emplace_back();
+    cuts.back()[0] = 1e-9 * dx[x1];
+    cuts.back()[1] = dx[x2];
     number_cuts++;
   } else if (points[1][1] == value && points[0][1] < value) {
-    cuts[number_cuts][0] = ALMOST_ONE * dx[x1];
-    cuts[number_cuts][1] = dx[x2];
+    cuts.emplace_back();
+    cuts.back()[0] = ALMOST_ONE * dx[x1];
+    cuts.back()[1] = dx[x2];
     number_cuts++;
   }
+
   if (number_cuts != 0 && number_cuts != 2 && number_cuts != 4) {
     std::cerr << "Error in ends_of_edge: number_cuts " << number_cuts
               << std::endl;
@@ -156,6 +174,7 @@ void Square::find_outside(double value) {
         (points[0][0] > value && value_middle > value)) {
       std::swap(cuts[1], cuts[2]);
     }
+    out.resize(2);
     // The center is below, so the middle point is always outside the surface
     if ((value_middle - value) < 0) {
       for (int i = 0; i < 2; i++) {
@@ -186,6 +205,7 @@ void Square::find_outside(double value) {
     }
   } else {
     // This is the normal case (not ambiguous)
+    out.resize(2);
     std::fill(out.begin(), out.end(), std::array<double, 2>{0, 0});
     int number_out = 0;
     for (int i = 0; i < 2; i++) {
@@ -210,4 +230,4 @@ bool Square::is_ambiguous() { return ambiguous; }
 
 int Square::get_number_lines() { return number_lines; }
 
-std::array<Line, Square::MAX_LINES>& Square::get_lines() { return lines; }
+std::vector<Line>& Square::get_lines() { return lines; }

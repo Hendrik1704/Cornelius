@@ -24,7 +24,6 @@ void Hypercube::init_hypercube(
 
 void Hypercube::split_to_cubes() {
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cube;
-  int number_cubes = 0;
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
     // is constant in this cube
@@ -47,7 +46,9 @@ void Hypercube::split_to_cubes() {
           }
         }
       }
-      cubes[number_cubes++].init_cube(cube, c_i, c_v, dx);
+      Cube new_cube;
+      new_cube.init_cube(cube, c_i, c_v, dx);
+      cubes.push_back(new_cube);
     }
   }
 }
@@ -55,54 +56,56 @@ void Hypercube::split_to_cubes() {
 void Hypercube::construct_polyhedra(double value) {
   split_to_cubes();
   // Construct polygons for each cube
-  for (int i = 0; i < NCUBES; i++) {
-    cubes[i].construct_polygons(value);
+  for (auto& cube : cubes) {
+    cube.construct_polygons(value);
   }
-  int number_polygons = 0;
+
   // Store the reference to the polygons
-  for (int i = 0; i < NCUBES; i++) {
-    for (int j = 0; j < cubes[i].get_number_polygons(); j++) {
-      polygons[number_polygons++] = cubes[i].get_polygons()[j];
+  for (auto& cube : cubes) {
+    for (auto& polygon : cube.get_polygons()) {
+      polygons.push_back(polygon);
     }
   }
   check_ambiguity(value);
   if (ambiguous) {
     // The surface might be ambiguous and we need to connect the polygons and
     // see how many polyhedrons we have
-    std::vector<bool> not_used(number_polygons, true);
+    std::vector<bool> not_used(polygons.size(), true);
     // Keep track of the used number of lines
     int used = 0;
     do {
-      polyhedra[number_polyhedra].init_polyhedron();
+      Polyhedron new_polyhedron;
+      new_polyhedron.init_polyhedron();
       // Go through all the polygons and try to add them to the polyhedron
-      for (int i = 0; i < number_polygons; i++) {
-        if (not_used[i]) {
-          // add_polygon returns true if the polygon was added
-          if (polyhedra[number_polyhedra].add_polygon(polygons[i], false)) {
-            not_used[i] = false;
-            used++;
-            // If the polygon is successfully added we start the loop from the
-            // beginning
-            i = 0;
-          }
+      for (size_t i = 0; i < polygons.size(); i++) {
+        // add_polygon returns true if the polygon was added
+        if (not_used[i] && new_polyhedron.add_polygon(polygons[i], false)) {
+          not_used[i] = false;
+          used++;
+          // If the polygon is successfully added we start the loop from the
+          // beginning
+          i = 0;
         }
       }
+      polyhedra.push_back(new_polyhedron);
       number_polyhedra++;
-    } while (used < number_polygons);
+    } while (used < polygons.size());
   } else {
     // Here surface cannot be ambiguous and all polygons can be added to
     // the polyhedron without ordering them
-    polyhedra[number_polyhedra].init_polyhedron();
-    for (int i = 0; i < number_polygons; i++) {
-      polyhedra[number_polyhedra].add_polygon(polygons[i], true);
+    Polyhedron new_polyhedron;
+    new_polyhedron.init_polyhedron();
+    for (auto& polygon : polygons) {
+      new_polyhedron.add_polygon(polygon, true);
     }
+    polyhedra.push_back(new_polyhedron);
     number_polyhedra++;
   }
 }
 
 void Hypercube::check_ambiguity(double value) {
-  for (int i = 0; i < NCUBES; i++) {
-    if (cubes[i].is_ambiguous()) {
+  for (auto& cube : cubes) {
+    if (cube.is_ambiguous()) {
       ambiguous = true;
       return;
     }
@@ -143,6 +146,4 @@ int Hypercube::get_number_polyhedra() { return number_polyhedra; }
 
 bool Hypercube::is_ambiguous() { return ambiguous; }
 
-std::array<Polyhedron, Hypercube::MAX_POLY>& Hypercube::get_polyhedra() {
-  return polyhedra;
-}
+std::vector<Polyhedron>& Hypercube::get_polyhedra() { return polyhedra; }
