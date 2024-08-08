@@ -63,7 +63,7 @@ void Square::construct_lines(double value) {
       out_temp[x2] = out[i / 2][1];
       out_temp[const_i[0]] = const_value[0];
       out_temp[const_i[1]] = const_value[1];
-      lines.emplace_back(Line());
+      lines.emplace_back();
       lines.back().init_line(points_temp, out_temp, const_i);
       number_lines++;
     }

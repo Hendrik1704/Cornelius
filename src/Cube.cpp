@@ -66,13 +66,12 @@ void Cube::construct_polygons(double value) {
   // Start by splitting the cube to squares and finding the lines
   std::vector<Square> squares(NSQUARES);
   split_to_squares(squares);
-  for (int i = 0; i < NSQUARES; i++) {
-    squares[i].construct_lines(value);
-  }
+
   // Then we make a table which contains references to the lines
   number_lines = 0;
   std::vector<Line> lines;
   for (int i = 0; i < NSQUARES; i++) {
+    squares[i].construct_lines(value);
     int number_lines_temp = squares[i].get_number_lines();
     const auto& lines_temp = squares[i].get_lines();
     for (int j = 0; j < number_lines_temp; j++) {

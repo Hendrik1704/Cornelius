@@ -23,8 +23,9 @@
  */
 class Hypercube : public GeneralGeometryElement {
  private:
-  static constexpr int DIM = 4;    ///< Dimension of the space.
-  static constexpr int STEPS = 2;  ///< Number of steps for discretization.
+  static constexpr int DIM = 4;     ///< Dimension of the space.
+  static constexpr int STEPS = 2;   ///< Number of steps for discretization.
+  static constexpr int NCUBES = 8;  ///< Number of cubes in the hypercube.
 
   std::array<std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
              STEPS>
@@ -62,15 +63,17 @@ class Hypercube : public GeneralGeometryElement {
   /**
    * @brief Splits the hypercube into cubes.
    * @param cubes Vector to store the cubes.
+   * @param value The value used to decide if the point is inside the surface.
+   * @return The number of points below the value.
    */
-  void split_to_cubes(std::vector<Cube>& cubes);
+  double split_to_cubes(std::vector<Cube>& cubes, double value);
 
   /**
    * @brief Checks if the hypercube is ambiguous based on a given value.
-   * @param value The value used to check for ambiguity.
+   * @param number_points_below_value The number of points below the value.
    * @param cubes The cubes in the hypercube.
    */
-  void check_ambiguity(double value, std::vector<Cube>& cubes);
+  void check_ambiguity(int number_points_below_value, std::vector<Cube>& cubes);
 
   /**
    * @brief Constructs polyhedra within the hypercube based on a given value.

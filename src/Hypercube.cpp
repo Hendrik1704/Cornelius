@@ -19,8 +19,10 @@ void Hypercube::init_hypercube(
   ambiguous = false;
 }
 
-void Hypercube::split_to_cubes(std::vector<Cube>& cubes) {
+double Hypercube::split_to_cubes(std::vector<Cube>& cubes, double value) {
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cube;
+  int number_points_below_value = 0;
+  int cube_index = 0;
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
     // is constant in this cube
@@ -40,26 +42,28 @@ void Hypercube::split_to_cubes(std::vector<Cube>& cubes) {
             } else {
               cube[ci1][ci2][ci3] = hypercube[ci1][ci2][ci3][j];
             }
+
+            if ((i == 0) && (hypercube[j][ci1][ci2][ci3] < value)) {
+              number_points_below_value++;
+            }
           }
         }
       }
-      cubes.emplace_back();
-      cubes.back().init_cube(cube, c_i, c_v, dx);
+      cubes[cube_index++].init_cube(cube, c_i, c_v, dx);
     }
   }
+  return number_points_below_value;
 }
 
 void Hypercube::construct_polyhedra(double value) {
-  std::vector<Cube> cubes;
-  split_to_cubes(cubes);
-  // Construct polygons for each cube
-  for (auto& cube : cubes) {
-    cube.construct_polygons(value);
-  }
+  std::vector<Cube> cubes(NCUBES);
+  int number_points_below_value = split_to_cubes(cubes, value);
 
   // Store the reference to the polygons
   std::vector<Polygon> polygons;
   for (auto& cube : cubes) {
+    // Construct polygons for each cube
+    cube.construct_polygons(value);
     for (auto& polygon : cube.get_polygons()) {
       polygons.push_back(polygon);
     }
@@ -101,7 +105,8 @@ void Hypercube::construct_polyhedra(double value) {
   }
 }
 
-void Hypercube::check_ambiguity(double value, std::vector<Cube>& cubes) {
+void Hypercube::check_ambiguity(int number_points_below_value,
+                                std::vector<Cube>& cubes) {
   for (auto& cube : cubes) {
     if (cube.is_ambiguous()) {
       ambiguous = true;
@@ -113,29 +118,10 @@ void Hypercube::check_ambiguity(double value, std::vector<Cube>& cubes) {
       cubes.begin(), cubes.end(), 0,
       [](int sum, Cube& cube) { return sum + cube.get_number_lines(); });
 
-  int number_points = std::accumulate(
-      hypercube.begin(), hypercube.end(), 0, [&](int sum, const auto& array3d) {
-        return sum +
-               std::accumulate(
-                   array3d.begin(), array3d.end(), 0,
-                   [&](int sum2, const auto& array2d) {
-                     return sum2 +
-                            std::accumulate(
-                                array2d.begin(), array2d.end(), 0,
-                                [&](int sum3, const auto& array1d) {
-                                  return sum3 +
-                                         std::count_if(array1d.begin(),
-                                                       array1d.end(),
-                                                       [&](double element) {
-                                                         return element < value;
-                                                       });
-                                });
-                   });
-      });
-  if (number_points > 8) {
-    number_points = 16 - number_points;
+  if (number_points_below_value > 8) {
+    number_points_below_value = 16 - number_points_below_value;
   }
-  if (number_lines == 24 && number_points == 2) {
+  if (number_points_below_value == 24 && number_points_below_value == 2) {
     ambiguous = true;
   }
 }
