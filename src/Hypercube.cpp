@@ -22,7 +22,7 @@ void Hypercube::init_hypercube(
   ambiguous = false;
 }
 
-void Hypercube::split_to_cubes() {
+void Hypercube::split_to_cubes(std::vector<Cube>& cubes) {
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cube;
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
@@ -46,27 +46,28 @@ void Hypercube::split_to_cubes() {
           }
         }
       }
-      Cube new_cube;
-      new_cube.init_cube(cube, c_i, c_v, dx);
-      cubes.push_back(new_cube);
+      cubes.emplace_back();
+      cubes.back().init_cube(cube, c_i, c_v, dx);
     }
   }
 }
 
 void Hypercube::construct_polyhedra(double value) {
-  split_to_cubes();
+  std::vector<Cube> cubes;
+  split_to_cubes(cubes);
   // Construct polygons for each cube
   for (auto& cube : cubes) {
     cube.construct_polygons(value);
   }
 
   // Store the reference to the polygons
+  std::vector<Polygon> polygons;
   for (auto& cube : cubes) {
     for (auto& polygon : cube.get_polygons()) {
       polygons.push_back(polygon);
     }
   }
-  check_ambiguity(value);
+  check_ambiguity(value, cubes);
   if (ambiguous) {
     // The surface might be ambiguous and we need to connect the polygons and
     // see how many polyhedrons we have
@@ -103,7 +104,7 @@ void Hypercube::construct_polyhedra(double value) {
   }
 }
 
-void Hypercube::check_ambiguity(double value) {
+void Hypercube::check_ambiguity(double value, std::vector<Cube>& cubes) {
   for (auto& cube : cubes) {
     if (cube.is_ambiguous()) {
       ambiguous = true;

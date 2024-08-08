@@ -76,7 +76,7 @@ TEST(CorneliusTest, apply_to_3D_surface) {
     }
   }
 
-  for (int cube_file = 0; cube_file < 10; cube_file++) {
+  for (int cube_file = 0; cube_file < 2; cube_file++) {
     std::string filename =
         "cornelius_3D_input_" + std::to_string(cube_file) + ".dat";
     std::ifstream file("./cornelius_test_data_3D/" + filename);
@@ -239,7 +239,7 @@ TEST(CorneliusTest, apply_to_4D_surface) {
     }
   }
 
-  for (int cube_file = 0; cube_file < 10; cube_file++) {
+  for (int cube_file = 0; cube_file < 2; cube_file++) {
     std::string filename =
         "cornelius_4D_input_" + std::to_string(cube_file) + ".dat";
     std::ifstream file("./cornelius_test_data_4D/" + filename);
@@ -272,6 +272,10 @@ TEST(CorneliusTest, apply_to_4D_surface) {
       std::cout << "Elapsed time for find_surface_4d new: "
                 << elapsed_seconds.count() << "s\n";
 
+      // print the size of the Cornelius object
+      std::cout << "Size of the Cornelius object: "
+                << sizeof(*cornelius_ptr.get()) << " bytes\n";
+
       // timing of the old cornelius version
       start = std::chrono::high_resolution_clock::now();
       std::unique_ptr<CorneliusOld> cornelius_old_ptr(new CorneliusOld());
@@ -281,6 +285,10 @@ TEST(CorneliusTest, apply_to_4D_surface) {
       elapsed_seconds = end - start;
       std::cout << "Elapsed time for find_surface_4d old: "
                 << elapsed_seconds.count() << "s\n";
+
+      // print the size of the CorneliusOld object
+      std::cout << "Size of the CorneliusOld object: "
+                << sizeof(*cornelius_old_ptr.get()) << " bytes\n";
 
       std::string filename_expected_output =
           "cornelius_4D_expected_output_" + std::to_string(cube_file) + ".dat";

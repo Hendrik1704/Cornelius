@@ -23,10 +23,7 @@ class Square : public GeneralGeometryElement {
       points;                                        ///< Points of the square.
   std::vector<std::array<double, SQUARE_DIM>> cuts;  ///< Points of the cuts.
   std::vector<std::array<double, SQUARE_DIM>>
-      out;  ///< Points outside the square.
-  std::array<std::array<double, DIM>, SQUARE_DIM>
-      points_temp;                            ///< Temporary points.
-  std::array<double, DIM> out_temp;           ///< Temporary outside points.
+      out;                                    ///< Points outside the square.
   std::array<int, DIM - SQUARE_DIM> const_i;  ///< Indices for constraints.
   std::array<double, DIM - SQUARE_DIM>
       const_value;             ///< Values for constraints.

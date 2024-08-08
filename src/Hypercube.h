@@ -26,8 +26,6 @@ class Hypercube : public GeneralGeometryElement {
       hypercube;  ///< 4D array representing the hypercube.
   std::vector<Polyhedron>
       polyhedra;  ///< Vector to store the polyhedra in the hypercube.
-  std::vector<Polygon> polygons;  ///< Array of polygons in the hypercube.
-  std::vector<Cube> cubes;        ///< Array of cubes in the hypercube.
 
   int number_polyhedra;        ///< Number of polyhedra in the hypercube.
   bool ambiguous;              ///< Indicates if the hypercube is ambiguous.
@@ -58,14 +56,16 @@ class Hypercube : public GeneralGeometryElement {
 
   /**
    * @brief Splits the hypercube into cubes.
+   * @param cubes Vector to store the cubes.
    */
-  void split_to_cubes();
+  void split_to_cubes(std::vector<Cube>& cubes);
 
   /**
    * @brief Checks if the hypercube is ambiguous based on a given value.
    * @param value The value used to check for ambiguity.
+   * @param cubes The cubes in the hypercube.
    */
-  void check_ambiguity(double value);
+  void check_ambiguity(double value, std::vector<Cube>& cubes);
 
   /**
    * @brief Constructs polyhedra within the hypercube based on a given value.

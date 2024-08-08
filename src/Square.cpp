@@ -51,6 +51,8 @@ void Square::construct_lines(double value) {
   }
   lines.clear();
   // Then we go through the cut points and form the line elements
+  std::array<std::array<double, DIM>, SQUARE_DIM> points_temp;
+  std::array<double, DIM> out_temp;
   for (int i = 0; i < number_cuts; i++) {
     points_temp[i % 2][x1] = cuts[i][0];
     points_temp[i % 2][x2] = cuts[i][1];

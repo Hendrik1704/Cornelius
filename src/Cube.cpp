@@ -33,7 +33,7 @@ void Cube::init_cube(
   ambiguous = false;
 }
 
-void Cube::split_to_squares() {
+void Cube::split_to_squares(std::vector<Square>& squares) {
   std::array<std::array<double, STEPS>, STEPS> square;
   std::array<int, STEPS> c_i = {const_i, 0};
   std::array<double, STEPS> c_v = {const_value, 0.0};
@@ -66,17 +66,20 @@ void Cube::split_to_squares() {
 
 void Cube::construct_polygons(double value) {
   // Start by splitting the cube to squares and finding the lines
-  split_to_squares();
+  std::vector<Square> squares(NSQUARES);
+  split_to_squares(squares);
   for (int i = 0; i < NSQUARES; i++) {
     squares[i].construct_lines(value);
   }
   // Then we make a table which contains references to the lines
   number_lines = 0;
+  std::vector<Line> lines;
   for (int i = 0; i < NSQUARES; i++) {
     int number_lines_temp = squares[i].get_number_lines();
     const auto& lines_temp = squares[i].get_lines();
     for (int j = 0; j < number_lines_temp; j++) {
-      lines[number_lines++] = lines_temp[j];
+      lines.push_back(lines_temp[j]);
+      number_lines++;
     }
   }
 
@@ -85,7 +88,7 @@ void Cube::construct_polygons(double value) {
     return;
   }
   // Then we check if the surface is ambiguous and continue
-  check_ambiguity(number_lines);
+  check_ambiguity(number_lines, squares);
   if (ambiguous) {
     // Surface is ambiguous, connect the lines to polygons and see how
     // many polygons we have
@@ -129,7 +132,7 @@ void Cube::construct_polygons(double value) {
   }
 }
 
-void Cube::check_ambiguity(int number_lines) {
+void Cube::check_ambiguity(int number_lines, std::vector<Square>& squares) {
   // Check if any squares may have ambiguous elements
   for (int i = 0; i < NSQUARES; i++) {
     if (squares[i].is_ambiguous()) {

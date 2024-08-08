@@ -68,10 +68,7 @@ class Cornelius : public GeneralGeometryElement {
   double value;           /**< Threshold value for surface detection */
   std::array<double, DIM> dx; /**< Array of step sizes in each dimension */
   std::ofstream
-      output_file;   /**< Output file stream for printing surface elements */
-  Square cube_2d;    /**< Square object for 2D operations */
-  Cube cube_3d;      /**< Cube object for 3D operations */
-  Hypercube cube_4d; /**< Hypercube object for 4D operations */
+      output_file; /**< Output file stream for printing surface elements */
 
   /**
    * @brief Processes and finds the surface elements for a 3D cube.

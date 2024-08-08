@@ -41,6 +41,7 @@ void Cornelius::find_surface_2d(
   }
   std::array<int, 2> c_i = {0, 1};
   std::array<double, 2> c_v = {0, 0};
+  Square cube_2d;
   cube_2d.init_square(cu, c_i, c_v, dx);
   cube_2d.construct_lines(value);
   number_elements = cube_2d.get_number_lines();
@@ -102,6 +103,7 @@ void Cornelius::surface_3d(
   // This cube has surface elements, start constructing the cube
   int c_i = 0;
   double c_v = 0.0;
+  Cube cube_3d;
   cube_3d.init_cube(cu, c_i, c_v, dx);
   // Find the elements
   cube_3d.construct_polygons(value);
@@ -163,6 +165,7 @@ void Cornelius::find_surface_4d(
     return;
   }
   // This cube has surface elements, start constructing the cube
+  Hypercube cube_4d;
   cube_4d.init_hypercube(cu, dx);
   // Find the elements
   cube_4d.construct_polyhedra(value);
