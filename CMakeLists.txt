@@ -124,6 +124,19 @@ target_link_libraries(
 target_include_directories(testCornelius PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(testCornelius PRIVATE ${CMAKE_SOURCE_DIR}/src_old)
 
+# Enable testing
+enable_testing()
+
+# Register tests with CTest
+add_test(NAME testGeneralGeometryElement COMMAND testGeneralGeometryElement)
+add_test(NAME testLine COMMAND testLine)
+add_test(NAME testPolygon COMMAND testPolygon)
+add_test(NAME testPolyhedron COMMAND testPolyhedron)
+add_test(NAME testSquare COMMAND testSquare)
+add_test(NAME testCube COMMAND testCube)
+add_test(NAME testHypercube COMMAND testHypercube)
+add_test(NAME testCornelius COMMAND testCornelius)
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src_test/cornelius_test_data_3D
      DESTINATION ${CMAKE_BINARY_DIR})
 
