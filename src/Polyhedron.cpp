@@ -1,10 +1,5 @@
 #include "Polyhedron.h"
 
-#include <algorithm>
-#include <cmath>
-#include <numeric>
-#include <vector>
-
 Polyhedron::Polyhedron() {}
 
 Polyhedron::~Polyhedron() {}

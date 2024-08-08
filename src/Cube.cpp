@@ -1,8 +1,5 @@
 #include "Cube.h"
 
-#include <iostream>
-#include <vector>
-
 Cube::Cube() : number_lines(0), number_polygons(0), ambiguous(false) {}
 
 Cube::~Cube() {}

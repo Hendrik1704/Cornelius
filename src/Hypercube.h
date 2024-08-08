@@ -1,6 +1,8 @@
 #ifndef HYPERCUBE_H
 #define HYPERCUBE_H
 
+#include <algorithm>
+#include <numeric>
 #include <vector>
 
 #include "Cube.h"

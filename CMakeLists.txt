@@ -39,18 +39,14 @@ add_library(Hypercube STATIC src/Hypercube.cpp)
 add_library(Cornelius STATIC src/Cornelius.cpp)
 add_library(CorneliusOld STATIC src_old/cornelius_old.cpp)
 
-add_executable(main src/main.cpp)
-target_link_libraries(
-  main
-  GeneralGeometryElement
-  Line
-  Polygon
-  Polyhedron
-  Square
-  Cube
-  Hypercube
-  Cornelius
-  CorneliusOld)
+target_link_libraries(Line PUBLIC GeneralGeometryElement)
+target_link_libraries(Polygon PUBLIC GeneralGeometryElement Line)
+target_link_libraries(Polyhedron PUBLIC GeneralGeometryElement Polygon)
+target_link_libraries(Square PUBLIC GeneralGeometryElement Line)
+target_link_libraries(Cube PUBLIC GeneralGeometryElement Line Polygon Square)
+target_link_libraries(Hypercube PUBLIC GeneralGeometryElement Polyhedron Cube)
+target_link_libraries(Cornelius PUBLIC GeneralGeometryElement Square Cube
+                                       Hypercube)
 
 add_executable(testGeneralGeometryElement
                src_test/TestGeneralGeometryElement.cpp)
@@ -133,3 +129,8 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src_test/cornelius_test_data_3D
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src_test/cornelius_test_data_4D
      DESTINATION ${CMAKE_BINARY_DIR})
+
+add_executable(main src/main.cpp)
+target_link_libraries(main Cornelius CorneliusOld)
+target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/src_old)

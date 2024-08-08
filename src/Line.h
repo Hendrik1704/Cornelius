@@ -1,6 +1,9 @@
 #ifndef LINE_H
 #define LINE_H
 
+#include <algorithm>
+#include <array>
+
 #include "GeneralGeometryElement.h"
 
 /**

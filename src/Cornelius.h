@@ -34,6 +34,9 @@
  *
  */
 
+#include <algorithm>
+#include <iostream>
+#include <numeric>
 #include <ostream>
 #include <vector>
 

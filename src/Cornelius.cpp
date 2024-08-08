@@ -1,10 +1,5 @@
 #include "Cornelius.h"
 
-#include <algorithm>
-#include <iostream>
-#include <numeric>
-#include <vector>
-
 Cornelius::Cornelius()
     : number_elements(0),
       cube_dimension(0),

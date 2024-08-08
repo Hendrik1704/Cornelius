@@ -1,7 +1,10 @@
 #ifndef POLYGON_H
 #define POLYGON_H
 
+#include <algorithm>
+#include <cmath>
 #include <fstream>
+#include <numeric>
 #include <vector>
 
 #include "GeneralGeometryElement.h"

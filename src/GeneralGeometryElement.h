@@ -1,7 +1,9 @@
 #ifndef GENERAL_GEOMETRY_ELEMENT_H
 #define GENERAL_GEOMETRY_ELEMENT_H
 
+#include <algorithm>
 #include <array>
+#include <numeric>
 
 /**
  * @class GeneralGeometryElement

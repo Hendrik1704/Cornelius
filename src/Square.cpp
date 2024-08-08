@@ -1,9 +1,5 @@
 #include "Square.h"
 
-#include <algorithm>
-#include <iostream>
-#include <numeric>
-
 Square::Square() : ambiguous(false) {}
 
 Square::~Square() {}

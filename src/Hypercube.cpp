@@ -1,9 +1,5 @@
 #include "Hypercube.h"
 
-#include <algorithm>
-#include <numeric>
-#include <vector>
-
 Hypercube::Hypercube() : number_polyhedra(0), ambiguous(false) {}
 
 Hypercube::~Hypercube() {}

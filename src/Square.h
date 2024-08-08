@@ -1,6 +1,9 @@
 #ifndef SQUARE_H
 #define SQUARE_H
 
+#include <algorithm>
+#include <iostream>
+#include <numeric>
 #include <vector>
 
 #include "GeneralGeometryElement.h"

@@ -1,10 +1,4 @@
-
 #include "Polygon.h"
-
-#include <algorithm>
-#include <cmath>
-#include <numeric>
-#include <vector>
 
 Polygon::Polygon() {}
 

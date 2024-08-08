@@ -1,9 +1,5 @@
 #include "GeneralGeometryElement.h"
 
-#include <algorithm>
-#include <array>
-#include <numeric>
-
 GeneralGeometryElement::GeneralGeometryElement()
     : normal_calculated(false), centroid_calculated(false) {}
 

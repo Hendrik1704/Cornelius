@@ -1,6 +1,9 @@
 #ifndef POLYHEDRON_H
 #define POLYHEDRON_H
 
+#include <algorithm>
+#include <cmath>
+#include <numeric>
 #include <vector>
 
 #include "GeneralGeometryElement.h"

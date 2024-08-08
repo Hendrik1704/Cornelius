@@ -1,6 +1,7 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <iostream>
 #include <vector>
 
 #include "GeneralGeometryElement.h"
