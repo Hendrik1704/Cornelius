@@ -9,3 +9,8 @@ Publications using this algorithm should cite:
 
 This new version leverages the newest C++17 features, makes the code slightly more memory efficient with faster performance and unit tests.
 There are also tests making sure that the results obtained by the new version are compatible with the old one.
+
+The speed test comparing the old and the new version is implemented in the `main`
+executable. It performs the surface finding for 10 cubes and repeats this 100k
+times for a better time measurement. The average total execution time is then
+printed to the terminal.
