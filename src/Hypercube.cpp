@@ -57,9 +57,10 @@ void Hypercube::construct_polyhedra(double value) {
   for (auto& cube : cubes) {
     // Construct polygons for each cube
     cube.construct_polygons(value);
-    for (auto& polygon : cube.get_polygons()) {
-      polygons.push_back(polygon);
-    }
+    auto& cube_polygons = cube.get_polygons();
+    polygons.insert(polygons.end(),
+                    std::make_move_iterator(cube_polygons.begin()),
+                    std::make_move_iterator(cube_polygons.end()));
   }
   check_ambiguity(value, cubes);
   if (ambiguous) {
@@ -82,7 +83,7 @@ void Hypercube::construct_polyhedra(double value) {
           i = 0;
         }
       }
-      polyhedra.emplace_back(new_polyhedron);
+      polyhedra.emplace_back(std::move(new_polyhedron));
       number_polyhedra++;
     } while (used < polygons.size());
   } else {
@@ -93,28 +94,28 @@ void Hypercube::construct_polyhedra(double value) {
     for (auto& polygon : polygons) {
       new_polyhedron.add_polygon(polygon, true);
     }
-    polyhedra.emplace_back(new_polyhedron);
+    polyhedra.emplace_back(std::move(new_polyhedron));
     number_polyhedra++;
   }
 }
 
 void Hypercube::check_ambiguity(int number_points_below_value,
                                 std::vector<Cube>& cubes) {
-  if (std::any_of(cubes.begin(), cubes.end(),
-                  [](Cube& cube) { return cube.is_ambiguous(); })) {
-    ambiguous = true;
-    return;
-  }
+  ambiguous = std::any_of(cubes.begin(), cubes.end(),
+                          [](Cube& cube) { return cube.is_ambiguous(); });
 
-  int number_lines = std::accumulate(
-      cubes.begin(), cubes.end(), 0,
-      [](int sum, Cube& cube) { return sum + cube.get_number_lines(); });
+  if (!ambiguous) {
+    int number_lines = 0;
+    for (auto& cube : cubes) {
+      number_lines += cube.get_number_lines();
+    }
 
-  if (number_points_below_value > 8) {
-    number_points_below_value = 16 - number_points_below_value;
-  }
-  if (number_lines == 24 && number_points_below_value == 2) {
-    ambiguous = true;
+    if (number_points_below_value > 8) {
+      number_points_below_value = 16 - number_points_below_value;
+    }
+    if (number_lines == 24 && number_points_below_value == 2) {
+      ambiguous = true;
+    }
   }
 }
 
