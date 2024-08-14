@@ -1,10 +1,6 @@
 #include "Square.h"
 
 Square::Square() : ambiguous(false) {
-  // Preallocate vectors
-  cuts.reserve(4);
-  out.reserve(2);
-  lines.reserve(2);
 }
 
 Square::~Square() {}
@@ -27,9 +23,6 @@ void Square::init_square(
   number_cuts = 0;
   number_lines = 0;
   ambiguous = false;
-  cuts.clear();
-  out.clear();
-  lines.clear();
 
 }
 
@@ -79,69 +72,75 @@ void Square::construct_lines(double value) {
       out_temp[x2] = out[i / 2][1];
       out_temp[c0] = const_value[0];
       out_temp[c1] = const_value[1];
-      lines.emplace_back();
-      lines.back().init_line(points_temp, out_temp, const_i);
-      number_lines++;
+      Line line;
+      line.init_line(points_temp, out_temp, const_i);
+      lines[number_lines++] = line;
     }
     toggle = !toggle;  // Toggle between 0 and 1
   }
 }
+void Square::add_cut(const std::array<double, SQUARE_DIM>& cut) {
+        if (number_cuts < MAX_POINTS) {
+            cuts[number_cuts++] = cut;
+        } else {
+            std::cerr << "Error: Maximum number of cuts exceeded." << std::endl;
+        }
+    }
 
 void Square::ends_of_edge(double value) {
   // Edge 1
   if ((points[0][0] - value) * (points[1][0] - value) < 0) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{
+    add_cut(std::array<double, SQUARE_DIM>{
         (points[0][0] - value) / (points[0][0] - points[1][0]) * dx[x1], 0});
-    number_cuts++;
+    
   } else if (points[0][0] == value && points[1][0] < value) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{1e-9 * dx[x1], 0});
-    number_cuts++;
+    add_cut(std::array<double, SQUARE_DIM>{1e-9 * dx[x1], 0});
+    
   } else if (points[1][0] == value && points[0][0] < value) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], 0});
-    number_cuts++;
+    add_cut(std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], 0});
+    
   }
 
   // Edge 2
   if ((points[0][0] - value) * (points[0][1] - value) < 0) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{
+    add_cut(std::array<double, SQUARE_DIM>{
         0, (points[0][0] - value) / (points[0][0] - points[0][1]) * dx[x2]});
-    number_cuts++;
+    
   } else if (points[0][0] == value && points[0][1] < value) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{0, 1e-9 * dx[x2]});
-    number_cuts++;
+    add_cut(std::array<double, SQUARE_DIM>{0, 1e-9 * dx[x2]});
+    
   } else if (points[0][1] == value && points[0][0] < value) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{0, ALMOST_ONE * dx[x2]});
-    number_cuts++;
+    add_cut(std::array<double, SQUARE_DIM>{0, ALMOST_ONE * dx[x2]});
   }
 
   // Edge 3
   if ((points[1][0] - value) * (points[1][1] - value) < 0) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{
+    add_cut(std::array<double, SQUARE_DIM>{
         dx[x1],
         (points[1][0] - value) / (points[1][0] - points[1][1]) * dx[x2]});
-    number_cuts++;
+    
   } else if (points[1][0] == value && points[1][1] < value) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{dx[x1], 1e-9 * dx[x2]});
-    number_cuts++;
+    add_cut(std::array<double, SQUARE_DIM>{dx[x1], 1e-9 * dx[x2]});
+    
   } else if (points[1][1] == value && points[1][0] < value) {
-    cuts.emplace_back(
+    add_cut(
         std::array<double, SQUARE_DIM>{dx[x1], ALMOST_ONE * dx[x2]});
-    number_cuts++;
+    
   }
 
   // Edge 4
   if ((points[0][1] - value) * (points[1][1] - value) < 0) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{
+    add_cut(std::array<double, SQUARE_DIM>{
         (points[0][1] - value) / (points[0][1] - points[1][1]) * dx[x1],
         dx[x2]});
-    number_cuts++;
+    
   } else if (points[0][1] == value && points[1][1] < value) {
-    cuts.emplace_back(std::array<double, SQUARE_DIM>{1e-9 * dx[x1], dx[x2]});
-    number_cuts++;
+    add_cut(std::array<double, SQUARE_DIM>{1e-9 * dx[x1], dx[x2]});
+    
   } else if (points[1][1] == value && points[0][1] < value) {
-    cuts.emplace_back(
+    add_cut(
         std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], dx[x2]});
-    number_cuts++;
+    
   }
 
   if (number_cuts != 0 && number_cuts != 2 && number_cuts != 4) {
@@ -171,7 +170,7 @@ void Square::find_outside(double value) {
         (points[0][0] > value && value_middle > value)) {
       std::swap(cuts[1], cuts[2]);
     }
-    out.resize(2);
+    
     // The center is below, so the middle point is always outside the surface
     if ((value_middle - value) < 0) {
       out[0][0] = 0.5 * dx[x1];
@@ -194,9 +193,12 @@ void Square::find_outside(double value) {
       }
     }
   } else {
+
     // This is the normal case (not ambiguous)
-    out.resize(2);
-    std::fill(out.begin(), out.end(), std::array<double, 2>{0, 0});
+    // Initialize all elements to 0 using std::fill
+    for (auto& row : out) {
+        std::fill(row.begin(), row.end(), 0.0);
+    }
     int number_out = 0;
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 2; j++) {
@@ -220,4 +222,4 @@ bool Square::is_ambiguous() { return ambiguous; }
 
 int Square::get_number_lines() { return number_lines; }
 
-std::vector<Line>& Square::get_lines() { return lines; }
+std::array<Line,Square::MAX_LINES>& Square::get_lines() { return lines; }

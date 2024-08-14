@@ -14,7 +14,7 @@ endif()
 
 # Set compiler options for different build types
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-g -O2")#"-O3 -DNDEBUG"
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 
 # get the google test framework

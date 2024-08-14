@@ -24,12 +24,14 @@ class Square : public GeneralGeometryElement {
  private:
   static constexpr int DIM = 4;          ///< Dimension of the space.
   static constexpr int SQUARE_DIM = 2;   ///< Dimension of the square.
+  static constexpr int MAX_POINTS = 4;
+  static constexpr int MAX_LINES = 2;
+
   const double ALMOST_ONE = 1.0 - 1e-9;  ///< Almost one value.
   std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>
       points;                                        ///< Points of the square.
-  std::vector<std::array<double, SQUARE_DIM>> cuts;  ///< Points of the cuts.
-  std::vector<std::array<double, SQUARE_DIM>>
-      out;                                    ///< Points outside the square.
+  std::array<std::array<double, SQUARE_DIM>,MAX_POINTS> cuts;  ///< Points of the cuts.
+  std::array<std::array<double, SQUARE_DIM>,MAX_POINTS> out;   ///< Points outside the square.
   std::array<int, DIM - SQUARE_DIM> const_i;  ///< Indices for constraints.
   std::array<double, DIM - SQUARE_DIM>
       const_value;             ///< Values for constraints.
@@ -37,7 +39,7 @@ class Square : public GeneralGeometryElement {
   std::array<double, DIM> dx;  ///< Delta values for lines.
   int number_cuts;             ///< Number of cuts.
   int number_lines;            ///< Number of lines.
-  std::vector<Line> lines;     ///< Lines in the square.
+  std::array<Line,MAX_LINES> lines;     ///< Lines in the square.
   bool ambiguous;              ///< Indicates if the square is ambiguous.
 
  public:
@@ -68,7 +70,11 @@ class Square : public GeneralGeometryElement {
    * @param value The value used to construct lines.
    */
   void construct_lines(double value);
-
+    /**
+     * @brief Adds a new cut point to the square.
+     * @param cut A `std::array` of size `SQUARE_DIM` representing the cut point coordinates.
+     */
+    void add_cut(const std::array<double, SQUARE_DIM>& cut);
   /**
    * @brief Determines the ends of edges based on a given value.
    *
@@ -87,6 +93,8 @@ class Square : public GeneralGeometryElement {
    * @param value The value used to find ends of edges.
    */
   void ends_of_edge(double value);
+
+
 
   /**
    * @brief Finds the points outside the square based on a given value.
@@ -110,7 +118,7 @@ class Square : public GeneralGeometryElement {
    * @brief Gets the lines in the square.
    * @return A reference to the array of lines.
    */
-  std::vector<Line>& get_lines();
+  std::array<Line,MAX_LINES>& get_lines();
 };
 
 #endif  // SQUARE_H

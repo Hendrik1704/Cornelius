@@ -32,8 +32,6 @@ void Cube::init_cube(
   polygons.reserve(8);
   squares.clear();
   squares.reserve(NSQUARES);
-  lines.clear();
-  lines.reserve(2 * NSQUARES);
 }
 
 void Cube::split_to_squares() {
@@ -72,11 +70,15 @@ void Cube::construct_polygons(double value) {
   // Then we make a table which contains references to the lines
   number_lines = 0;
 
-  for (auto& square : squares) {
+  for (Square& square : squares) {
     square.construct_lines(value);
-    const auto& lines_temp = square.get_lines();
-    lines.insert(lines.end(), lines_temp.begin(), lines_temp.end());
-    number_lines += lines_temp.size();
+   std::array<Line,2>& lines_temp = square.get_lines();
+    int num_lines_temp=square.get_number_lines();
+
+    number_lines += num_lines_temp;
+
+    // Copy lines from lines_temp to lines
+    std::copy(lines_temp.begin(), lines_temp.begin() + num_lines_temp, lines.begin() + number_lines);
   }
 
   // If no lines were found we may exit. This can happen only in 4D case
@@ -120,8 +122,8 @@ void Cube::construct_polygons(double value) {
     // can be added to it without ordering them
     Polygon new_polygon;
     new_polygon.init_polygon(const_i);
-    for (auto& line : lines) {
-      new_polygon.add_line(line, true);
+    for (int i=0;i<number_lines;i++){
+      new_polygon.add_line(lines[i], true);
     }
     polygons.emplace_back(new_polygon);
     number_polygons++;

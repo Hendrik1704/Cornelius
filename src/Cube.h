@@ -33,7 +33,7 @@ class Cube : public GeneralGeometryElement {
       cube;                       ///< 3D array representing the cube.
   std::vector<Polygon> polygons;  ///< Vector of polygons in the cube.
   std::vector<Square> squares;    ///< Vector of squares in the cube.
-  std::vector<Line> lines;        ///< Vector of lines in the squares.
+  std::array<Line,NSQUARES*2> lines;        ///< Vector of lines in the squares.
 
   int number_lines;            ///< Number of lines in the cube.
   int number_polygons;         ///< Number of polygons in the cube.
