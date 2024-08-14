@@ -79,9 +79,8 @@ class Cube : public GeneralGeometryElement {
   /**
    * @brief Checks if the cube is ambiguous based on the number of lines.
    * @param number_lines The number of lines in the cube.
-   * @param squares The squares in the cube.
    */
-  void check_ambiguity(int number_lines, std::vector<Square>& squares);
+  void check_ambiguity(int number_lines);
 
   /**
    * @brief Checks if the cube is ambiguous.

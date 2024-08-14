@@ -84,7 +84,7 @@ void Cube::construct_polygons(double value) {
     return;
   }
   // Then we check if the surface is ambiguous and continue
-  check_ambiguity(number_lines, squares);
+  check_ambiguity(number_lines);
   if (ambiguous) {
     // Surface is ambiguous, connect the lines to polygons and see how
     // many polygons we have
@@ -128,7 +128,7 @@ void Cube::construct_polygons(double value) {
   }
 }
 
-void Cube::check_ambiguity(int number_lines, std::vector<Square>& squares) {
+void Cube::check_ambiguity(int number_lines) {
   // Check if any squares may have ambiguous elements
   if (std::any_of(squares.begin(), squares.end(),
                   [](Square& square) { return square.is_ambiguous(); })) {

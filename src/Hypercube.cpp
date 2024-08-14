@@ -65,7 +65,7 @@ void Hypercube::construct_polyhedra(double value) {
                     std::make_move_iterator(cube_polygons.begin()),
                     std::make_move_iterator(cube_polygons.end()));
   }
-  check_ambiguity(value, cubes);
+  check_ambiguity(value);
   if (ambiguous) {
     // The surface might be ambiguous and we need to connect the polygons and
     // see how many polyhedrons we have
@@ -102,8 +102,7 @@ void Hypercube::construct_polyhedra(double value) {
   }
 }
 
-void Hypercube::check_ambiguity(int number_points_below_value,
-                                std::vector<Cube>& cubes) {
+void Hypercube::check_ambiguity(int number_points_below_value) {
   ambiguous = std::any_of(cubes.begin(), cubes.end(),
                           [](Cube& cube) { return cube.is_ambiguous(); });
 

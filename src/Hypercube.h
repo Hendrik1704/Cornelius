@@ -72,9 +72,8 @@ class Hypercube : public GeneralGeometryElement {
   /**
    * @brief Checks if the hypercube is ambiguous based on a given value.
    * @param number_points_below_value The number of points below the value.
-   * @param cubes The cubes in the hypercube.
    */
-  void check_ambiguity(int number_points_below_value, std::vector<Cube>& cubes);
+  void check_ambiguity(int number_points_below_value);
 
   /**
    * @brief Constructs polyhedra within the hypercube based on a given value.
