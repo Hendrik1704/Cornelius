@@ -37,6 +37,7 @@ void Cube::split_to_squares(std::vector<Square>& squares) {
   std::array<int, STEPS> c_i = {const_i, 0};
   std::array<double, STEPS> c_v = {const_value, 0.0};
   int number_squares = 0;
+  squares.reserve(NSQUARES);
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
     // is constant in this cube
@@ -53,7 +54,9 @@ void Cube::split_to_squares(std::vector<Square>& squares) {
                                            : cube[ci1][ci2][j];
           }
         }
-        squares[number_squares++].init_square(square, c_i, c_v, dx);
+        squares.emplace_back();
+        squares[number_squares].init_square(square, c_i, c_v, dx);
+        number_squares++;
       }
     }
   }
@@ -61,16 +64,17 @@ void Cube::split_to_squares(std::vector<Square>& squares) {
 
 void Cube::construct_polygons(double value) {
   // Start by splitting the cube to squares and finding the lines
-  std::vector<Square> squares(NSQUARES);
+  std::vector<Square> squares;
   split_to_squares(squares);
 
   // Then we make a table which contains references to the lines
   number_lines = 0;
   std::vector<Line> lines;
   lines.reserve(2 * NSQUARES);
-  for (int i = 0; i < NSQUARES; i++) {
-    squares[i].construct_lines(value);
-    const auto& lines_temp = squares[i].get_lines();
+
+  for (auto& square : squares) {
+    square.construct_lines(value);
+    const auto& lines_temp = square.get_lines();
     lines.insert(lines.end(), lines_temp.begin(), lines_temp.end());
     number_lines += lines_temp.size();
   }
@@ -116,8 +120,8 @@ void Cube::construct_polygons(double value) {
     // can be added to it without ordering them
     Polygon new_polygon;
     new_polygon.init_polygon(const_i);
-    for (int i = 0; i < number_lines; i++) {
-      new_polygon.add_line(lines[i], true);
+    for (auto& line : lines) {
+      new_polygon.add_line(line, true);
     }
     polygons.emplace_back(new_polygon);
     number_polygons++;
