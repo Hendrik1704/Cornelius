@@ -76,6 +76,10 @@ class Cornelius : public GeneralGeometryElement {
   std::ofstream
       output_file; /**< Output file stream for printing surface elements */
 
+  Square cube_2d;    /**< 2D cube for surface detection */
+  Cube cube_3d;      /**< 3D cube for surface detection */
+  Hypercube cube_4d; /**< 4D cube for surface detection */
+
   /**
    * @brief Processes and finds the surface elements for a 3D cube.
    *

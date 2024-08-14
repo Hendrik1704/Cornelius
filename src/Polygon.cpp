@@ -29,13 +29,14 @@ void Polygon::init_polygon(int new_const_i) {
   // Reset the number of lines in the polygon
   number_lines = 0;
   lines.clear();
+  lines.reserve(24);
 }
 
 bool Polygon::add_line(Line& new_line, bool perform_no_check) {
   constexpr double epsilon = 1e-10;
   // For the first line, we don't need to check
   if (number_lines == 0 || perform_no_check) {
-    lines.push_back(new_line);
+    lines.emplace_back(new_line);
     number_lines++;
     return true;
   } else {
@@ -63,7 +64,7 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
       if (difference2 < epsilon) {
         new_line.flip_start_end();
       }
-      lines.push_back(new_line);
+      lines.emplace_back(new_line);
       number_lines++;
       return true;
     } else {

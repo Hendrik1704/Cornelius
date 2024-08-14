@@ -5,16 +5,11 @@ Polyhedron::Polyhedron() {}
 Polyhedron::~Polyhedron() {}
 
 void Polyhedron::init_polyhedron() {
-  // Fix the indices which are not constant
-  x1 = 0;
-  x2 = 1;
-  x3 = 2;
-  x4 = 3;
-
   // Reset the number of polygons and tetrahedrons in the polyhedron
   number_polygons = 0;
   number_tetrahedrons = 0;
   polygons.clear();
+  polygons.reserve(24);
   // Set the flags for normal and centroid calculations to false
   normal_calculated = false;
   centroid_calculated = false;
@@ -23,7 +18,7 @@ void Polyhedron::init_polyhedron() {
 bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
   // For the first polygon, we don't need to check
   if (number_polygons == 0 || perform_no_check) {
-    polygons.push_back(new_polygon);
+    polygons.emplace_back(new_polygon);
     number_polygons++;
     number_tetrahedrons += new_polygon.get_number_lines();
     return true;
@@ -39,7 +34,7 @@ bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
       for (int j = 0; j < number_lines1; j++) {
         for (int k = 0; k < number_lines2; k++) {
           if (lines_are_connected(lines1[j], lines2[k])) {
-            polygons.push_back(new_polygon);
+            polygons.emplace_back(new_polygon);
             number_polygons++;
             number_tetrahedrons += number_lines1;
             return true;

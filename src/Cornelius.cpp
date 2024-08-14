@@ -38,7 +38,6 @@ void Cornelius::find_surface_2d(
   }
   std::array<int, 2> c_i = {0, 1};
   std::array<double, 2> c_v = {0, 0};
-  Square cube_2d;
   cube_2d.init_square(cu, c_i, c_v, dx);
   cube_2d.construct_lines(value);
   number_elements = cube_2d.get_number_lines();
@@ -48,13 +47,8 @@ void Cornelius::find_surface_2d(
   centroids.reserve(number_elements);
   auto& lines = cube_2d.get_lines();
   for (int i = 0; i < number_elements; i++) {
-    std::array<double, DIM> normal, centroid;
-    for (int j = 0; j < DIM; j++) {
-      normal[j] = lines[i].get_normal()[j];
-      centroid[j] = lines[i].get_centroid()[j];
-    }
-    normals.emplace_back(normal);
-    centroids.emplace_back(centroid);
+    normals.emplace_back(lines[i].get_normal());
+    centroids.emplace_back(lines[i].get_centroid());
   }
 }
 
@@ -100,7 +94,6 @@ void Cornelius::surface_3d(
   // This cube has surface elements, start constructing the cube
   int c_i = 0;
   double c_v = 0.0;
-  Cube cube_3d;
   cube_3d.init_cube(cu, c_i, c_v, dx);
   // Find the elements
   cube_3d.construct_polygons(value);
@@ -112,14 +105,8 @@ void Cornelius::surface_3d(
   centroids.reserve(number_elements);
   auto& polygons = cube_3d.get_polygons();
   for (int i = 0; i < number_elements; i++) {
-    // Always work with 4 dimensions
-    std::array<double, DIM> normal, centroid;
-    for (int j = 0; j < DIM; j++) {
-      centroid[j] = polygons[i].get_centroid()[j];
-      normal[j] = polygons[i].get_normal()[j];
-    }
-    normals.emplace_back(normal);
-    centroids.emplace_back(centroid);
+    normals.emplace_back(polygons[i].get_normal());
+    centroids.emplace_back(polygons[i].get_centroid());
     // If the triangles should be printed, print them
     if (print_initialized && do_print) {
       polygons[i].print(output_file, position);
@@ -162,7 +149,6 @@ void Cornelius::find_surface_4d(
     return;
   }
   // This cube has surface elements, start constructing the cube
-  Hypercube cube_4d;
   cube_4d.init_hypercube(cu, dx);
   // Find the elements
   cube_4d.construct_polyhedra(value);
@@ -174,13 +160,8 @@ void Cornelius::find_surface_4d(
   centroids.reserve(number_elements);
   auto& polyhedra = cube_4d.get_polyhedra();
   for (int i = 0; i < number_elements; i++) {
-    std::array<double, DIM> normal, centroid;
-    for (int j = 0; j < DIM; j++) {
-      centroid[j] = polyhedra[i].get_centroid()[j];
-      normal[j] = polyhedra[i].get_normal()[j];
-    }
-    normals.emplace_back(normal);
-    centroids.emplace_back(centroid);
+    centroids.emplace_back(polyhedra[i].get_centroid());
+    normals.emplace_back(polyhedra[i].get_normal());
   }
 }
 

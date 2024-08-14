@@ -10,12 +10,9 @@ void Hypercube::init_hypercube(
     std::array<double, DIM>& new_dx) {
   hypercube = hc;
   dx = new_dx;
-  x1 = 0;
-  x2 = 1;
-  x3 = 2;
-  x4 = 3;
   number_polyhedra = 0;
   polyhedra.clear();
+  polyhedra.reserve(10);
   ambiguous = false;
 }
 
@@ -33,15 +30,10 @@ double Hypercube::split_to_cubes(std::vector<Cube>& cubes, double value) {
       for (int ci1 = 0; ci1 < STEPS; ci1++) {
         for (int ci2 = 0; ci2 < STEPS; ci2++) {
           for (int ci3 = 0; ci3 < STEPS; ci3++) {
-            if (i == x1) {
-              cube[ci1][ci2][ci3] = hypercube[j][ci1][ci2][ci3];
-            } else if (i == x2) {
-              cube[ci1][ci2][ci3] = hypercube[ci1][j][ci2][ci3];
-            } else if (i == x3) {
-              cube[ci1][ci2][ci3] = hypercube[ci1][ci2][j][ci3];
-            } else {
-              cube[ci1][ci2][ci3] = hypercube[ci1][ci2][ci3][j];
-            }
+            cube[ci1][ci2][ci3] = (i == 0)   ? hypercube[j][ci1][ci2][ci3]
+                                  : (i == 1) ? hypercube[ci1][j][ci2][ci3]
+                                  : (i == 2) ? hypercube[ci1][ci2][j][ci3]
+                                             : hypercube[ci1][ci2][ci3][j];
 
             if ((i == 0) && (hypercube[j][ci1][ci2][ci3] < value)) {
               number_points_below_value++;
@@ -61,6 +53,7 @@ void Hypercube::construct_polyhedra(double value) {
 
   // Store the reference to the polygons
   std::vector<Polygon> polygons;
+  polygons.reserve(NCUBES * 10);
   for (auto& cube : cubes) {
     // Construct polygons for each cube
     cube.construct_polygons(value);
@@ -89,7 +82,7 @@ void Hypercube::construct_polyhedra(double value) {
           i = 0;
         }
       }
-      polyhedra.push_back(new_polyhedron);
+      polyhedra.emplace_back(new_polyhedron);
       number_polyhedra++;
     } while (used < polygons.size());
   } else {
@@ -100,18 +93,17 @@ void Hypercube::construct_polyhedra(double value) {
     for (auto& polygon : polygons) {
       new_polyhedron.add_polygon(polygon, true);
     }
-    polyhedra.push_back(new_polyhedron);
+    polyhedra.emplace_back(new_polyhedron);
     number_polyhedra++;
   }
 }
 
 void Hypercube::check_ambiguity(int number_points_below_value,
                                 std::vector<Cube>& cubes) {
-  for (auto& cube : cubes) {
-    if (cube.is_ambiguous()) {
-      ambiguous = true;
-      return;
-    }
+  if (std::any_of(cubes.begin(), cubes.end(),
+                  [](Cube& cube) { return cube.is_ambiguous(); })) {
+    ambiguous = true;
+    return;
   }
 
   int number_lines = std::accumulate(
@@ -121,7 +113,7 @@ void Hypercube::check_ambiguity(int number_points_below_value,
   if (number_points_below_value > 8) {
     number_points_below_value = 16 - number_points_below_value;
   }
-  if (number_points_below_value == 24 && number_points_below_value == 2) {
+  if (number_lines == 24 && number_points_below_value == 2) {
     ambiguous = true;
   }
 }
