@@ -1,6 +1,11 @@
 #include "Square.h"
 
-Square::Square() : ambiguous(false) {}
+Square::Square() : ambiguous(false) {
+  // Preallocate vectors
+  cuts.reserve(4);
+  out.reserve(2);
+  lines.reserve(2);
+}
 
 Square::~Square() {}
 
@@ -25,9 +30,7 @@ void Square::init_square(
   cuts.clear();
   out.clear();
   lines.clear();
-  cuts.reserve(4);
-  out.reserve(2);
-  lines.reserve(2);
+
 }
 
 void Square::construct_lines(double value) {
