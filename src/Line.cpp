@@ -20,24 +20,11 @@ void Line::init_line(
 
   // Fix the non-zero indices in such a way that x1 is always smaller
   if (new_const_i[0] == 0) {
-    if (new_const_i[1] == 1) {
-      x1 = 2;
-      x2 = 3;
-    } else if (new_const_i[1] == 2) {
-      x1 = 1;
-      x2 = 3;
-    } else {
-      x1 = 1;
-      x2 = 2;
-    }
+    x1 = (new_const_i[1] == 1) ? 2 : ((new_const_i[1] == 2) ? 1 : 1);
+    x2 = (new_const_i[1] == 1) ? 3 : ((new_const_i[1] == 2) ? 3 : 2);
   } else if (new_const_i[0] == 1) {
-    if (new_const_i[1] == 2) {
-      x1 = 0;
-      x2 = 3;
-    } else {
-      x1 = 0;
-      x2 = 2;
-    }
+    x1 = (new_const_i[1] == 2) ? 0 : 0;
+    x2 = (new_const_i[1] == 2) ? 3 : 2;
   } else {
     x1 = 0;
     x2 = 1;
