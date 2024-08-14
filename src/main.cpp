@@ -7,13 +7,8 @@
 #include "Cornelius.h"
 #include "cornelius_old.h"
 
-int main(int argc, char const *argv[]) {
-  int number_of_cubes_to_test =
-      10;  // 10 is the maximum, since there are only 10 test files
-  int number_of_tests =
-      1000000;  // number of times the test is repeated for one
-                // cube to get a more accurate time measurement
-  bool print_intermediate_times = false;
+void cornelius_test_3D(int number_of_cubes_to_test, int number_of_tests,
+                       bool print_intermediate_times) {
   // Initialize all the variables for the comparison
   double grid_dt = 0.1;
   double grid_dx = 0.2;
@@ -21,20 +16,12 @@ int main(int argc, char const *argv[]) {
   double grid_dz = 0.2;
   double T_cut = 0.16;
   std::array<double, 4> dx_3D = {grid_dt, grid_dx, grid_dy, 1.0};
-  std::array<double, 4> dx_4D = {grid_dt, grid_dx, grid_dy, grid_dz};
 
   const int dim_3D = 3;
   double lattice_spacing_3D[dim_3D];
   lattice_spacing_3D[0] = grid_dt;
   lattice_spacing_3D[1] = grid_dx;
   lattice_spacing_3D[2] = grid_dy;
-
-  const int dim_4D = 4;
-  double lattice_spacing_4D[dim_4D];
-  lattice_spacing_4D[0] = grid_dt;
-  lattice_spacing_4D[1] = grid_dx;
-  lattice_spacing_4D[2] = grid_dy;
-  lattice_spacing_4D[3] = grid_dz;
 
   // for the test with the old cornelius version
   double ***cube_3D = new double **[2];
@@ -44,19 +31,6 @@ int main(int argc, char const *argv[]) {
       cube_3D[i][j] = new double[2];
       for (int k = 0; k < 2; k++)
         cube_3D[i][j][k] = 0.0;
-    }
-  }
-
-  double ****cube_4D = new double ***[2];
-  for (int i = 0; i < 2; i++) {
-    cube_4D[i] = new double **[2];
-    for (int j = 0; j < 2; j++) {
-      cube_4D[i][j] = new double *[2];
-      for (int k = 0; k < 2; k++) {
-        cube_4D[i][j][k] = new double[2];
-        for (int l = 0; l < 2; l++)
-          cube_4D[i][j][k][l] = 0.0;
-      }
     }
   }
 
@@ -72,7 +46,7 @@ int main(int argc, char const *argv[]) {
             << sizeof(*cornelius_old_ptr.get()) << " bytes\n";
 
   // Perform a time measurement for the new and old cornelius version and
-  // average over 10 cubes
+  // average over multiple cubes
   std::chrono::duration<double> elapsed_seconds_new_avg_3D =
       std::chrono::duration<double>::zero();
   std::chrono::duration<double> elapsed_seconds_old_avg_3D =
@@ -134,8 +108,8 @@ int main(int argc, char const *argv[]) {
     }
   }
   // average the elapsed time
-  elapsed_seconds_new_avg_3D /= 10;
-  elapsed_seconds_old_avg_3D /= 10;
+  elapsed_seconds_new_avg_3D /= number_of_cubes_to_test;
+  elapsed_seconds_old_avg_3D /= number_of_cubes_to_test;
 
   std::cout << "Average elapsed time for find_surface_3d new: "
             << elapsed_seconds_new_avg_3D.count() << "s\n";
@@ -145,6 +119,47 @@ int main(int argc, char const *argv[]) {
             << elapsed_seconds_new_avg_3D.count() /
                    elapsed_seconds_old_avg_3D.count()
             << "\n";
+}
+
+void cornelius_test_4D(int number_of_cubes_to_test, int number_of_tests,
+                       bool print_intermediate_times) {
+  // Initialize all the variables for the comparison
+  double grid_dt = 0.1;
+  double grid_dx = 0.2;
+  double grid_dy = 0.2;
+  double grid_dz = 0.2;
+  double T_cut = 0.16;
+  std::array<double, 4> dx_4D = {grid_dt, grid_dx, grid_dy, grid_dz};
+
+  const int dim_4D = 4;
+  double lattice_spacing_4D[dim_4D];
+  lattice_spacing_4D[0] = grid_dt;
+  lattice_spacing_4D[1] = grid_dx;
+  lattice_spacing_4D[2] = grid_dy;
+  lattice_spacing_4D[3] = grid_dz;
+
+  double ****cube_4D = new double ***[2];
+  for (int i = 0; i < 2; i++) {
+    cube_4D[i] = new double **[2];
+    for (int j = 0; j < 2; j++) {
+      cube_4D[i][j] = new double *[2];
+      for (int k = 0; k < 2; k++) {
+        cube_4D[i][j][k] = new double[2];
+        for (int l = 0; l < 2; l++)
+          cube_4D[i][j][k][l] = 0.0;
+      }
+    }
+  }
+
+  std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
+  // print the size of the Cornelius object
+  std::cout << "Size of the Cornelius object: " << sizeof(*cornelius_ptr.get())
+            << " bytes\n";
+
+  std::unique_ptr<CorneliusOld> cornelius_old_ptr(new CorneliusOld());
+  // print the size of the CorneliusOld object
+  std::cout << "Size of the CorneliusOld object: "
+            << sizeof(*cornelius_old_ptr.get()) << " bytes\n";
 
   // Test for 4D
   // Perform a time measurement for the new and old cornelius version and
@@ -211,8 +226,8 @@ int main(int argc, char const *argv[]) {
     }
   }
   // average the elapsed time
-  elapsed_seconds_new_avg_4D /= 10;
-  elapsed_seconds_old_avg_4D /= 10;
+  elapsed_seconds_new_avg_4D /= number_of_cubes_to_test;
+  elapsed_seconds_old_avg_4D /= number_of_cubes_to_test;
 
   std::cout << "Average elapsed time for find_surface_4d new: "
             << elapsed_seconds_new_avg_4D.count() << "s\n";
@@ -222,6 +237,20 @@ int main(int argc, char const *argv[]) {
             << elapsed_seconds_new_avg_4D.count() /
                    elapsed_seconds_old_avg_4D.count()
             << "\n";
+}
+
+int main(int argc, char const *argv[]) {
+  int number_of_cubes_to_test =
+      10;  // 10 is the maximum, since there are only 10 test files
+  int number_of_tests = 10000;  // number of times the test is repeated for one
+                                // cube to get a more accurate time measurement
+  bool print_intermediate_times = false;
+
+  cornelius_test_3D(number_of_cubes_to_test, number_of_tests,
+                    print_intermediate_times);
+
+  cornelius_test_4D(number_of_cubes_to_test, number_of_tests,
+                    print_intermediate_times);
 
   return 0;
 }
