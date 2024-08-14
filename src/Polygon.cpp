@@ -185,8 +185,8 @@ std::vector<Line>& Polygon::get_lines() { return lines; }
 void Polygon::print(std::ofstream& file, std::array<double, DIM> position) {
   // Print the polygon to the file
   for (int i = 0; i < number_lines; i++) {
-    std::array<double, DIM> p1 = lines[i].get_start_point();
-    std::array<double, DIM> p2 = lines[i].get_end_point();
+    const auto& p1 = lines[i].get_start_point();
+    const auto& p2 = lines[i].get_end_point();
     file << position[x1] + p1[x1] << " " << position[x2] + p1[x2] << " "
          << position[x3] + p1[x3] << " " << position[x1] + p2[x1] << " "
          << position[x2] + p2[x2] << " " << position[x3] + p2[x3] << " "
