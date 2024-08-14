@@ -32,12 +32,15 @@ void Square::init_square(
 
 void Square::construct_lines(double value) {
   // Check the corner points to see if there are lines
-  int above =
-      std::count_if(points.begin(), points.end(), [value](const auto& row) {
-        return std::count_if(row.begin(), row.end(), [value](double point) {
-                 return point >= value;
-               }) > 0;
+  bool is_above[4];
+  std::transform(
+      points.begin(), points.end(), is_above, [value](const auto& row) {
+        return std::any_of(row.begin(), row.end(),
+                           [value](double point) { return point >= value; });
       });
+
+  int above = std::count(is_above, is_above + 4, true);
+
   // If all corners are above or below this value, there are no lines in this
   // square
   if (above == 0 || above == 4) {
@@ -168,24 +171,17 @@ void Square::find_outside(double value) {
     out.resize(2);
     // The center is below, so the middle point is always outside the surface
     if ((value_middle - value) < 0) {
-      for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < 2; j++) {
-          if (j == 0)
-            out[i][j] = 0.5 * dx[x1];
-          else
-            out[i][j] = 0.5 * dx[x2];
-        }
-      }
+      out[0][0] = 0.5 * dx[x1];
+      out[0][1] = 0.5 * dx[x2];
+      out[1][0] = 0.5 * dx[x1];
+      out[1][1] = 0.5 * dx[x2];
     } else {  // The center is above
       // Cuts are \\ here so bottom left and top right corners are outside
       if ((points[0][0] - value) < 0) {
-        for (int i = 0; i < 2; i++) {
-          out[0][i] = 0;
-          if (i == 0)
-            out[1][i] = dx[x1];
-          else
-            out[1][i] = dx[x2];
-        }
+        out[0][0] = 0;
+        out[1][0] = dx[x1];
+        out[0][1] = 0;
+        out[1][1] = dx[x2];
         // Cuts are // here so bottom right and top left corners are outside
       } else {
         out[0][0] = dx[x1];
