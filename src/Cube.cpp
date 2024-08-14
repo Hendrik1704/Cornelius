@@ -30,14 +30,17 @@ void Cube::init_cube(
   ambiguous = false;
   polygons.clear();
   polygons.reserve(8);
+  squares.clear();
+  squares.reserve(NSQUARES);
+  lines.clear();
+  lines.reserve(2 * NSQUARES);
 }
 
-void Cube::split_to_squares(std::vector<Square>& squares) {
+void Cube::split_to_squares() {
   std::array<std::array<double, STEPS>, STEPS> square;
   std::array<int, STEPS> c_i = {const_i, 0};
   std::array<double, STEPS> c_v = {const_value, 0.0};
   int number_squares = 0;
-  squares.reserve(NSQUARES);
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
     // is constant in this cube
@@ -64,13 +67,10 @@ void Cube::split_to_squares(std::vector<Square>& squares) {
 
 void Cube::construct_polygons(double value) {
   // Start by splitting the cube to squares and finding the lines
-  std::vector<Square> squares;
-  split_to_squares(squares);
+  split_to_squares();
 
   // Then we make a table which contains references to the lines
   number_lines = 0;
-  std::vector<Line> lines;
-  lines.reserve(2 * NSQUARES);
 
   for (auto& square : squares) {
     square.construct_lines(value);

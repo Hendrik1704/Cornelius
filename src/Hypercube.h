@@ -31,7 +31,10 @@ class Hypercube : public GeneralGeometryElement {
              STEPS>
       hypercube;  ///< 4D array representing the hypercube.
   std::vector<Polyhedron>
-      polyhedra;  ///< Vector to store the polyhedra in the hypercube.
+      polyhedra;            ///< Vector to store the polyhedra in the hypercube.
+  std::vector<Cube> cubes;  ///< Vector to store the cubes in the hypercube.
+  std::vector<Polygon>
+      polygons;  ///< Vector to store the polygons in the hypercube.
 
   int number_polyhedra;        ///< Number of polyhedra in the hypercube.
   bool ambiguous;              ///< Indicates if the hypercube is ambiguous.
@@ -61,11 +64,10 @@ class Hypercube : public GeneralGeometryElement {
 
   /**
    * @brief Splits the hypercube into cubes.
-   * @param cubes Vector to store the cubes.
    * @param value The value used to decide if the point is inside the surface.
    * @return The number of points below the value.
    */
-  double split_to_cubes(std::vector<Cube>& cubes, double value);
+  double split_to_cubes(double value);
 
   /**
    * @brief Checks if the hypercube is ambiguous based on a given value.

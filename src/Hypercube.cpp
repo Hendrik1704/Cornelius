@@ -13,10 +13,14 @@ void Hypercube::init_hypercube(
   number_polyhedra = 0;
   polyhedra.clear();
   polyhedra.reserve(10);
+  cubes.clear();
+  cubes.reserve(NCUBES);
+  polygons.clear();
+  polygons.reserve(NCUBES * 10);
   ambiguous = false;
 }
 
-double Hypercube::split_to_cubes(std::vector<Cube>& cubes, double value) {
+double Hypercube::split_to_cubes(double value) {
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cube;
   int number_points_below_value = 0;
   int cube_index = 0;
@@ -41,19 +45,18 @@ double Hypercube::split_to_cubes(std::vector<Cube>& cubes, double value) {
           }
         }
       }
-      cubes[cube_index++].init_cube(cube, c_i, c_v, dx);
+      cubes.emplace_back();
+      cubes[cube_index].init_cube(cube, c_i, c_v, dx);
+      cube_index++;
     }
   }
   return number_points_below_value;
 }
 
 void Hypercube::construct_polyhedra(double value) {
-  std::vector<Cube> cubes(NCUBES);
-  int number_points_below_value = split_to_cubes(cubes, value);
+  int number_points_below_value = split_to_cubes(value);
 
   // Store the reference to the polygons
-  std::vector<Polygon> polygons;
-  polygons.reserve(NCUBES * 10);
   for (auto& cube : cubes) {
     // Construct polygons for each cube
     cube.construct_polygons(value);

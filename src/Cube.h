@@ -32,6 +32,8 @@ class Cube : public GeneralGeometryElement {
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>
       cube;                       ///< 3D array representing the cube.
   std::vector<Polygon> polygons;  ///< Vector of polygons in the cube.
+  std::vector<Square> squares;    ///< Vector of squares in the cube.
+  std::vector<Line> lines;        ///< Vector of lines in the squares.
 
   int number_lines;            ///< Number of lines in the cube.
   int number_polygons;         ///< Number of polygons in the cube.
@@ -71,9 +73,8 @@ class Cube : public GeneralGeometryElement {
 
   /**
    * @brief Splits the cube into squares.
-   * @param squares Vector to store the squares.
    */
-  void split_to_squares(std::vector<Square>& squares);
+  void split_to_squares();
 
   /**
    * @brief Checks if the cube is ambiguous based on the number of lines.
