@@ -35,7 +35,6 @@ class Hypercube : public GeneralGeometryElement {
 
   int number_polyhedra;        ///< Number of polyhedra in the hypercube.
   bool ambiguous;              ///< Indicates if the hypercube is ambiguous.
-  int x1, x2, x3, x4;          ///< Indices for dimensions.
   std::array<double, DIM> dx;  ///< Delta values for discretization.
 
  public:

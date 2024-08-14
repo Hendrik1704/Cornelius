@@ -24,7 +24,6 @@ class Polyhedron : public GeneralGeometryElement {
   std::vector<Polygon> polygons;  ///< Vector of polygons in the polyhedron
   int number_polygons;            ///< Number of polygons in the polyhedron
   int number_tetrahedrons;        ///< Number of tetrahedrons in the polyhedron
-  int x1, x2, x3, x4;  ///< Indices representing the polyhedron's dimensions
 
  public:
   /**

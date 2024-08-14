@@ -25,6 +25,9 @@ void Square::init_square(
   cuts.clear();
   out.clear();
   lines.clear();
+  cuts.reserve(4);
+  out.reserve(2);
+  lines.reserve(2);
 }
 
 void Square::construct_lines(double value) {
@@ -42,7 +45,7 @@ void Square::construct_lines(double value) {
     return;
   }
   // Find the cut points and the points which are always outside of the
-  // surface. Also find_outside() arranges cuts so that first two cuts form 7
+  // surface. Also find_outside() arranges cuts so that first two cuts form
   // a line as defined in the algorithm (in case there are 4 cuts)
   ends_of_edge(value);
   if (number_cuts > 0) {
@@ -51,99 +54,87 @@ void Square::construct_lines(double value) {
   // Then we go through the cut points and form the line elements
   std::array<std::array<double, DIM>, SQUARE_DIM> points_temp;
   std::array<double, DIM> out_temp;
+
+  bool toggle = false;
   for (int i = 0; i < number_cuts; i++) {
-    points_temp[i % 2][x1] = cuts[i][0];
-    points_temp[i % 2][x2] = cuts[i][1];
-    points_temp[i % 2][const_i[0]] = const_value[0];
-    points_temp[i % 2][const_i[1]] = const_value[1];
+    int toggle_index = toggle ? 1 : 0;
+
+    points_temp[toggle_index][x1] = cuts[i][0];
+    points_temp[toggle_index][x2] = cuts[i][1];
+
+    int c0 = const_i[0];
+    int c1 = const_i[1];
+    points_temp[toggle_index][c0] = const_value[0];
+    points_temp[toggle_index][c1] = const_value[1];
     // If we inserted both endpoints we insert the outside point
     // and we are ready to create the line element
-    if (i % 2 == 1) {
+    if (toggle) {
       out_temp[x1] = out[i / 2][0];
       out_temp[x2] = out[i / 2][1];
-      out_temp[const_i[0]] = const_value[0];
-      out_temp[const_i[1]] = const_value[1];
+      out_temp[c0] = const_value[0];
+      out_temp[c1] = const_value[1];
       lines.emplace_back();
       lines.back().init_line(points_temp, out_temp, const_i);
       number_lines++;
     }
+    toggle = !toggle;  // Toggle between 0 and 1
   }
 }
 
 void Square::ends_of_edge(double value) {
   // Edge 1
   if ((points[0][0] - value) * (points[1][0] - value) < 0) {
-    cuts.emplace_back();
-    cuts.back()[0] =
-        (points[0][0] - value) / (points[0][0] - points[1][0]) * dx[x1];
-    cuts.back()[1] = 0;
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{
+        (points[0][0] - value) / (points[0][0] - points[1][0]) * dx[x1], 0});
     number_cuts++;
   } else if (points[0][0] == value && points[1][0] < value) {
-    cuts.emplace_back();
-    cuts.back()[0] = 1e-9 * dx[x1];
-    cuts.back()[1] = 0;
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{1e-9 * dx[x1], 0});
     number_cuts++;
   } else if (points[1][0] == value && points[0][0] < value) {
-    cuts.emplace_back();
-    cuts.back()[0] = ALMOST_ONE * dx[x1];
-    cuts.back()[1] = 0;
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], 0});
     number_cuts++;
   }
 
   // Edge 2
   if ((points[0][0] - value) * (points[0][1] - value) < 0) {
-    cuts.emplace_back();
-    cuts.back()[0] = 0;
-    cuts.back()[1] =
-        (points[0][0] - value) / (points[0][0] - points[0][1]) * dx[x2];
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{
+        0, (points[0][0] - value) / (points[0][0] - points[0][1]) * dx[x2]});
     number_cuts++;
   } else if (points[0][0] == value && points[0][1] < value) {
-    cuts.emplace_back();
-    cuts.back()[0] = 0;
-    cuts.back()[1] = 1e-9 * dx[x2];
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{0, 1e-9 * dx[x2]});
     number_cuts++;
   } else if (points[0][1] == value && points[0][0] < value) {
-    cuts.emplace_back();
-    cuts.back()[0] = 0;
-    cuts.back()[1] = ALMOST_ONE * dx[x2];
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{0, ALMOST_ONE * dx[x2]});
     number_cuts++;
   }
 
   // Edge 3
   if ((points[1][0] - value) * (points[1][1] - value) < 0) {
-    cuts.emplace_back();
-    cuts.back()[0] = dx[x1];
-    cuts.back()[1] =
-        (points[1][0] - value) / (points[1][0] - points[1][1]) * dx[x2];
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{
+        dx[x1],
+        (points[1][0] - value) / (points[1][0] - points[1][1]) * dx[x2]});
     number_cuts++;
   } else if (points[1][0] == value && points[1][1] < value) {
-    cuts.emplace_back();
-    cuts.back()[0] = dx[x1];
-    cuts.back()[1] = 1e-9 * dx[x2];
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{dx[x1], 1e-9 * dx[x2]});
     number_cuts++;
   } else if (points[1][1] == value && points[1][0] < value) {
-    cuts.emplace_back();
-    cuts.back()[0] = dx[x1];
-    cuts.back()[1] = ALMOST_ONE * dx[x2];
+    cuts.emplace_back(
+        std::array<double, SQUARE_DIM>{dx[x1], ALMOST_ONE * dx[x2]});
     number_cuts++;
   }
 
   // Edge 4
   if ((points[0][1] - value) * (points[1][1] - value) < 0) {
-    cuts.emplace_back();
-    cuts.back()[0] =
-        (points[0][1] - value) / (points[0][1] - points[1][1]) * dx[x1];
-    cuts.back()[1] = dx[x2];
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{
+        (points[0][1] - value) / (points[0][1] - points[1][1]) * dx[x1],
+        dx[x2]});
     number_cuts++;
   } else if (points[0][1] == value && points[1][1] < value) {
-    cuts.emplace_back();
-    cuts.back()[0] = 1e-9 * dx[x1];
-    cuts.back()[1] = dx[x2];
+    cuts.emplace_back(std::array<double, SQUARE_DIM>{1e-9 * dx[x1], dx[x2]});
     number_cuts++;
   } else if (points[1][1] == value && points[0][1] < value) {
-    cuts.emplace_back();
-    cuts.back()[0] = ALMOST_ONE * dx[x1];
-    cuts.back()[1] = dx[x2];
+    cuts.emplace_back(
+        std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], dx[x2]});
     number_cuts++;
   }
 

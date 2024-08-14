@@ -29,6 +29,7 @@ void Cube::init_cube(
   number_polygons = 0;
   ambiguous = false;
   polygons.clear();
+  polygons.reserve(8);
 }
 
 void Cube::split_to_squares(std::vector<Square>& squares) {
@@ -47,13 +48,9 @@ void Cube::split_to_squares(std::vector<Square>& squares) {
         c_v[1] = j * dx[i];
         for (int ci1 = 0; ci1 < STEPS; ci1++) {
           for (int ci2 = 0; ci2 < STEPS; ci2++) {
-            if (i == x1) {
-              square[ci1][ci2] = cube[j][ci1][ci2];
-            } else if (i == x2) {
-              square[ci1][ci2] = cube[ci1][j][ci2];
-            } else {
-              square[ci1][ci2] = cube[ci1][ci2][j];
-            }
+            square[ci1][ci2] = (i == x1)   ? cube[j][ci1][ci2]
+                               : (i == x2) ? cube[ci1][j][ci2]
+                                           : cube[ci1][ci2][j];
           }
         }
         squares[number_squares++].init_square(square, c_i, c_v, dx);
@@ -70,14 +67,12 @@ void Cube::construct_polygons(double value) {
   // Then we make a table which contains references to the lines
   number_lines = 0;
   std::vector<Line> lines;
+  lines.reserve(2 * NSQUARES);
   for (int i = 0; i < NSQUARES; i++) {
     squares[i].construct_lines(value);
-    int number_lines_temp = squares[i].get_number_lines();
     const auto& lines_temp = squares[i].get_lines();
-    for (int j = 0; j < number_lines_temp; j++) {
-      lines.push_back(lines_temp[j]);
-      number_lines++;
-    }
+    lines.insert(lines.end(), lines_temp.begin(), lines_temp.end());
+    number_lines += lines_temp.size();
   }
 
   // If no lines were found we may exit. This can happen only in 4D case
@@ -113,7 +108,7 @@ void Cube::construct_polygons(double value) {
         }
       }
       // When we have reached this point one complete polygon is formed
-      polygons.push_back(new_polygon);
+      polygons.emplace_back(new_polygon);
       number_polygons++;
     } while (used < number_lines);
   } else {
@@ -124,19 +119,19 @@ void Cube::construct_polygons(double value) {
     for (int i = 0; i < number_lines; i++) {
       new_polygon.add_line(lines[i], true);
     }
-    polygons.push_back(new_polygon);
+    polygons.emplace_back(new_polygon);
     number_polygons++;
   }
 }
 
 void Cube::check_ambiguity(int number_lines, std::vector<Square>& squares) {
   // Check if any squares may have ambiguous elements
-  for (int i = 0; i < NSQUARES; i++) {
-    if (squares[i].is_ambiguous()) {
-      ambiguous = true;
-      return;
-    }
+  if (std::any_of(squares.begin(), squares.end(),
+                  [](Square& square) { return square.is_ambiguous(); })) {
+    ambiguous = true;
+    return;
   }
+
   // If the surface is not ambiguous already, it is still possible to
   // have a ambiguous case if we have exactly 6 lines, i.e. the surface
   // elements are at the opposite corners

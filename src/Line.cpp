@@ -54,10 +54,8 @@ void Line::calculate_normal() {
     calculate_centroid();
   }
   // The normal is given by (-dy, dx)
-  double dx = corners[1][x1] - corners[0][x1];
-  double dy = corners[1][x2] - corners[0][x2];
-  normal[x1] = -dy;
-  normal[x2] = dx;
+  normal[x1] = -(corners[1][x2] - corners[0][x2]);
+  normal[x2] = corners[1][x1] - corners[0][x1];
   normal[const_i[0]] = 0.0;
   normal[const_i[1]] = 0.0;
 
