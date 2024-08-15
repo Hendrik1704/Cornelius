@@ -72,13 +72,14 @@ void Cube::construct_polygons(double value) {
 
   for (Square& square : squares) {
     square.construct_lines(value);
-   std::array<Line,2>& lines_temp = square.get_lines();
-    int num_lines_temp=square.get_number_lines();
+    std::array<Line, 2>& lines_temp = square.get_lines();
+    int num_lines_temp = square.get_number_lines();
 
     number_lines += num_lines_temp;
 
     // Copy lines from lines_temp to lines
-    std::copy(lines_temp.begin(), lines_temp.begin() + num_lines_temp, lines.begin() + number_lines);
+    std::copy(lines_temp.begin(), lines_temp.begin() + num_lines_temp,
+              lines.begin() + number_lines);
   }
 
   // If no lines were found we may exit. This can happen only in 4D case
@@ -122,7 +123,7 @@ void Cube::construct_polygons(double value) {
     // can be added to it without ordering them
     Polygon new_polygon;
     new_polygon.init_polygon(const_i);
-    for (int i=0;i<number_lines;i++){
+    for (int i = 0; i < number_lines; i++) {
       new_polygon.add_line(lines[i], true);
     }
     polygons.emplace_back(new_polygon);

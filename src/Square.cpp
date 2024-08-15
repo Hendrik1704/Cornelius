@@ -1,7 +1,6 @@
 #include "Square.h"
 
-Square::Square() : ambiguous(false) {
-}
+Square::Square() : ambiguous(false) {}
 
 Square::~Square() {}
 
@@ -23,7 +22,6 @@ void Square::init_square(
   number_cuts = 0;
   number_lines = 0;
   ambiguous = false;
-
 }
 
 void Square::construct_lines(double value) {
@@ -79,36 +77,36 @@ void Square::construct_lines(double value) {
     toggle = !toggle;  // Toggle between 0 and 1
   }
 }
+
 void Square::add_cut(const std::array<double, SQUARE_DIM>& cut) {
-        if (number_cuts < MAX_POINTS) {
-            cuts[number_cuts++] = cut;
-        } else {
-            std::cerr << "Error: Maximum number of cuts exceeded." << std::endl;
-        }
-    }
+  if (number_cuts < MAX_POINTS) {
+    cuts[number_cuts++] = cut;
+  } else {
+    std::cerr << "Error: Maximum number of cuts exceeded." << std::endl;
+  }
+}
 
 void Square::ends_of_edge(double value) {
   // Edge 1
   if ((points[0][0] - value) * (points[1][0] - value) < 0) {
     add_cut(std::array<double, SQUARE_DIM>{
         (points[0][0] - value) / (points[0][0] - points[1][0]) * dx[x1], 0});
-    
+
   } else if (points[0][0] == value && points[1][0] < value) {
     add_cut(std::array<double, SQUARE_DIM>{1e-9 * dx[x1], 0});
-    
+
   } else if (points[1][0] == value && points[0][0] < value) {
     add_cut(std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], 0});
-    
   }
 
   // Edge 2
   if ((points[0][0] - value) * (points[0][1] - value) < 0) {
     add_cut(std::array<double, SQUARE_DIM>{
         0, (points[0][0] - value) / (points[0][0] - points[0][1]) * dx[x2]});
-    
+
   } else if (points[0][0] == value && points[0][1] < value) {
     add_cut(std::array<double, SQUARE_DIM>{0, 1e-9 * dx[x2]});
-    
+
   } else if (points[0][1] == value && points[0][0] < value) {
     add_cut(std::array<double, SQUARE_DIM>{0, ALMOST_ONE * dx[x2]});
   }
@@ -118,14 +116,12 @@ void Square::ends_of_edge(double value) {
     add_cut(std::array<double, SQUARE_DIM>{
         dx[x1],
         (points[1][0] - value) / (points[1][0] - points[1][1]) * dx[x2]});
-    
+
   } else if (points[1][0] == value && points[1][1] < value) {
     add_cut(std::array<double, SQUARE_DIM>{dx[x1], 1e-9 * dx[x2]});
-    
+
   } else if (points[1][1] == value && points[1][0] < value) {
-    add_cut(
-        std::array<double, SQUARE_DIM>{dx[x1], ALMOST_ONE * dx[x2]});
-    
+    add_cut(std::array<double, SQUARE_DIM>{dx[x1], ALMOST_ONE * dx[x2]});
   }
 
   // Edge 4
@@ -133,14 +129,12 @@ void Square::ends_of_edge(double value) {
     add_cut(std::array<double, SQUARE_DIM>{
         (points[0][1] - value) / (points[0][1] - points[1][1]) * dx[x1],
         dx[x2]});
-    
+
   } else if (points[0][1] == value && points[1][1] < value) {
     add_cut(std::array<double, SQUARE_DIM>{1e-9 * dx[x1], dx[x2]});
-    
+
   } else if (points[1][1] == value && points[0][1] < value) {
-    add_cut(
-        std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], dx[x2]});
-    
+    add_cut(std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], dx[x2]});
   }
 
   if (number_cuts != 0 && number_cuts != 2 && number_cuts != 4) {
@@ -170,7 +164,7 @@ void Square::find_outside(double value) {
         (points[0][0] > value && value_middle > value)) {
       std::swap(cuts[1], cuts[2]);
     }
-    
+
     // The center is below, so the middle point is always outside the surface
     if ((value_middle - value) < 0) {
       out[0][0] = 0.5 * dx[x1];
@@ -193,11 +187,10 @@ void Square::find_outside(double value) {
       }
     }
   } else {
-
     // This is the normal case (not ambiguous)
     // Initialize all elements to 0 using std::fill
     for (auto& row : out) {
-        std::fill(row.begin(), row.end(), 0.0);
+      std::fill(row.begin(), row.end(), 0.0);
     }
     int number_out = 0;
     for (int i = 0; i < 2; i++) {
@@ -222,4 +215,4 @@ bool Square::is_ambiguous() { return ambiguous; }
 
 int Square::get_number_lines() { return number_lines; }
 
-std::array<Line,Square::MAX_LINES>& Square::get_lines() { return lines; }
+std::array<Line, Square::MAX_LINES>& Square::get_lines() { return lines; }
