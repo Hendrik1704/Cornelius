@@ -2,9 +2,9 @@
 #define SQUARE_H
 
 #include <algorithm>
+#include <array>
 #include <iostream>
 #include <numeric>
-#include <vector>
 
 #include "GeneralGeometryElement.h"
 #include "Line.h"
@@ -25,9 +25,10 @@ class Square : public GeneralGeometryElement {
   static constexpr int DIM = 4;         ///< Dimension of the space.
   static constexpr int SQUARE_DIM = 2;  ///< Dimension of the square.
   static constexpr int MAX_POINTS = 4;  ///< Maximum number of points.
-  static constexpr int MAX_LINES = 2;  ///< Maximum number of lines.
+  static constexpr int MAX_LINES = 2;   ///< Maximum number of lines.
 
-  const double ALMOST_ONE = 1.0 - 1e-9;  ///< Almost one value.
+  static constexpr double ALMOST_ONE = 1.0 - 1e-9;  ///< Almost one value.
+  static constexpr double ALMOST_ZERO = 1e-9;       ///< Almost zero value.
   std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>
       points;  ///< Points of the square.
   std::array<std::array<double, SQUARE_DIM>, MAX_POINTS>

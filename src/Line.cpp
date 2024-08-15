@@ -54,7 +54,6 @@ void Line::calculate_normal() {
                    return out_val - centroid_val;
                  });
   flip_normal_if_needed(normal, reference_normal);
-
   normal_calculated = true;
 }
 

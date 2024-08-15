@@ -2,6 +2,7 @@
 #define POLYGON_H
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <fstream>
 #include <numeric>
@@ -19,10 +20,12 @@
  */
 class Polygon : public GeneralGeometryElement {
  protected:
-  std::vector<Line> lines;  ///< Vector of lines in the polygon
-  int number_lines;         ///< Number of lines in the polygon
-  int x1, x2, x3;           ///< Indices representing the polygon's dimensions
-  int const_i;              ///< Constant index for the polygon
+  static constexpr int MAX_LINES =
+      24;                             ///< Maximum number of lines in a polygon
+  std::array<Line, MAX_LINES> lines;  ///< Array of lines in the polygon
+  int number_lines;                   ///< Number of lines in the polygon
+  int x1, x2, x3;  ///< Indices representing the polygon's dimensions
+  int const_i;     ///< Constant index for the polygon
 
  public:
   /**
@@ -83,7 +86,7 @@ class Polygon : public GeneralGeometryElement {
    *
    * @return A reference to the array of lines in the polygon.
    */
-  std::vector<Line>& get_lines();
+  std::array<Line, MAX_LINES>& get_lines();
 
   /**
    * @brief Prints the triangles formed from the polygon into a given file.
