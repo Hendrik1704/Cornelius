@@ -24,17 +24,25 @@ void Square::init_square(
   ambiguous = false;
 }
 
+
 void Square::construct_lines(double value) {
   // Check the corner points to see if there are lines
-  bool is_above[4];
-  std::transform(
-      points.begin(), points.end(), is_above, [value](const auto& row) {
-        return std::any_of(row.begin(), row.end(),
-                           [value](double point) { return point >= value; });
-      });
+  // bool is_above[4];
+  // std::transform(
+  //     points.begin(), points.end(), is_above, [value](const auto& row) {
+  //       return std::any_of(row.begin(), row.end(),
+  //                          [value](double point) { return point >= value; });
+  //     });
 
-  int above = std::count(is_above, is_above + 4, true);
+  // int above = std::count(is_above, is_above + 4, true);
 
+   int above=0;
+  for (int i=0; i < DIM-SQUARE_DIM; i++) {
+    for (int j=0; j < DIM-SQUARE_DIM; j++) {
+      if ( points[i][j] >= value )
+        above++; 
+    }
+  }
   // If all corners are above or below this value, there are no lines in this
   // square
   if (above == 0 || above == 4) {
@@ -85,10 +93,14 @@ void Square::add_cut(const std::array<double, SQUARE_DIM>& cut) {
 }
 
 void Square::ends_of_edge(double value) {
+  double top_left=points[0][0] - value;
+  double top_right=points[0][1] - value;
+  double bottom_left=points[1][0] - value;
+  double bottom_right=points[1][1] - value;
   // Edge 1
-  if ((points[0][0] - value) * (points[1][0] - value) < 0) {
+  if (top_left * bottom_left < 0) {
     add_cut(std::array<double, SQUARE_DIM>{
-        (points[0][0] - value) / (points[0][0] - points[1][0]) * dx[x1], 0});
+        top_left / (points[0][0] - points[1][0]) * dx[x1], 0});
   } else if (points[0][0] == value && points[1][0] < value) {
     add_cut(std::array<double, SQUARE_DIM>{ALMOST_ZERO * dx[x1], 0});
   } else if (points[1][0] == value && points[0][0] < value) {
@@ -96,9 +108,9 @@ void Square::ends_of_edge(double value) {
   }
 
   // Edge 2
-  if ((points[0][0] - value) * (points[0][1] - value) < 0) {
+  if (top_left * top_right < 0) {
     add_cut(std::array<double, SQUARE_DIM>{
-        0, (points[0][0] - value) / (points[0][0] - points[0][1]) * dx[x2]});
+        0, top_left / (points[0][0] - points[0][1]) * dx[x2]});
   } else if (points[0][0] == value && points[0][1] < value) {
     add_cut(std::array<double, SQUARE_DIM>{0, ALMOST_ZERO * dx[x2]});
   } else if (points[0][1] == value && points[0][0] < value) {
@@ -106,10 +118,10 @@ void Square::ends_of_edge(double value) {
   }
 
   // Edge 3
-  if ((points[1][0] - value) * (points[1][1] - value) < 0) {
+  if (bottom_left * bottom_right < 0) {
     add_cut(std::array<double, SQUARE_DIM>{
         dx[x1],
-        (points[1][0] - value) / (points[1][0] - points[1][1]) * dx[x2]});
+        bottom_left / (points[1][0] - points[1][1]) * dx[x2]});
   } else if (points[1][0] == value && points[1][1] < value) {
     add_cut(std::array<double, SQUARE_DIM>{dx[x1], ALMOST_ZERO * dx[x2]});
   } else if (points[1][1] == value && points[1][0] < value) {
@@ -117,9 +129,9 @@ void Square::ends_of_edge(double value) {
   }
 
   // Edge 4
-  if ((points[0][1] - value) * (points[1][1] - value) < 0) {
+  if (top_right * bottom_right < 0) {
     add_cut(std::array<double, SQUARE_DIM>{
-        (points[0][1] - value) / (points[0][1] - points[1][1]) * dx[x1],
+        top_right / (points[0][1] - points[1][1]) * dx[x1],
         dx[x2]});
   } else if (points[0][1] == value && points[1][1] < value) {
     add_cut(std::array<double, SQUARE_DIM>{ALMOST_ZERO * dx[x1], dx[x2]});
@@ -138,32 +150,47 @@ void Square::find_outside(double value) {
   if (number_cuts == 4) {
     // If there are 4 cuts, the surface is ambiguous
     ambiguous = true;
-    // Compute the value in the middle of the square
-    double value_middle =
-        std::accumulate(points.begin(), points.end(), 0.0,
-                        [](double sum, const auto& row) {
-                          return sum +
-                                 std::accumulate(row.begin(), row.end(), 0.0);
-                        }) *
-        0.25;
+    // // Compute the value in the middle of the square
+    // double value_middle =
+    //     std::accumulate(points.begin(), points.end(), 0.0,
+    //                     [](double sum, const auto& row) {
+    //                       return sum +
+    //                              std::accumulate(row.begin(), row.end(), 0.0);
+    //                     }) *
+    //     0.25;
 
+    // Compute the value in the middle of the square
+        double value_middle = 0.0;
+        for (const auto& row : points) {
+            for (double point : row) {
+                value_middle += point;
+            }
+        }
+        value_middle *= 0.25;
     // The default is that cuts are connected as \\ here.
     // If both value_middle and (0,0) are above or below the criterion
     // the cuts should be like // and we have to switch order in cuts
-    if ((points[0][0] < value && value_middle < value) ||
-        (points[0][0] > value && value_middle > value)) {
-      std::swap(cuts[1], cuts[2]);
-    }
+    // if ((points[0][0] < value && value_middle < value) ||
+    //     (points[0][0] > value && value_middle > value)) {
+    //   std::swap(cuts[1], cuts[2]);
+    // }
+
+    // Determine if cuts need to be swapped
+        bool need_swap = (points[0][0] < value && value_middle < value) ||
+                         (points[0][0] > value && value_middle > value);
+        if (need_swap) {
+            std::swap(cuts[1], cuts[2]);
+        }
 
     // The center is below, so the middle point is always outside the surface
-    if ((value_middle - value) < 0) {
+    if (value_middle < value) {
       out[0][0] = 0.5 * dx[x1];
       out[0][1] = 0.5 * dx[x2];
       out[1][0] = 0.5 * dx[x1];
       out[1][1] = 0.5 * dx[x2];
     } else {  // The center is above
       // Cuts are \\ here so bottom left and top right corners are outside
-      if ((points[0][0] - value) < 0) {
+      if (points[0][0]  < value) {
         out[0][0] = 0;
         out[1][0] = dx[x1];
         out[0][1] = 0;

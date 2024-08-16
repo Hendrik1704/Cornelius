@@ -69,7 +69,7 @@ class Hypercube : public GeneralGeometryElement {
    * @param value The value used to decide if the point is inside the surface.
    * @return The number of points below the value.
    */
-  double split_to_cubes(double value);
+  int split_to_cubes(double value);
 
   /**
    * @brief Checks if the hypercube is ambiguous based on a given value.

@@ -14,7 +14,7 @@ void Hypercube::init_hypercube(
   ambiguous = false;
 }
 
-double Hypercube::split_to_cubes(double value) {
+int Hypercube::split_to_cubes(double value) {
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cube;
   int number_points_below_value = 0;
   int cube_index = 0;

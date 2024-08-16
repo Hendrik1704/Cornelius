@@ -58,6 +58,7 @@ class Polygon : public GeneralGeometryElement {
    */
   bool add_line(Line& new_line, bool perform_no_check);
 
+double calc_difference(const std::array<double, DIM>& p1, const std::array<double, DIM>& p2);
   /**
    * @brief Gets the number of lines in the polygon.
    *

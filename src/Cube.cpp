@@ -65,10 +65,12 @@ void Cube::construct_polygons(double value) {
   number_lines = 0;
   for (int i = 0; i < NSQUARES; i++) {
     squares[i].construct_lines(value);
-    int num_lines_temp = squares[i].get_number_lines();
-    auto& lines_temp = squares[i].get_lines();
-    for (int j = 0; j < num_lines_temp; j++) {
-      lines[number_lines++] = lines_temp[j];
+    // int num_lines_temp = squares[i].get_number_lines();
+    // auto& lines_temp = squares[i].get_lines();
+    // for (int j = 0; j < num_lines_temp; j++) {
+    for (int j = 0; j < squares[i].get_number_lines(); j++) {
+      // lines[number_lines++] = lines_temp[j];
+      lines[number_lines++] = squares[i].get_lines()[j];
     }
   }
 

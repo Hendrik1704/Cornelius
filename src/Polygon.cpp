@@ -8,9 +8,7 @@ void Polygon::init_polygon(int new_const_i) {
   // Copy the new value into the class variable
   const_i = new_const_i;
   // Fix the indices which are not constant
-  x1 = -1;
-  x2 = -1;
-  x3 = -1;
+  x1 = x2 = x3 = -1;
   for (int i = 0; i < DIM; i++) {
     if (i != new_const_i) {
       if (x1 < 0) {
@@ -24,8 +22,8 @@ void Polygon::init_polygon(int new_const_i) {
   }
 
   // Set the flags for normal and centroid calculations to false
-  normal_calculated = false;
-  centroid_calculated = false;
+  normal_calculated =centroid_calculated = false;
+  
   // Reset the number of lines in the polygon
   number_lines = 0;
 }
@@ -43,12 +41,7 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
     const auto& end_point = new_line.get_end_point();
     const auto& last_end_point = lines[number_lines - 1].get_end_point();
 
-    // Lambda function to calculate the difference between two points
-    auto calc_difference = [](const auto& p1, const auto& p2) {
-      return std::transform_reduce(
-          p1.begin(), p1.end(), p2.begin(), 0.0, std::plus<double>(),
-          [](double a, double b) { return std::abs(a - b); });
-    };
+    
 
     double difference1 = calc_difference(start_point, last_end_point);
     double difference2 = calc_difference(end_point, last_end_point);
@@ -70,6 +63,13 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
   }
 }
 
+double Polygon::calc_difference(const std::array<double, DIM>& p1, const std::array<double, DIM>& p2){// Lambda function to calculate the difference between two points
+    
+      // Lambda function to calculate the difference between two points
+      return std::transform_reduce(
+          p1.begin(), p1.end(), p2.begin(), 0.0, std::plus<double>(),
+          [](double a, double b) { return std::abs(a - b); });
+}
 int Polygon::get_number_lines() { return number_lines; }
 
 void Polygon::calculate_centroid() {
