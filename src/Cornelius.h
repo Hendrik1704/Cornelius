@@ -28,9 +28,9 @@
  *
  * Last update 03.08.2012 Hannu Holopainen
  *
- * Last update 08.08.2024 Hendrik Roch: Modernized the code to C++17 features,
- * more memory efficient and faster. Added unit tests and also tests to ensure
- * that the new code is compatible with the old one.
+ * Last update 16.08.2024 Hendrik Roch, Haydar Mehryar: Modernized the code to
+ * C++17 features, more memory efficient and faster. Added unit tests and also
+ * tests to ensure that the new code is compatible with the old one.
  *
  */
 
@@ -55,7 +55,7 @@
  * code by Pasi Huovinen.
  *
  * 23.04.2012 Hannu Holopainen
- * 08.08.2024 Hendrik Roch
+ * 16.08.2024 Hendrik Roch, Haydar Mehryar
  *
  */
 class Cornelius : public GeneralGeometryElement {

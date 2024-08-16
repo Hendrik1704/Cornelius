@@ -20,7 +20,7 @@
  * ambiguity.
  *
  * 13.10.2011 Hannu Holopainen
- * 08.08.2024 Hendrik Roch
+ * 16.08.2024 Hendrik Roch, Haydar Mehryar
  */
 class Cube : public GeneralGeometryElement {
  private:

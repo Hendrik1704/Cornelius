@@ -58,7 +58,16 @@ class Polygon : public GeneralGeometryElement {
    */
   bool add_line(Line& new_line, bool perform_no_check);
 
-double calc_difference(const std::array<double, DIM>& p1, const std::array<double, DIM>& p2);
+  /**
+   * @brief Calculates the difference between two points.
+   * @param line1 The point to compare.
+   * @param line2 The second point to compare.
+   *
+   * @return The difference between the two points.
+   */
+  double calc_difference(const std::array<double, DIM>& p1,
+                         const std::array<double, DIM>& p2);
+
   /**
    * @brief Gets the number of lines in the polygon.
    *

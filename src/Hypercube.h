@@ -18,7 +18,7 @@
  * elements.
  *
  * 13.10.2011 Hannu Holopainen
- * 08.08.2024 Hendrik Roch
+ * 016.08.2024 Hendrik Roch, Haydar Mehryar
  */
 class Hypercube : public GeneralGeometryElement {
  private:

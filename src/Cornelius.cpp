@@ -69,18 +69,16 @@ void Cornelius::surface_3d(
   // Check if the cube actually contains surface elements.
   // If all or none of the elements are below the criterion, no surface
   // elements exist.
-  int value_greater = std::accumulate(
-      cu.begin(), cu.end(), 0, [this](int sum, const auto& array2d) {
-        return sum + std::accumulate(
-                         array2d.begin(), array2d.end(), 0,
-                         [this](int sum2, const auto& array1d) {
-                           return sum2 +
-                                  std::count_if(array1d.begin(), array1d.end(),
-                                                [this](double element) {
-                                                  return element >= this->value;
-                                                });
-                         });
-      });
+  int value_greater = 0;
+  for (const auto& array2d : cu) {
+    for (const auto& array1d : array2d) {
+      for (double element : array1d) {
+        if (element >= this->value) {
+          ++value_greater;
+        }
+      }
+    }
+  }
   if (value_greater == 0 || value_greater == 8) {
     // No elements in this cube
     number_elements = 0;
@@ -117,25 +115,18 @@ void Cornelius::find_surface_4d(
   // Check if the cube actually contains surface elements.
   // If all or none of the elements are below the criterion, no surface
   // elements exist.
-  int value_greater = std::accumulate(
-      cu.begin(), cu.end(), 0, [this](int sum, const auto& array3d) {
-        return sum +
-               std::accumulate(
-                   array3d.begin(), array3d.end(), 0,
-                   [this](int sum2, const auto& array2d) {
-                     return sum2 +
-                            std::accumulate(
-                                array2d.begin(), array2d.end(), 0,
-                                [this](int sum3, const auto& array1d) {
-                                  return sum3 +
-                                         std::count_if(
-                                             array1d.begin(), array1d.end(),
-                                             [this](double element) {
-                                               return element >= this->value;
-                                             });
-                                });
-                   });
-      });
+  int value_greater = 0;
+  for (const auto& array3d : cu) {
+    for (const auto& array2d : array3d) {
+      for (const auto& array1d : array2d) {
+        for (double element : array1d) {
+          if (element >= this->value) {
+            ++value_greater;
+          }
+        }
+      }
+    }
+  }
   if (value_greater == 0 || value_greater == 16) {
     // No elements in this cube
     number_elements = 0;

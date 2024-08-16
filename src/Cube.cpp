@@ -11,9 +11,7 @@ void Cube::init_cube(
   const_i = new_const_i;
   const_value = new_const_value;
   dx = new_dx;
-  x1 = -1;
-  x2 = -1;
-  x3 = -1;
+  x1 = x2 = x3 = -1;
   for (int i = 0; i < DIM; i++) {
     if (i != new_const_i) {
       if (x1 < 0) {
@@ -65,11 +63,7 @@ void Cube::construct_polygons(double value) {
   number_lines = 0;
   for (int i = 0; i < NSQUARES; i++) {
     squares[i].construct_lines(value);
-    // int num_lines_temp = squares[i].get_number_lines();
-    // auto& lines_temp = squares[i].get_lines();
-    // for (int j = 0; j < num_lines_temp; j++) {
     for (int j = 0; j < squares[i].get_number_lines(); j++) {
-      // lines[number_lines++] = lines_temp[j];
       lines[number_lines++] = squares[i].get_lines()[j];
     }
   }
@@ -83,7 +77,7 @@ void Cube::construct_polygons(double value) {
   if (ambiguous) {
     // Surface is ambiguous, connect the lines to polygons and see how
     // many polygons we have
-    std::array<bool, NSQUARES * 2> not_used = {true};
+    std::array<bool, NSQUARES* 2> not_used = {true};
     // Keep track of the lines which are used
     int used = 0;
     do {
