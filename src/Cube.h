@@ -1,6 +1,7 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <array>
 #include <iostream>
 #include <vector>
 
@@ -24,16 +25,18 @@
  */
 class Cube : public GeneralGeometryElement {
  private:
-  static constexpr int DIM = 4;       ///< Dimension of the space.
-  static constexpr int CUBE_DIM = 4;  ///< Dimension of the cube.
-  static constexpr int NSQUARES = 6;  ///< Number of squares in the cube.
-  static constexpr int STEPS = 2;     ///< Number of steps.
+  static constexpr int DIM = 4;           ///< Dimension of the space.
+  static constexpr int CUBE_DIM = 4;      ///< Dimension of the cube.
+  static constexpr int NSQUARES = 6;      ///< Number of squares in the cube.
+  static constexpr int STEPS = 2;         ///< Number of steps.
+  static constexpr int MAX_POLYGONS = 8;  ///< Maximum number of polygons.
 
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>
-      cube;                              ///< 3D array representing the cube.
-  std::vector<Polygon> polygons;         ///< Vector of polygons in the cube.
-  std::vector<Square> squares;           ///< Vector of squares in the cube.
-  std::array<Line, NSQUARES * 2> lines;  ///< Vector of lines in the squares.
+      cube;  ///< 3D array representing the cube.
+  std::array<Polygon, MAX_POLYGONS>
+      polygons;                          ///< Array of polygons in the cube.
+  std::array<Square, NSQUARES> squares;  ///< Array of squares in the cube.
+  std::array<Line, NSQUARES * 2> lines;  ///< Array of lines in the squares.
 
   int number_lines;            ///< Number of lines in the cube.
   int number_polygons;         ///< Number of polygons in the cube.
@@ -104,7 +107,7 @@ class Cube : public GeneralGeometryElement {
    * @brief Gets the polygons in the cube.
    * @return A reference to the array of polygons.
    */
-  std::vector<Polygon>& get_polygons();
+  std::array<Polygon, MAX_POLYGONS>& get_polygons();
 };
 
 #endif  // CUBE_H

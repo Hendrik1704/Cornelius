@@ -28,10 +28,6 @@ void Cube::init_cube(
   number_lines = 0;
   number_polygons = 0;
   ambiguous = false;
-  polygons.clear();
-  polygons.reserve(8);
-  squares.clear();
-  squares.reserve(NSQUARES);
 }
 
 void Cube::split_to_squares() {
@@ -55,9 +51,7 @@ void Cube::split_to_squares() {
                                            : cube[ci1][ci2][j];
           }
         }
-        squares.emplace_back();
-        squares[number_squares].init_square(square, c_i, c_v, dx);
-        number_squares++;
+        squares[number_squares++].init_square(square, c_i, c_v, dx);
       }
     }
   }
@@ -69,17 +63,13 @@ void Cube::construct_polygons(double value) {
 
   // Then we make a table which contains references to the lines
   number_lines = 0;
-
-  for (Square& square : squares) {
-    square.construct_lines(value);
-    std::array<Line, 2>& lines_temp = square.get_lines();
-    int num_lines_temp = square.get_number_lines();
-
-    number_lines += num_lines_temp;
-
-    // Copy lines from lines_temp to lines
-    std::copy(lines_temp.begin(), lines_temp.begin() + num_lines_temp,
-              lines.begin() + number_lines);
+  for (int i = 0; i < NSQUARES; i++) {
+    squares[i].construct_lines(value);
+    int num_lines_temp = squares[i].get_number_lines();
+    auto& lines_temp = squares[i].get_lines();
+    for (int j = 0; j < num_lines_temp; j++) {
+      lines[number_lines++] = lines_temp[j];
+    }
   }
 
   // If no lines were found we may exit. This can happen only in 4D case
@@ -101,12 +91,12 @@ void Cube::construct_polygons(double value) {
         exit(1);
       }
       // Initialize a new polygon
-      Polygon new_polygon;
-      new_polygon.init_polygon(const_i);
+      polygons[number_polygons].init_polygon(const_i);
       // Go through all lines and try to add them to the polygon
       for (int i = 0; i < number_lines; i++) {
         // add_line returns true if line is successfully added
-        if (not_used[i] && new_polygon.add_line(lines[i], false)) {
+        if (not_used[i] &&
+            polygons[number_polygons].add_line(lines[i], false)) {
           not_used[i] = false;
           used++;
           // If line is successfully added we start the loop from the
@@ -115,18 +105,15 @@ void Cube::construct_polygons(double value) {
         }
       }
       // When we have reached this point one complete polygon is formed
-      polygons.emplace_back(new_polygon);
       number_polygons++;
     } while (used < number_lines);
   } else {
     // Surface is not ambiguous, so we have only one polygon and all lines
     // can be added to it without ordering them
-    Polygon new_polygon;
-    new_polygon.init_polygon(const_i);
+    polygons[number_polygons].init_polygon(const_i);
     for (int i = 0; i < number_lines; i++) {
-      new_polygon.add_line(lines[i], true);
+      polygons[number_polygons].add_line(lines[i], true);
     }
-    polygons.emplace_back(new_polygon);
     number_polygons++;
   }
 }
@@ -142,7 +129,7 @@ void Cube::check_ambiguity(int number_lines) {
   // If the surface is not ambiguous already, it is still possible to
   // have a ambiguous case if we have exactly 6 lines, i.e. the surface
   // elements are at the opposite corners
-  if (!ambiguous && number_lines == 6) {
+  if (number_lines == 6) {
     ambiguous = true;
   }
 }
@@ -153,4 +140,6 @@ int Cube::get_number_lines() { return number_lines; }
 
 int Cube::get_number_polygons() { return number_polygons; }
 
-std::vector<Polygon>& Cube::get_polygons() { return polygons; }
+std::array<Polygon, Cube::MAX_POLYGONS>& Cube::get_polygons() {
+  return polygons;
+}

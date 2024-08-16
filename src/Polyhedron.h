@@ -2,6 +2,7 @@
 #define POLYHEDRON_H
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <numeric>
 #include <vector>
@@ -21,9 +22,12 @@
  */
 class Polyhedron : public GeneralGeometryElement {
  private:
-  std::vector<Polygon> polygons;  ///< Vector of polygons in the polyhedron
-  int number_polygons;            ///< Number of polygons in the polyhedron
-  int number_tetrahedrons;        ///< Number of tetrahedrons in the polyhedron
+  static constexpr int MAX_POLYGONS =
+      24;  ///< Maximum number of polygons in a polyhedron
+  std::array<Polygon, MAX_POLYGONS>
+      polygons;             ///< Array of polygons in the polyhedron
+  int number_polygons;      ///< Number of polygons in the polyhedron
+  int number_tetrahedrons;  ///< Number of tetrahedrons in the polyhedron
 
  public:
   /**

@@ -26,15 +26,18 @@ class Hypercube : public GeneralGeometryElement {
   static constexpr int DIM = 4;     ///< Dimension of the space.
   static constexpr int STEPS = 2;   ///< Number of steps for discretization.
   static constexpr int NCUBES = 8;  ///< Number of cubes in the hypercube.
+  static constexpr int MAX_POLYHEDRONS =
+      10;  ///< Maximum number of polyhedrons.
 
   std::array<std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
              STEPS>
       hypercube;  ///< 4D array representing the hypercube.
-  std::vector<Polyhedron>
-      polyhedra;            ///< Vector to store the polyhedra in the hypercube.
-  std::vector<Cube> cubes;  ///< Vector to store the cubes in the hypercube.
-  std::vector<Polygon>
-      polygons;  ///< Vector to store the polygons in the hypercube.
+  std::array<Polyhedron, MAX_POLYHEDRONS>
+      polyhedra;  ///< Array to store the polyhedra in the hypercube.
+  std::array<Cube, NCUBES>
+      cubes;  ///< Array to store the cubes in the hypercube.
+  std::array<Polygon, NCUBES * 10>
+      polygons;  ///< Array to store the polygons in the hypercube.
 
   int number_polyhedra;        ///< Number of polyhedra in the hypercube.
   bool ambiguous;              ///< Indicates if the hypercube is ambiguous.
@@ -89,9 +92,9 @@ class Hypercube : public GeneralGeometryElement {
 
   /**
    * @brief Gets the polyhedra in the hypercube.
-   * @return A reference to the vector of polyhedra.
+   * @return A reference to the array of polyhedra.
    */
-  std::vector<Polyhedron>& get_polyhedra();
+  std::array<Polyhedron, MAX_POLYHEDRONS>& get_polyhedra();
 
   /**
    * @brief Checks if the hypercube is ambiguous.

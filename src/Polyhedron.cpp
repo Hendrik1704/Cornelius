@@ -1,5 +1,7 @@
 #include "Polyhedron.h"
 
+#include <iostream>
+
 Polyhedron::Polyhedron() {}
 
 Polyhedron::~Polyhedron() {}
@@ -8,8 +10,6 @@ void Polyhedron::init_polyhedron() {
   // Reset the number of polygons and tetrahedrons in the polyhedron
   number_polygons = 0;
   number_tetrahedrons = 0;
-  polygons.clear();
-  polygons.reserve(24);
   // Set the flags for normal and centroid calculations to false
   normal_calculated = false;
   centroid_calculated = false;
@@ -18,24 +18,22 @@ void Polyhedron::init_polyhedron() {
 bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
   // For the first polygon, we don't need to check
   if (number_polygons == 0 || perform_no_check) {
-    polygons.emplace_back(new_polygon);
-    number_polygons++;
+    polygons[number_polygons++] = new_polygon;
     number_tetrahedrons += new_polygon.get_number_lines();
     return true;
   } else {
     // Check if the current polygon is connected to the last polygon, since
     // the polygons are ordered
     for (int i = 0; i < number_polygons; i++) {
+      int number_lines1 = new_polygon.get_number_lines();
+      int number_lines2 = polygons[i].get_number_lines();
       auto& lines1 = new_polygon.get_lines();
       auto& lines2 = polygons[i].get_lines();
-      const int number_lines1 = new_polygon.get_number_lines();
-      const int number_lines2 = polygons[i].get_number_lines();
       // Check if the lines are equal
       for (int j = 0; j < number_lines1; j++) {
         for (int k = 0; k < number_lines2; k++) {
           if (lines_are_connected(lines1[j], lines2[k])) {
-            polygons.emplace_back(new_polygon);
-            number_polygons++;
+            polygons[number_polygons++] = new_polygon;
             number_tetrahedrons += number_lines1;
             return true;
           }
@@ -98,7 +96,8 @@ void Polyhedron::calculate_centroid() {
   for (int k = 0; k < DIM; k++) {
     mean_values[k] =
         std::transform_reduce(
-            polygons.begin(), polygons.end(), 0.0, std::plus<>(),
+            polygons.begin(), polygons.begin() + number_polygons, 0.0,
+            std::plus<>(),
             [k](Polygon& polygon) {
               return std::transform_reduce(
                   polygon.get_lines().begin(),
@@ -118,7 +117,8 @@ void Polyhedron::calculate_centroid() {
   std::array<double, DIM> sum_up = {0};
   double sum_down = 0.0;
   // Loop over all polygons
-  for (auto& polygon : polygons) {
+  for (int i = 0; i < number_polygons; ++i) {
+    auto& polygon = polygons[i];
     int number_lines = polygon.get_number_lines();
     auto& lines = polygon.get_lines();
     auto& centroid = polygon.get_centroid();
@@ -169,7 +169,8 @@ void Polyhedron::calculate_normal() {
                                                std::array<double, DIM>{0});
   int index_tetrahedron = 0;
   // Loop over all polygons
-  for (auto& polygon : polygons) {
+  for (int i = 0; i < number_polygons; i++) {
+    auto& polygon = polygons[i];
     int number_lines = polygon.get_number_lines();
     auto& lines = polygon.get_lines();
     auto& cent = polygon.get_centroid();
@@ -197,9 +198,9 @@ void Polyhedron::calculate_normal() {
   }
   // The normal is the sum of the normals of the tetrahedrons
   std::fill(normal.begin(), normal.end(), 0.0);
-  for (const auto& norm : normals) {
-    std::transform(normal.begin(), normal.end(), norm.begin(), normal.begin(),
-                   std::plus<>());
+  for (int i = 0; i < number_tetrahedrons; i++) {
+    std::transform(normal.begin(), normal.end(), normals[i].begin(),
+                   normal.begin(), std::plus<>());
   }
   normal_calculated = true;
 }

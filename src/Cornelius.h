@@ -62,12 +62,13 @@ class Cornelius : public GeneralGeometryElement {
  private:
   static constexpr int STEPS = 2; /**< Number of steps for the discretization */
   static constexpr int DIM = 4;   /**< Dimension of the space (default is 4D) */
+  static constexpr int MAX_ELEMENTS = 10; /**< Maximum number of elements */
 
   int number_elements; /**< Number of surface elements found */
-  std::vector<std::array<double, DIM>>
-      normals; /**< Vector to store the normals of the surface elements */
-  std::vector<std::array<double, DIM>>
-      centroids; /**< Vector to store the centroids of the surface elements */
+  std::array<std::array<double, DIM>, MAX_ELEMENTS>
+      normals; /**< Array to store the normals of the surface elements */
+  std::array<std::array<double, DIM>, MAX_ELEMENTS>
+      centroids; /**< Array to store the centroids of the surface elements */
   int cube_dimension; /**< Dimension of the cube (2, 3, or 4) */
   bool initialized;   /**< Flag to indicate if Cornelius has been initialized */
   bool print_initialized; /**< Flag to indicate if printing is initialized */
@@ -179,8 +180,8 @@ class Cornelius : public GeneralGeometryElement {
    * without factors(sqrt(-g)) from the metric.
    *
    * @return A vector of vectors with dimensions [number of
-   * elements][dimensions] containing the normal vectors of the surface
-   * elements.
+   * elements][dimension of the problem] containing the normal vectors of the
+   * surface elements.
    */
   std::vector<std::vector<double>> get_normals();
 
@@ -191,25 +192,6 @@ class Cornelius : public GeneralGeometryElement {
    * @return A vector of vectors representing the centroids.
    */
   std::vector<std::vector<double>> get_centroids();
-
-  /**
-   * @brief Gets the normal vectors as a 2d vector with the following number of
-   * indices [number of elements][4]. If the dimension of the problem is smaller
-   * than four, first (4-dimension) elements are zero. This gives \sigma_\mu
-   * without factors(sqrt(-g)) from the metric.
-   *
-   * @return A vector of vectors representing the normals in 4D.
-   */
-  std::vector<std::vector<double>> get_normals_4d();
-
-  /**
-   * @brief Gets the centroid vectors as a 2d table with the following number of
-   * indices [number of elements][4]. If the dimension of the problem is smaller
-   * than four, first (4-dimension) elements are zero.
-   *
-   * @return A vector of vectors representing the centroids in 4D.
-   */
-  std::vector<std::vector<double>> get_centroids_4d();
 
   /**
    * @brief Gets a specific centroid element.

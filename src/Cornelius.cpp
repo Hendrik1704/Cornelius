@@ -21,8 +21,6 @@ void Cornelius::init_cornelius(int dimension, double new_value,
     dx[i] = (i < DIM - cube_dimension) ? 1 : new_dx[i - (DIM - cube_dimension)];
   }
   initialized = true;
-  normals.clear();
-  centroids.clear();
 }
 
 void Cornelius::init_print_cornelius(std::string filename) {
@@ -41,14 +39,11 @@ void Cornelius::find_surface_2d(
   cube_2d.init_square(cu, c_i, c_v, dx);
   cube_2d.construct_lines(value);
   number_elements = cube_2d.get_number_lines();
-  normals.clear();
-  normals.reserve(number_elements);
-  centroids.clear();
-  centroids.reserve(number_elements);
-  auto& lines = cube_2d.get_lines();
   for (int i = 0; i < number_elements; i++) {
-    normals.emplace_back(lines[i].get_normal());
-    centroids.emplace_back(lines[i].get_centroid());
+    for (int j = 0; j < DIM; j++) {
+      normals[i][j] = cube_2d.get_lines()[i].get_normal()[j];
+      centroids[i][j] = cube_2d.get_lines()[i].get_centroid()[j];
+    }
   }
 }
 
@@ -99,17 +94,15 @@ void Cornelius::surface_3d(
   cube_3d.construct_polygons(value);
   // Obtain the information about the elements
   number_elements = cube_3d.get_number_polygons();
-  normals.clear();
-  normals.reserve(number_elements);
-  centroids.clear();
-  centroids.reserve(number_elements);
-  auto& polygons = cube_3d.get_polygons();
   for (int i = 0; i < number_elements; i++) {
-    normals.emplace_back(polygons[i].get_normal());
-    centroids.emplace_back(polygons[i].get_centroid());
-    // If the triangles should be printed, print them
-    if (print_initialized && do_print) {
-      polygons[i].print(output_file, position);
+    for (int j = 0; j < DIM; j++) {
+      normals[i][j] = cube_3d.get_polygons()[i].get_normal()[j];
+      centroids[i][j] = cube_3d.get_polygons()[i].get_centroid()[j];
+
+      // If the triangles should be printed, print them
+      if (print_initialized && do_print) {
+        cube_3d.get_polygons()[i].print(output_file, position);
+      }
     }
   }
 }
@@ -154,37 +147,15 @@ void Cornelius::find_surface_4d(
   cube_4d.construct_polyhedra(value);
   // Obtain the information about the elements
   number_elements = cube_4d.get_number_polyhedra();
-  normals.clear();
-  normals.reserve(number_elements);
-  centroids.clear();
-  centroids.reserve(number_elements);
-  auto& polyhedra = cube_4d.get_polyhedra();
   for (int i = 0; i < number_elements; i++) {
-    centroids.emplace_back(polyhedra[i].get_centroid());
-    normals.emplace_back(polyhedra[i].get_normal());
+    for (int j = 0; j < DIM; j++) {
+      normals[i][j] = cube_4d.get_polyhedra()[i].get_normal()[j];
+      centroids[i][j] = cube_4d.get_polyhedra()[i].get_centroid()[j];
+    }
   }
 }
 
 int Cornelius::get_number_elements() { return number_elements; }
-
-std::vector<std::vector<double>> Cornelius::get_normals_4d() {
-  std::vector<std::vector<double>> normals_vector(number_elements,
-                                                  std::vector<double>(DIM));
-  for (int i = 0; i < number_elements; i++) {
-    std::copy(normals[i].begin(), normals[i].end(), normals_vector[i].begin());
-  }
-  return normals_vector;
-}
-
-std::vector<std::vector<double>> Cornelius::get_centroids_4d() {
-  std::vector<std::vector<double>> centroids_vector(number_elements,
-                                                    std::vector<double>(DIM));
-  for (int i = 0; i < number_elements; i++) {
-    std::copy(centroids[i].begin(), centroids[i].end(),
-              centroids_vector[i].begin());
-  }
-  return centroids_vector;
-}
 
 std::vector<std::vector<double>> Cornelius::get_normals() {
   std::vector<std::vector<double>> normals_vector(

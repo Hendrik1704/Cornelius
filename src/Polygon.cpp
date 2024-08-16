@@ -28,16 +28,13 @@ void Polygon::init_polygon(int new_const_i) {
   centroid_calculated = false;
   // Reset the number of lines in the polygon
   number_lines = 0;
-  lines.clear();
-  lines.reserve(24);
 }
 
 bool Polygon::add_line(Line& new_line, bool perform_no_check) {
   constexpr double epsilon = 1e-10;
   // For the first line, we don't need to check
   if (number_lines == 0 || perform_no_check) {
-    lines.emplace_back(new_line);
-    number_lines++;
+    lines[number_lines++] = new_line;
     return true;
   } else {
     // Check if the current line is connected to the last line, since
@@ -64,8 +61,7 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
       if (difference2 < epsilon) {
         new_line.flip_start_end();
       }
-      lines.emplace_back(new_line);
-      number_lines++;
+      lines[number_lines++] = new_line;
       return true;
     } else {
       // In this case, the line is not connected to the polygon
@@ -83,11 +79,11 @@ void Polygon::calculate_centroid() {
   // Determine the mean values of the corner points, all points appear twice
   for (int k = 0; k < DIM; ++k) {
     mean_values[k] =
-        std::transform_reduce(lines.begin(), lines.end(), 0.0, std::plus<>(),
-                              [k](Line& line) {
-                                return line.get_start_point()[k] +
-                                       line.get_end_point()[k];
-                              }) /
+        std::transform_reduce(
+            lines.begin(), lines.begin() + number_lines, 0.0, std::plus<>(),
+            [k](Line& line) {
+              return line.get_start_point()[k] + line.get_end_point()[k];
+            }) /
         (2.0 * number_lines);
   }
   // In the case there are only 3 lines, the centroid is the mean of the corner
@@ -180,7 +176,7 @@ void Polygon::calculate_normal() {
   normal_calculated = true;
 }
 
-std::vector<Line>& Polygon::get_lines() { return lines; }
+std::array<Line, Polygon::MAX_LINES>& Polygon::get_lines() { return lines; }
 
 void Polygon::print(std::ofstream& file, std::array<double, DIM> position) {
   // Print the polygon to the file
