@@ -52,9 +52,9 @@ void Hypercube::construct_polyhedra(double value) {
   int number_polygons = 0;
   for (int i = 0; i < NCUBES; i++) {
     cubes[i].construct_polygons(value);
-    auto& polygons = cubes[i].get_polygons();
+    auto& polygons_cube = cubes[i].get_polygons();
     for (int j = 0; j < cubes[i].get_number_polygons(); j++) {
-      polygons[number_polygons++] = polygons[j];
+      polygons[number_polygons++] = polygons_cube[j];
     }
   }
   check_ambiguity(value);
