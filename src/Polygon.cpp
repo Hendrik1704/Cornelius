@@ -137,8 +137,10 @@ void Polygon::calculate_normal() {
   }
   // Find the normal vector for all the triangles formed from one edge of the
   // centroid
-  std::vector<std::array<double, DIM>> normals(number_lines,
-                                               std::array<double, DIM>{0});
+  std::array<std::array<double, DIM>, MAX_LINES> normals;
+  for (auto& n : normals) {
+    std::fill(n.begin(), n.end(), 0.0);
+  }
   std::array<double, DIM> v_out = {0};  // point always outside
 
   // Arrays a and b to define the vectors of the triangles

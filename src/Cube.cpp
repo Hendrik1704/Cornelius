@@ -81,7 +81,7 @@ void Cube::construct_polygons(double value) {
   if (ambiguous) {
     // Surface is ambiguous, connect the lines to polygons and see how
     // many polygons we have
-    std::vector<bool> not_used(number_lines, true);
+    std::array<bool, NSQUARES * 2> not_used = {true};
     // Keep track of the lines which are used
     int used = 0;
     do {

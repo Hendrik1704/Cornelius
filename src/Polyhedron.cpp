@@ -165,8 +165,10 @@ void Polyhedron::calculate_normal() {
   std::array<double, DIM> a = {0};
   std::array<double, DIM> b = {0};
   std::array<double, DIM> c = {0};
-  std::vector<std::array<double, DIM>> normals(number_tetrahedrons,
-                                               std::array<double, DIM>{0});
+  std::array<std::array<double, DIM>, MAX_POLYGONS*24> normals;
+  for (auto& n : normals) {
+    std::fill(n.begin(), n.end(), 0.0);
+  }
   int index_tetrahedron = 0;
   // Loop over all polygons
   for (int i = 0; i < number_polygons; i++) {

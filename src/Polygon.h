@@ -6,7 +6,6 @@
 #include <cmath>
 #include <fstream>
 #include <numeric>
-#include <vector>
 
 #include "GeneralGeometryElement.h"
 #include "Line.h"

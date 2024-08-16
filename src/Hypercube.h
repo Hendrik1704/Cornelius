@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <numeric>
-#include <vector>
 
 #include "Cube.h"
 #include "GeneralGeometryElement.h"

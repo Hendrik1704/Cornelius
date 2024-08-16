@@ -3,7 +3,6 @@
 
 #include <array>
 #include <iostream>
-#include <vector>
 
 #include "GeneralGeometryElement.h"
 #include "Line.h"

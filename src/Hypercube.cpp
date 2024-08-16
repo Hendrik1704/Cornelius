@@ -61,7 +61,7 @@ void Hypercube::construct_polyhedra(double value) {
   if (ambiguous) {
     // The surface might be ambiguous and we need to connect the polygons and
     // see how many polyhedra we have
-    std::vector<bool> not_used(number_polygons, true);
+    std::array<bool, NCUBES * 10> not_used = {true};
     // Keep track of the used number of lines
     int used = 0;
     do {

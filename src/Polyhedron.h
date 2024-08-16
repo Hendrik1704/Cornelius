@@ -5,7 +5,6 @@
 #include <array>
 #include <cmath>
 #include <numeric>
-#include <vector>
 
 #include "GeneralGeometryElement.h"
 #include "Line.h"
