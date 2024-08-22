@@ -37,7 +37,7 @@ TEST(PolyhedronTest, lines_are_equal) {
   ASSERT_FALSE(polyhedron.lines_are_connected(line1, line3));
 }
 
-TEST(PolyhedronTest, tetrahedron_colume) {
+TEST(PolyhedronTest, tetrahedron_volume) {
   Polyhedron polyhedron;
   std::array<double, 4> v1 = {1, 0, 0, 0};
   std::array<double, 4> v2 = {1, 2, 0, 0};
