@@ -45,6 +45,10 @@ class Cube : public GeneralGeometryElement {
   int x1, x2, x3;              ///< Indices for dimensions.
   std::array<double, DIM> dx;  ///< Delta values for discretization.
 
+  // Temporary array for storing a square
+  std::array<std::array<double, STEPS>, STEPS>
+      square;  ///< 2D array representing a square
+
  public:
   /**
    * @brief Default constructor for the Cube class.
@@ -82,31 +86,45 @@ class Cube : public GeneralGeometryElement {
    * @brief Checks if the cube is ambiguous based on the number of lines.
    * @param number_lines The number of lines in the cube.
    */
-  void check_ambiguity(int number_lines);
+  inline void check_ambiguity(int number_lines) {
+    // Check if any squares may have ambiguous elements
+    for (int i = 0; i < NSQUARES; i++) {
+      if (squares[i].is_ambiguous()) {
+        ambiguous = true;
+        return;
+      }
+    }
+    // If the surface is not ambiguous already, it is still possible to
+    // have a ambiguous case if we have exactly 6 lines, i.e. the surface
+    // elements are at the opposite corners
+    if (number_lines == 6) {
+      ambiguous = true;
+    }
+  }
 
   /**
    * @brief Checks if the cube is ambiguous.
    * @return True if the cube is ambiguous, false otherwise.
    */
-  bool is_ambiguous();
+  inline bool is_ambiguous() { return ambiguous; }
 
   /**
    * @brief Gets the number of polygons in the cube.
    * @return The number of polygons.
    */
-  int get_number_polygons();
+  inline int get_number_polygons() { return number_polygons; }
 
   /**
    * @brief Gets the number of lines in the cube.
    * @return The number of lines.
    */
-  int get_number_lines();
+  inline int get_number_lines() { return number_lines; }
 
   /**
    * @brief Gets the polygons in the cube.
    * @return A reference to the array of polygons.
    */
-  std::array<Polygon, MAX_POLYGONS>& get_polygons();
+  inline std::array<Polygon, MAX_POLYGONS>& get_polygons() { return polygons; }
 };
 
 #endif  // CUBE_H

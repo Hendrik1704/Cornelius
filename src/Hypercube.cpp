@@ -2,7 +2,7 @@
 
 Hypercube::Hypercube() : number_polyhedra(0), ambiguous(false) {}
 
-Hypercube::~Hypercube() {}
+Hypercube::~Hypercube() = default;
 
 void Hypercube::init_hypercube(
     std::array<std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
@@ -15,14 +15,13 @@ void Hypercube::init_hypercube(
 }
 
 int Hypercube::split_to_cubes(double value) {
-  std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS> cube;
   int number_points_below_value = 0;
   int cube_index = 0;
+  double c_v;
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
     // is constant in this cube
     int c_i = i;
-    double c_v;
     for (int j = 0; j < STEPS; j++) {
       c_v = j * dx[i];
       for (int ci1 = 0; ci1 < STEPS; ci1++) {
@@ -108,12 +107,4 @@ void Hypercube::check_ambiguity(int number_points_below_value) {
       ambiguous = true;
     }
   }
-}
-
-int Hypercube::get_number_polyhedra() { return number_polyhedra; }
-
-bool Hypercube::is_ambiguous() { return ambiguous; }
-
-std::array<Polyhedron, Hypercube::MAX_POLYHEDRONS>& Hypercube::get_polyhedra() {
-  return polyhedra;
 }

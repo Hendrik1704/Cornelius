@@ -2,7 +2,7 @@
 
 Cube::Cube() : number_lines(0), number_polygons(0), ambiguous(false) {}
 
-Cube::~Cube() {}
+Cube::~Cube() = default;
 
 void Cube::init_cube(
     std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>& cu,
@@ -11,34 +11,42 @@ void Cube::init_cube(
   const_i = new_const_i;
   const_value = new_const_value;
   dx = new_dx;
-  x1 = x2 = x3 = -1;
-  for (int i = 0; i < DIM; i++) {
-    if (i != new_const_i) {
-      if (x1 < 0) {
-        x1 = i;
-      } else if (x2 < 0) {
-        x2 = i;
-      } else {
-        x3 = i;
-      }
-    }
+  switch (new_const_i) {
+    case 0:
+      x1 = 1;
+      x2 = 2;
+      x3 = 3;
+      break;
+    case 1:
+      x1 = 0;
+      x2 = 2;
+      x3 = 3;
+      break;
+    case 2:
+      x1 = 0;
+      x2 = 1;
+      x3 = 3;
+      break;
+    case 3:
+      x1 = 0;
+      x2 = 1;
+      x3 = 2;
+      break;
+    default:
+      break;
   }
-  number_lines = 0;
-  number_polygons = 0;
+  number_lines = number_polygons = 0;
   ambiguous = false;
 }
 
 void Cube::split_to_squares() {
-  std::array<std::array<double, STEPS>, STEPS> square;
   std::array<int, STEPS> c_i = {const_i, 0};
   std::array<double, STEPS> c_v = {const_value, 0.0};
   int number_squares = 0;
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
     // is constant in this cube
-    if (i == const_i) {
-      continue;
-    } else {
+    if (i != const_i) {
       c_i[1] = i;
       for (int j = 0; j < STEPS; j++) {
         c_v[1] = j * dx[i];
@@ -112,30 +120,4 @@ void Cube::construct_polygons(double value) {
     }
     number_polygons++;
   }
-}
-
-void Cube::check_ambiguity(int number_lines) {
-  // Check if any squares may have ambiguous elements
-  if (std::any_of(squares.begin(), squares.end(),
-                  [](Square& square) { return square.is_ambiguous(); })) {
-    ambiguous = true;
-    return;
-  }
-
-  // If the surface is not ambiguous already, it is still possible to
-  // have a ambiguous case if we have exactly 6 lines, i.e. the surface
-  // elements are at the opposite corners
-  if (number_lines == 6) {
-    ambiguous = true;
-  }
-}
-
-bool Cube::is_ambiguous() { return ambiguous; }
-
-int Cube::get_number_lines() { return number_lines; }
-
-int Cube::get_number_polygons() { return number_polygons; }
-
-std::array<Polygon, Cube::MAX_POLYGONS>& Cube::get_polygons() {
-  return polygons;
 }

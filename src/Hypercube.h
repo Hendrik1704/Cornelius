@@ -42,6 +42,10 @@ class Hypercube : public GeneralGeometryElement {
   bool ambiguous;              ///< Indicates if the hypercube is ambiguous.
   std::array<double, DIM> dx;  ///< Delta values for discretization.
 
+  // Temporary array for storing a cube
+  std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>
+      cube;  ///< 3D array representing a cube
+
  public:
   /**
    * @brief Default constructor for the Hypercube class.
@@ -87,19 +91,21 @@ class Hypercube : public GeneralGeometryElement {
    * @brief Gets the number of polyhedra in the hypercube.
    * @return The number of polyhedra.
    */
-  int get_number_polyhedra();
+  inline int get_number_polyhedra() { return number_polyhedra; }
 
   /**
    * @brief Gets the polyhedra in the hypercube.
    * @return A reference to the array of polyhedra.
    */
-  std::array<Polyhedron, MAX_POLYHEDRONS>& get_polyhedra();
+  inline std::array<Polyhedron, MAX_POLYHEDRONS>& get_polyhedra() {
+    return polyhedra;
+  }
 
   /**
    * @brief Checks if the hypercube is ambiguous.
    * @return True if the hypercube is ambiguous, false otherwise.
    */
-  bool is_ambiguous();
+  inline bool is_ambiguous() { return ambiguous; }
 };
 
 #endif  // HYPERCUBE_H

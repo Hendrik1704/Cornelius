@@ -2,23 +2,35 @@
 
 Polygon::Polygon() {}
 
-Polygon::~Polygon() {}
+Polygon::~Polygon() = default;
 
 void Polygon::init_polygon(int new_const_i) {
   // Copy the new value into the class variable
   const_i = new_const_i;
   // Fix the indices which are not constant
-  x1 = x2 = x3 = -1;
-  for (int i = 0; i < DIM; i++) {
-    if (i != new_const_i) {
-      if (x1 < 0) {
-        x1 = i;
-      } else if (x2 < 0) {
-        x2 = i;
-      } else {
-        x3 = i;
-      }
-    }
+  switch (new_const_i) {
+    case 0:
+      x1 = 1;
+      x2 = 2;
+      x3 = 3;
+      break;
+    case 1:
+      x1 = 0;
+      x2 = 2;
+      x3 = 3;
+      break;
+    case 2:
+      x1 = 0;
+      x2 = 1;
+      x3 = 3;
+      break;
+    case 3:
+      x1 = 0;
+      x2 = 1;
+      x3 = 2;
+      break;
+    default:
+      break;
   }
 
   // Set the flags for normal and centroid calculations to false
@@ -29,7 +41,6 @@ void Polygon::init_polygon(int new_const_i) {
 }
 
 bool Polygon::add_line(Line& new_line, bool perform_no_check) {
-  constexpr double epsilon = 1e-10;
   // For the first line, we don't need to check
   if (number_lines == 0 || perform_no_check) {
     lines[number_lines++] = new_line;
@@ -46,10 +57,10 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
 
     // If start or end point is the same as the end point of previous line,
     // line is connected to polygon and it is added
-    if (difference1 < epsilon || difference2 < epsilon) {
+    if (difference1 < EPSILON || difference2 < EPSILON) {
       // We always want that the start point is connected to end so we
       // flip the start and end in the new line if needed
-      if (difference2 < epsilon) {
+      if (difference2 < EPSILON) {
         new_line.flip_start_end();
       }
       lines[number_lines++] = new_line;
@@ -61,29 +72,20 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
   }
 }
 
-double Polygon::calc_difference(const std::array<double, DIM>& p1,
-                                const std::array<double, DIM>& p2) {
-  // Lambda function to calculate the difference between two points
-  return std::transform_reduce(
-      p1.begin(), p1.end(), p2.begin(), 0.0, std::plus<double>(),
-      [](double a, double b) { return std::abs(a - b); });
-}
-
-int Polygon::get_number_lines() { return number_lines; }
-
 void Polygon::calculate_centroid() {
   // Array of 0s to store the mean values
   std::array<double, DIM> mean_values = {0};
 
   // Determine the mean values of the corner points, all points appear twice
-  for (int k = 0; k < DIM; ++k) {
-    mean_values[k] =
-        std::transform_reduce(
-            lines.begin(), lines.begin() + number_lines, 0.0, std::plus<>(),
-            [k](Line& line) {
-              return line.get_start_point()[k] + line.get_end_point()[k];
-            }) /
-        (2.0 * number_lines);
+  for (int i = 0; i < number_lines; i++) {
+    const auto& start_point = lines[i].get_start_point();
+    const auto& end_point = lines[i].get_end_point();
+    for (int k = 0; k < DIM; ++k) {
+      mean_values[k] += start_point[k] + end_point[k];
+    }
+  }
+  for (int i = 0; i < DIM; i++) {
+    mean_values[i] /= (2.0 * number_lines);
   }
   // In the case there are only 3 lines, the centroid is the mean of the corner
   // points and the Polygon is on a plane
@@ -99,33 +101,30 @@ void Polygon::calculate_centroid() {
   // Array to store the areas of the triangles
   std::array<double, DIM> sum_up = {0};
   double sum_down = 0.0;  // Sum of the areas of the triangles
-  // Arrays a and b to store the vectors of the triangles
-  std::array<double, DIM> a;
-  std::array<double, DIM> b;
-  // Centroid of the triangle (always on the plane)
-  std::array<double, DIM> triangle_centroid;
   for (int l = 0; l < number_lines; l++) {
+    const auto& line_start = lines[l].get_start_point();
+    const auto& line_end = lines[l].get_end_point();
     // Form the vectors of the triangle
     for (int j = 0; j < DIM; j++) {
-      a[j] = lines[l].get_start_point()[j] - mean_values[j];
-      b[j] = lines[l].get_end_point()[j] - mean_values[j];
-      triangle_centroid[j] = (lines[l].get_start_point()[j] +
-                              lines[l].get_end_point()[j] + mean_values[j]) /
-                             3.0;
+      a[j] = line_start[j] - mean_values[j];
+      b[j] = line_end[j] - mean_values[j];
+      triangle_centroid[j] =
+          (line_start[j] + line_end[j] + mean_values[j]) / 3.0;
     }
     // Calculate the area of the triangle
     double A_l = 0.5 * std::sqrt(std::pow(a[x2] * b[x3] - a[x3] * b[x2], 2.0) +
                                  std::pow(a[x1] * b[x3] - a[x3] * b[x1], 2.0) +
                                  std::pow(a[x2] * b[x1] - a[x1] * b[x2], 2.0));
     // Store the area and update the total area
-    std::transform(
-        sum_up.begin(), sum_up.end(), triangle_centroid.begin(), sum_up.begin(),
-        [A_l](double sum, double coord) { return sum + A_l * coord; });
+    for (int i = 0; i < DIM; ++i) {
+      sum_up[i] += A_l * triangle_centroid[i];
+    }
     sum_down += A_l;
   }
   // Determine centroid as a weighted average of the centroids of the triangles
-  std::transform(sum_up.begin(), sum_up.end(), centroid.begin(),
-                 [sum_down](double sum) { return sum / sum_down; });
+  for (int i = 0; i < DIM; i++) {
+    centroid[i] = sum_up[i] / sum_down;
+  }
   centroid_calculated = true;
 }
 
@@ -136,23 +135,20 @@ void Polygon::calculate_normal() {
   }
   // Find the normal vector for all the triangles formed from one edge of the
   // centroid
-  std::array<std::array<double, DIM>, MAX_LINES> normals;
-  for (auto& n : normals) {
-    std::fill(n.begin(), n.end(), 0.0);
+  for (int i = 0; i < number_lines; i++) {
+    for (int j = 0; j < DIM; j++) {
+      normals[i][j] = 0.0;
+    }
   }
   std::array<double, DIM> v_out = {0};  // point always outside
-
-  // Arrays a and b to define the vectors of the triangles
-  std::array<double, DIM> a;
-  std::array<double, DIM> b;
   // Loop over all triangles
   for (int i = 0; i < number_lines; i++) {
-    a = lines[i].get_start_point();
-    b = lines[i].get_end_point();
+    const auto& l1 = lines[i].get_start_point();
+    const auto& l2 = lines[i].get_end_point();
 
     for (int j = 0; j < DIM; j++) {
-      a[j] -= centroid[j];
-      b[j] -= centroid[j];
+      a[j] = l1[j] - centroid[j];
+      b[j] = l2[j] - centroid[j];
     }
     // Calculate the normal vector of the triangle with cross product
     normals[i][x1] = 0.5 * (a[x2] * b[x3] - a[x3] * b[x2]);
@@ -162,22 +158,23 @@ void Polygon::calculate_normal() {
 
     // Construct the vector pointing outside the polygon
     const auto& o = lines[i].get_outside_point();
-    std::transform(o.begin(), o.end(), centroid.begin(), v_out.begin(),
-                   std::minus<>());
+    for (int j = 0; j < DIM; ++j) {
+      v_out[j] = o[j] - centroid[j];
+    }
     // Check if the normal is pointing in the correct direction
     flip_normal_if_needed(normals[i], v_out);
   }
   // The normal is the sum of the normals of the triangles
-  std::fill(normal.begin(), normal.end(), 0.0);
-  for (const auto& n : normals) {
+  for (int i = 0; i < DIM; i++) {
+    normal[i] = 0.0;
+  }
+  for (int i = 0; i < number_lines; i++) {
     for (int j = 0; j < DIM; ++j) {
-      normal[j] += n[j];
+      normal[j] += normals[i][j];
     }
   }
   normal_calculated = true;
 }
-
-std::array<Line, Polygon::MAX_LINES>& Polygon::get_lines() { return lines; }
 
 void Polygon::print(std::ofstream& file, std::array<double, DIM> position) {
   // Print the polygon to the file

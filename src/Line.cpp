@@ -31,8 +31,7 @@ void Line::init_line(
   }
 
   // Set the flags for normal and centroid calculations to false
-  normal_calculated = false;
-  centroid_calculated = false;
+  normal_calculated = centroid_calculated = false;
 }
 
 void Line::calculate_normal() {
@@ -48,32 +47,16 @@ void Line::calculate_normal() {
 
   // Check if the normal is pointing in the correct direction
   std::array<double, DIM> reference_normal;
-  std::transform(out.begin(), out.end(), centroid.begin(),
-                 reference_normal.begin(),
-                 [](double out_val, double centroid_val) {
-                   return out_val - centroid_val;
-                 });
+  for (int i = 0; i < DIM; i++) {
+    reference_normal[i] = out[i] - centroid[i];
+  }
   flip_normal_if_needed(normal, reference_normal);
   normal_calculated = true;
 }
 
 void Line::calculate_centroid() {
-  std::transform(corners[0].begin(), corners[0].end(), corners[1].begin(),
-                 centroid.begin(),
-                 [](double a, double b) { return 0.5 * (a + b); });
+  for (int i = 0; i < DIM; i++) {
+    centroid[i] = 0.5 * (corners[0][i] + corners[1][i]);
+  }
   centroid_calculated = true;
-}
-
-void Line::flip_start_end() { std::swap(start_point, end_point); }
-
-std::array<double, GeneralGeometryElement::DIM>& Line::get_start_point() {
-  return corners[start_point];
-}
-
-std::array<double, GeneralGeometryElement::DIM>& Line::get_end_point() {
-  return corners[end_point];
-}
-
-std::array<double, GeneralGeometryElement::DIM>& Line::get_outside_point() {
-  return out;
 }

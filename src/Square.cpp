@@ -2,7 +2,7 @@
 
 Square::Square() : ambiguous(false) {}
 
-Square::~Square() {}
+Square::~Square() = default;
 
 void Square::init_square(
     std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>& sq,
@@ -18,8 +18,7 @@ void Square::init_square(
       (x1 < 0 ? x1 : x2) = i;
     }
   }
-  number_cuts = 0;
-  number_lines = 0;
+  number_cuts = number_lines = 0;
   ambiguous = false;
 }
 
@@ -46,9 +45,6 @@ void Square::construct_lines(double value) {
     find_outside(value);
   }
   // Then we go through the cut points and form the line elements
-  std::array<std::array<double, DIM>, SQUARE_DIM> points_temp;
-  std::array<double, DIM> out_temp;
-
   bool toggle = false;
   for (int i = 0; i < number_cuts; i++) {
     int toggle_index = toggle ? 1 : 0;
@@ -70,14 +66,6 @@ void Square::construct_lines(double value) {
       lines[number_lines++].init_line(points_temp, out_temp, const_i);
     }
     toggle = !toggle;  // Toggle between 0 and 1
-  }
-}
-
-void Square::add_cut(const std::array<double, SQUARE_DIM>& cut) {
-  if (number_cuts < MAX_POINTS) {
-    cuts[number_cuts++] = cut;
-  } else {
-    std::cerr << "Error: Maximum number of cuts exceeded." << std::endl;
   }
 }
 
@@ -150,9 +138,8 @@ void Square::find_outside(double value) {
     // If both value_middle and (0,0) are above or below the criterion
     // the cuts should be like // and we have to switch order in cuts
     // Determine if cuts need to be swapped
-    bool need_swap = (points[0][0] < value && value_middle < value) ||
-                     (points[0][0] > value && value_middle > value);
-    if (need_swap) {
+    if ((points[0][0] < value && value_middle < value) ||
+        (points[0][0] > value && value_middle > value)) {
       std::swap(cuts[1], cuts[2]);
     }
 
@@ -179,12 +166,10 @@ void Square::find_outside(double value) {
     }
   } else {
     // This is the normal case (not ambiguous)
-    for (auto& row : out) {
-      std::fill(row.begin(), row.end(), 0.0);
-    }
     int number_out = 0;
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 2; j++) {
+        out[i][j] = 0.0;
         if (points[i][j] < value) {
           out[0][0] += i * dx[x1];
           out[0][1] += j * dx[x2];
@@ -193,16 +178,11 @@ void Square::find_outside(double value) {
       }
     }
     if (number_out > 0) {
-      for (auto& elem : out) {
-        std::transform(elem.begin(), elem.end(), elem.begin(),
-                       [number_out](double val) { return val / number_out; });
+      for (int i = 0; i < SQUARE_DIM; i++) {
+        for (int j = 0; j < SQUARE_DIM; j++) {
+          out[i][j] /= number_out;
+        }
       }
     }
   }
 }
-
-bool Square::is_ambiguous() { return ambiguous; }
-
-int Square::get_number_lines() { return number_lines; }
-
-std::array<Line, Square::MAX_LINES>& Square::get_lines() { return lines; }

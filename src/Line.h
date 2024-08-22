@@ -64,7 +64,7 @@ class Line : public GeneralGeometryElement {
    * This method swaps the line's start and end points to reverse the direction
    * of the line.
    */
-  void flip_start_end();
+  inline void flip_start_end() { std::swap(start_point, end_point); }
 
   /**
    * @brief Calculates the normal vector of the line.
@@ -87,21 +87,27 @@ class Line : public GeneralGeometryElement {
    *
    * @return Reference to the array representing the start point
    */
-  std::array<double, GeneralGeometryElement::DIM>& get_start_point();
+  inline std::array<double, GeneralGeometryElement::DIM>& get_start_point() {
+    return corners[start_point];
+  }
 
   /**
    * @brief Retrieves the end point of the line in 4D.
    *
    * @return Reference to the array representing the end point
    */
-  std::array<double, GeneralGeometryElement::DIM>& get_end_point();
+  inline std::array<double, GeneralGeometryElement::DIM>& get_end_point() {
+    return corners[end_point];
+  }
 
   /**
    * @brief Retrieves the point which is always outside in 4D.
    *
    * @return Reference to the array representing the outside point
    */
-  std::array<double, GeneralGeometryElement::DIM>& get_outside_point();
+  inline std::array<double, GeneralGeometryElement::DIM>& get_outside_point() {
+    return out;
+  }
 };
 
 #endif  // LINE_H

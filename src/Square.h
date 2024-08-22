@@ -45,6 +45,10 @@ class Square : public GeneralGeometryElement {
   std::array<Line, MAX_LINES> lines;  ///< Lines in the square.
   bool ambiguous;                     ///< Indicates if the square is ambiguous.
 
+  std::array<std::array<double, DIM>, SQUARE_DIM>
+      points_temp;                   ///< Temporary points.
+  std::array<double, DIM> out_temp;  ///< Temporary outside point.
+
  public:
   /**
    * @brief Default constructor for the Square class.
@@ -79,7 +83,13 @@ class Square : public GeneralGeometryElement {
    * @param cut A `std::array` of size `SQUARE_DIM` representing the cut point
    * coordinates.
    */
-  void add_cut(const std::array<double, SQUARE_DIM>& cut);
+  inline void add_cut(const std::array<double, SQUARE_DIM>& cut) {
+    if (number_cuts < MAX_POINTS) {
+      cuts[number_cuts++] = cut;
+    } else {
+      std::cerr << "Error: Maximum number of cuts exceeded." << std::endl;
+    }
+  }
 
   /**
    * @brief Determines the ends of edges based on a given value.
@@ -110,19 +120,19 @@ class Square : public GeneralGeometryElement {
    * @brief Checks if the square is ambiguous.
    * @return True if the square is ambiguous, false otherwise.
    */
-  bool is_ambiguous();
+  inline bool is_ambiguous() { return ambiguous; }
 
   /**
    * @brief Gets the number of lines in the square.
    * @return The number of lines.
    */
-  int get_number_lines();
+  inline int get_number_lines() { return number_lines; }
 
   /**
    * @brief Gets the lines in the square.
    * @return A reference to the array of lines.
    */
-  std::array<Line, MAX_LINES>& get_lines();
+  inline std::array<Line, MAX_LINES>& get_lines() { return lines; }
 };
 
 #endif  // SQUARE_H

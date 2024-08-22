@@ -26,6 +26,15 @@ class Polygon : public GeneralGeometryElement {
   int x1, x2, x3;  ///< Indices representing the polygon's dimensions
   int const_i;     ///< Constant index for the polygon
 
+  // Arrays a and b to store the vectors of the triangles
+  std::array<double, DIM> a;                  ///< Vector a of the triangle
+  std::array<double, DIM> b;                  ///< Vector b of the triangle
+  std::array<double, DIM> triangle_centroid;  ///< Centroid of the triangle
+
+  std::array<std::array<double, DIM>, MAX_LINES> normals;  ///< Normal vectors
+
+  static constexpr double EPSILON = 1e-10;  ///< Small value for epsilon.
+
  public:
   /**
    * @brief Default constructor for the Polygon class.
@@ -65,15 +74,21 @@ class Polygon : public GeneralGeometryElement {
    *
    * @return The difference between the two points.
    */
-  double calc_difference(const std::array<double, DIM>& p1,
-                         const std::array<double, DIM>& p2);
+  inline double calc_difference(const std::array<double, DIM>& p1,
+                                const std::array<double, DIM>& p2) {
+    double result = 0;
+    for (int i = 0; i < DIM; ++i) {
+      result += std::abs(p1[i] - p2[i]);
+    }
+    return result;
+  }
 
   /**
    * @brief Gets the number of lines in the polygon.
    *
    * @return The number of lines in the polygon.
    */
-  int get_number_lines();
+  inline int get_number_lines() { return number_lines; }
 
   /**
    * @brief Calculates the normal vector of the polygon.
@@ -95,7 +110,7 @@ class Polygon : public GeneralGeometryElement {
    *
    * @return A reference to the array of lines in the polygon.
    */
-  std::array<Line, MAX_LINES>& get_lines();
+  inline std::array<Line, MAX_LINES>& get_lines() { return lines; }
 
   /**
    * @brief Prints the triangles formed from the polygon into a given file.

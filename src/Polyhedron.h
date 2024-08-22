@@ -23,10 +23,22 @@ class Polyhedron : public GeneralGeometryElement {
  private:
   static constexpr int MAX_POLYGONS =
       24;  ///< Maximum number of polygons in a polyhedron
+  static constexpr double INV_SIX = 1.0 / 6.0;  ///< Inverse of six.
+  static constexpr double EPSILON = 1e-10;  ///< Epsilon value for comparison
   std::array<Polygon, MAX_POLYGONS>
       polygons;             ///< Array of polygons in the polyhedron
   int number_polygons;      ///< Number of polygons in the polyhedron
   int number_tetrahedrons;  ///< Number of tetrahedrons in the polyhedron
+
+  // Arrays for temporary storage
+  std::array<double, DIM> Vout;  ///< Point outside the surface
+  std::array<double, DIM> a;     ///< Vector a of the triangle
+  std::array<double, DIM> b;     ///< Vector b of the triangle
+  std::array<double, DIM> c;     ///< Centroid of the triangle
+  std::array<double, DIM> n;     ///< Normal vector of the triangle
+  std::array<double, DIM> cm_i;  ///< Center of mass of the tetrahedron
+  std::array<std::array<double, DIM>, MAX_POLYGONS * 24>
+      normals;  ///< Normal vectors
 
  public:
   /**
@@ -101,14 +113,14 @@ class Polyhedron : public GeneralGeometryElement {
    *
    * @return The number of polygons in the polyhedron.
    */
-  int get_number_polygons() { return number_polygons; }
+  inline int get_number_polygons() { return number_polygons; }
 
   /**
    * @brief Retrieves the number of tetrahedrons in the polyhedron.
    *
    * @return The number of tetrahedrons in the polyhedron.
    */
-  int get_number_tetrahedrons() { return number_tetrahedrons; }
+  inline int get_number_tetrahedrons() { return number_tetrahedrons; }
 };
 
 #endif  // POLYHEDRON_H
