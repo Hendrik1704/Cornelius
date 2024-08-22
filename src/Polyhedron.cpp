@@ -43,9 +43,9 @@ bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
 
 bool Polyhedron::lines_are_connected(Line& line1, Line& line2) {
   // Get the start and end points of the lines
-  auto& start_point1 = line1.get_start_point();
-  auto& end_point1 = line1.get_end_point();
-  auto& start_point2 = line2.get_start_point();
+  const auto& start_point1 = line1.get_start_point();
+  const auto& end_point1 = line1.get_end_point();
+  const auto& start_point2 = line2.get_start_point();
 
   // Check if any point pairs are close enough
   double difference1 = 0.0;
@@ -65,12 +65,12 @@ void Polyhedron::tetrahedron_volume(std::array<double, DIM>& v1,
                                     std::array<double, DIM>& v3,
                                     std::array<double, DIM>& n) {
   // Calculate the volume of the tetrahedron
-  double bc01 = v2[0] * v3[1] - v2[1] * v3[0];
-  double bc02 = v2[0] * v3[2] - v2[2] * v3[0];
-  double bc03 = v2[0] * v3[3] - v2[3] * v3[0];
-  double bc12 = v2[1] * v3[2] - v2[2] * v3[1];
-  double bc13 = v2[1] * v3[3] - v2[3] * v3[1];
-  double bc23 = v2[2] * v3[3] - v2[3] * v3[2];
+  const double bc01 = v2[0] * v3[1] - v2[1] * v3[0];
+  const double bc02 = v2[0] * v3[2] - v2[2] * v3[0];
+  const double bc03 = v2[0] * v3[3] - v2[3] * v3[0];
+  const double bc12 = v2[1] * v3[2] - v2[2] * v3[1];
+  const double bc13 = v2[1] * v3[3] - v2[3] * v3[1];
+  const double bc23 = v2[2] * v3[3] - v2[3] * v3[2];
   n[0] = (v1[1] * bc23 - v1[2] * bc13 + v1[3] * bc12) * INV_SIX;
   n[1] = -(v1[0] * bc23 - v1[2] * bc03 + v1[3] * bc02) * INV_SIX;
   n[2] = (v1[0] * bc13 - v1[1] * bc03 + v1[3] * bc01) * INV_SIX;
@@ -82,27 +82,31 @@ void Polyhedron::calculate_centroid() {
   std::array<double, DIM> mean_values = {0};
 
   // Determine the mean values of the corner points, all points appear twice
-  for (int k = 0; k < DIM; k++) {
-    for (int i = 0; i < number_polygons; i++) {
-      auto& lines = polygons[i].get_lines();
-      for (int j = 0; j < polygons[i].get_number_lines(); j++) {
-        mean_values[k] +=
-            lines[j].get_start_point()[k] + lines[j].get_end_point()[k];
+  for (int i = 0; i < number_polygons; i++) {
+    auto& lines = polygons[i].get_lines();
+    for (int j = 0; j < polygons[i].get_number_lines(); j++) {
+      const auto& start_point = lines[j].get_start_point();
+      const auto& end_point = lines[j].get_end_point();
+      for (int k = 0; k < DIM; k++) {
+        mean_values[k] += start_point[k] + end_point[k];
       }
     }
+  }
+  for (int k = 0; k < DIM; k++) {
     mean_values[k] /= (2.0 * number_tetrahedrons);
   }
+
   // Temporary arrays
   std::array<double, DIM> sum_up = {0};
   double sum_down = 0.0;
   // Loop over all polygons
   for (int i = 0; i < number_polygons; ++i) {
     auto& lines = polygons[i].get_lines();
-    auto& cent = polygons[i].get_centroid();
+    const auto& cent = polygons[i].get_centroid();
     // Loop over all lines in the polygon
     for (int j = 0; j < polygons[i].get_number_lines(); j++) {
-      auto& start_point = lines[j].get_start_point();
-      auto& end_point = lines[j].get_end_point();
+      const auto& start_point = lines[j].get_start_point();
+      const auto& end_point = lines[j].get_end_point();
       // Center of mass of the tetrahedron
       for (int k = 0; k < DIM; k++) {
         cm_i[k] =
@@ -114,7 +118,7 @@ void Polyhedron::calculate_centroid() {
       }
       // Calculate the volume of the tetrahedron
       tetrahedron_volume(a, b, c, n);
-      double V_i =
+      const double V_i =
           std::sqrt(std::inner_product(n.begin(), n.end(), n.begin(), 0.0));
       // Add the contribution to the sum
       for (int i = 0; i < DIM; i++) {
@@ -168,10 +172,8 @@ void Polyhedron::calculate_normal() {
   // The normal is the sum of the normals of the tetrahedrons
   for (int i = 0; i < DIM; i++) {
     normal[i] = 0.0;
-  }
-  for (int i = 0; i < number_tetrahedrons; i++) {
-    for (int j = 0; j < DIM; j++) {
-      normal[j] += normals[i][j];
+    for (int j = 0; j < number_tetrahedrons; j++) {
+      normal[i] += normals[j][i];
     }
   }
   normal_calculated = true;

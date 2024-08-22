@@ -98,8 +98,8 @@ class GeneralGeometryElement {
   inline void flip_normal_if_needed(std::array<double, DIM>& normal,
                                     std::array<double, DIM>& reference_normal) {
     // Compute the dot product of the two normals
-    double dot_product = std::inner_product(normal.begin(), normal.end(),
-                                            reference_normal.begin(), 0.0);
+    const double dot_product = std::inner_product(
+        normal.begin(), normal.end(), reference_normal.begin(), 0.0);
 
     // If the dot product is negative, flip the normal
     if (dot_product < 0) {

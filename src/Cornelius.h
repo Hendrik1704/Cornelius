@@ -172,7 +172,7 @@ class Cornelius : public GeneralGeometryElement {
    *
    * @return The number of surface elements.
    */
-  int get_number_elements();
+  inline int get_number_elements() { return number_elements; }
 
   /**
    * @brief Normal vectors as a 2d table with the following number of indices

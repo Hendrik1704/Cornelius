@@ -32,10 +32,8 @@ void Polygon::init_polygon(int new_const_i) {
     default:
       break;
   }
-
   // Set the flags for normal and centroid calculations to false
   normal_calculated = centroid_calculated = false;
-
   // Reset the number of lines in the polygon
   number_lines = 0;
 }
@@ -52,8 +50,12 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
     const auto& end_point = new_line.get_end_point();
     const auto& last_end_point = lines[number_lines - 1].get_end_point();
 
-    double difference1 = calc_difference(start_point, last_end_point);
-    double difference2 = calc_difference(end_point, last_end_point);
+    double difference1 = 0.0;
+    double difference2 = 0.0;
+    for (int i = 0; i < DIM; ++i) {
+      difference1 += std::abs(start_point[i] - last_end_point[i]);
+      difference2 += std::abs(end_point[i] - last_end_point[i]);
+    }
 
     // If start or end point is the same as the end point of previous line,
     // line is connected to polygon and it is added
@@ -112,9 +114,10 @@ void Polygon::calculate_centroid() {
           (line_start[j] + line_end[j] + mean_values[j]) / 3.0;
     }
     // Calculate the area of the triangle
-    double A_l = 0.5 * std::sqrt(std::pow(a[x2] * b[x3] - a[x3] * b[x2], 2.0) +
-                                 std::pow(a[x1] * b[x3] - a[x3] * b[x1], 2.0) +
-                                 std::pow(a[x2] * b[x1] - a[x1] * b[x2], 2.0));
+    const double A_l =
+        0.5 * std::sqrt(std::pow(a[x2] * b[x3] - a[x3] * b[x2], 2.0) +
+                        std::pow(a[x1] * b[x3] - a[x3] * b[x1], 2.0) +
+                        std::pow(a[x2] * b[x1] - a[x1] * b[x2], 2.0));
     // Store the area and update the total area
     for (int i = 0; i < DIM; ++i) {
       sum_up[i] += A_l * triangle_centroid[i];

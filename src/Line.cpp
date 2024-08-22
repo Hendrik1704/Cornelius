@@ -46,7 +46,6 @@ void Line::calculate_normal() {
   normal[const_i[1]] = 0.0;
 
   // Check if the normal is pointing in the correct direction
-  std::array<double, DIM> reference_normal;
   for (int i = 0; i < DIM; i++) {
     reference_normal[i] = out[i] - centroid[i];
   }

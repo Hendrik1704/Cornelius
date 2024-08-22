@@ -47,13 +47,13 @@ void Square::construct_lines(double value) {
   // Then we go through the cut points and form the line elements
   bool toggle = false;
   for (int i = 0; i < number_cuts; i++) {
-    int toggle_index = toggle ? 1 : 0;
+    const int toggle_index = toggle ? 1 : 0;
 
     points_temp[toggle_index][x1] = cuts[i][0];
     points_temp[toggle_index][x2] = cuts[i][1];
 
-    int c0 = const_i[0];
-    int c1 = const_i[1];
+    const int c0 = const_i[0];
+    const int c1 = const_i[1];
     points_temp[toggle_index][c0] = const_value[0];
     points_temp[toggle_index][c1] = const_value[1];
     // If we inserted both endpoints we insert the outside point
@@ -70,10 +70,10 @@ void Square::construct_lines(double value) {
 }
 
 void Square::ends_of_edge(double value) {
-  double top_left = points[0][0] - value;
-  double top_right = points[0][1] - value;
-  double bottom_left = points[1][0] - value;
-  double bottom_right = points[1][1] - value;
+  const double top_left = points[0][0] - value;
+  const double top_right = points[0][1] - value;
+  const double bottom_left = points[1][0] - value;
+  const double bottom_right = points[1][1] - value;
   // Edge 1
   if (top_left * bottom_left < 0) {
     add_cut(std::array<double, SQUARE_DIM>{

@@ -26,9 +26,10 @@ class Line : public GeneralGeometryElement {
   int start_point;  ///< Index of the start point
   int end_point;    ///< Index of the end point
   std::array<std::array<double, DIM>, LINE_DIM>
-      corners;                              ///< Array of line corners
-  std::array<double, DIM> out;              ///< Output point of the line
-  std::array<int, DIM - LINE_DIM> const_i;  ///< Constant indices for the line
+      corners;                               ///< Array of line corners
+  std::array<double, DIM> out;               ///< Output point of the line
+  std::array<int, DIM - LINE_DIM> const_i;   ///< Constant indices for the line
+  std::array<double, DIM> reference_normal;  ///< Reference normal vector
 
  public:
   /**

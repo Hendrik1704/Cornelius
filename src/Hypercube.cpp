@@ -21,7 +21,7 @@ int Hypercube::split_to_cubes(double value) {
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
     // is constant in this cube
-    int c_i = i;
+    const int c_i = i;
     for (int j = 0; j < STEPS; j++) {
       c_v = j * dx[i];
       for (int ci1 = 0; ci1 < STEPS; ci1++) {
@@ -45,13 +45,13 @@ int Hypercube::split_to_cubes(double value) {
 }
 
 void Hypercube::construct_polyhedra(double value) {
-  int number_points_below_value = split_to_cubes(value);
+  const int number_points_below_value = split_to_cubes(value);
 
   // Store the reference to the polygons
   int number_polygons = 0;
   for (int i = 0; i < NCUBES; i++) {
     cubes[i].construct_polygons(value);
-    auto& polygons_cube = cubes[i].get_polygons();
+    const auto& polygons_cube = cubes[i].get_polygons();
     for (int j = 0; j < cubes[i].get_number_polygons(); j++) {
       polygons[number_polygons++] = polygons_cube[j];
     }

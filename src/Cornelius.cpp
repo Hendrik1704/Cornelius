@@ -85,8 +85,8 @@ void Cornelius::surface_3d(
     return;
   }
   // This cube has surface elements, start constructing the cube
-  int c_i = 0;
-  double c_v = 0.0;
+  const int c_i = 0;
+  const double c_v = 0.0;
   cube_3d.init_cube(cu, c_i, c_v, dx);
   // Find the elements
   cube_3d.construct_polygons(value);
@@ -145,8 +145,6 @@ void Cornelius::find_surface_4d(
     }
   }
 }
-
-int Cornelius::get_number_elements() { return number_elements; }
 
 std::vector<std::vector<double>> Cornelius::get_normals() {
   std::vector<std::vector<double>> normals_vector(
