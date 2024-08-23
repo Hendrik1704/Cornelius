@@ -13,6 +13,9 @@
  * This class provides functionality to manage and manipulate geometric
  * elements, including methods for calculating normals and centroids, and
  * flipping the orientation of the normal if needed.
+ *
+ * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ *
  */
 class GeneralGeometryElement {
  protected:

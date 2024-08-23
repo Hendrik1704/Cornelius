@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <numeric>
+#include <vector>
 
 #include "Cube.h"
 #include "GeneralGeometryElement.h"
@@ -18,7 +19,7 @@
  * elements.
  *
  * 13.10.2011 Hannu Holopainen
- * 016.08.2024 Hendrik Roch, Haydar Mehryar
+ * 23.08.2024 Hendrik Roch, Haydar Mehryar
  */
 class Hypercube : public GeneralGeometryElement {
  private:
@@ -30,9 +31,8 @@ class Hypercube : public GeneralGeometryElement {
 
   std::array<std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
              STEPS>
-      hypercube;  ///< 4D array representing the hypercube.
-  std::array<Polyhedron, MAX_POLYHEDRONS>
-      polyhedra;  ///< Array to store the polyhedra in the hypercube.
+      hypercube;                      ///< 4D array representing the hypercube.
+  std::vector<Polyhedron> polyhedra;  ///< Vector to store the polyhedra.
   std::array<Cube, NCUBES>
       cubes;  ///< Array to store the cubes in the hypercube.
   std::array<Polygon, NCUBES * 10>
@@ -97,9 +97,7 @@ class Hypercube : public GeneralGeometryElement {
    * @brief Gets the polyhedra in the hypercube.
    * @return A reference to the array of polyhedra.
    */
-  inline std::array<Polyhedron, MAX_POLYHEDRONS>& get_polyhedra() {
-    return polyhedra;
-  }
+  inline std::vector<Polyhedron>& get_polyhedra() { return polyhedra; }
 
   /**
    * @brief Checks if the hypercube is ambiguous.

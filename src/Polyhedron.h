@@ -5,6 +5,7 @@
 #include <array>
 #include <cmath>
 #include <numeric>
+#include <vector>
 
 #include "GeneralGeometryElement.h"
 #include "Line.h"
@@ -18,6 +19,9 @@
  * methods for initializing the polyhedron, adding polygons, checking line
  * equality, calculating the volume of tetrahedrons, and calculating the
  * centroid and normal.
+ *
+ * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ *
  */
 class Polyhedron : public GeneralGeometryElement {
  private:
@@ -25,8 +29,8 @@ class Polyhedron : public GeneralGeometryElement {
       24;  ///< Maximum number of polygons in a polyhedron
   static constexpr double INV_SIX = 1.0 / 6.0;  ///< Inverse of six.
   static constexpr double EPSILON = 1e-10;  ///< Epsilon value for comparison
-  std::array<Polygon, MAX_POLYGONS>
-      polygons;             ///< Array of polygons in the polyhedron
+  std::vector<Polygon>
+      polygons;             ///< Vector to store the polygons in the polyhedron
   int number_polygons;      ///< Number of polygons in the polyhedron
   int number_tetrahedrons;  ///< Number of tetrahedrons in the polyhedron
 

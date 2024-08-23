@@ -55,7 +55,7 @@
  * code by Pasi Huovinen.
  *
  * 23.04.2012 Hannu Holopainen
- * 16.08.2024 Hendrik Roch, Haydar Mehryar
+ * 23.08.2024 Hendrik Roch, Haydar Mehryar
  *
  */
 class Cornelius : public GeneralGeometryElement {

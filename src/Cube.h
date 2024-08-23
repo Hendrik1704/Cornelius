@@ -3,6 +3,7 @@
 
 #include <array>
 #include <iostream>
+#include <vector>
 
 #include "GeneralGeometryElement.h"
 #include "Line.h"
@@ -20,7 +21,8 @@
  * ambiguity.
  *
  * 13.10.2011 Hannu Holopainen
- * 16.08.2024 Hendrik Roch, Haydar Mehryar
+ * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ *
  */
 class Cube : public GeneralGeometryElement {
  private:
@@ -31,9 +33,8 @@ class Cube : public GeneralGeometryElement {
   static constexpr int MAX_POLYGONS = 8;  ///< Maximum number of polygons.
 
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>
-      cube;  ///< 3D array representing the cube.
-  std::array<Polygon, MAX_POLYGONS>
-      polygons;                          ///< Array of polygons in the cube.
+      cube;                       ///< 3D array representing the cube.
+  std::vector<Polygon> polygons;  ///< Vector to store the polygons in the cube.
   std::array<Square, NSQUARES> squares;  ///< Array of squares in the cube.
   std::array<Line, NSQUARES * 2> lines;  ///< Array of lines in the squares.
 
@@ -124,7 +125,7 @@ class Cube : public GeneralGeometryElement {
    * @brief Gets the polygons in the cube.
    * @return A reference to the array of polygons.
    */
-  inline std::array<Polygon, MAX_POLYGONS>& get_polygons() { return polygons; }
+  inline std::vector<Polygon>& get_polygons() { return polygons; }
 };
 
 #endif  // CUBE_H

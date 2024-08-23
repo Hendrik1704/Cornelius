@@ -1,6 +1,9 @@
 #include "Hypercube.h"
 
-Hypercube::Hypercube() : number_polyhedra(0), ambiguous(false) {}
+Hypercube::Hypercube() : number_polyhedra(0), ambiguous(false) {
+  polyhedra.reserve(MAX_POLYHEDRONS);
+  polyhedra.emplace_back();  // Default to construct 1 Polyhedron
+}
 
 Hypercube::~Hypercube() = default;
 
@@ -18,6 +21,7 @@ int Hypercube::split_to_cubes(double value) {
   int number_points_below_value = 0;
   int cube_index = 0;
   double c_v;
+  double hypercube_value;
   for (int i = 0; i < DIM; i++) {
     // i is the index which is kept constant, thus we ignore the index which
     // is constant in this cube
@@ -27,14 +31,24 @@ int Hypercube::split_to_cubes(double value) {
       for (int ci1 = 0; ci1 < STEPS; ci1++) {
         for (int ci2 = 0; ci2 < STEPS; ci2++) {
           for (int ci3 = 0; ci3 < STEPS; ci3++) {
-            cube[ci1][ci2][ci3] = (i == 0)   ? hypercube[j][ci1][ci2][ci3]
-                                  : (i == 1) ? hypercube[ci1][j][ci2][ci3]
-                                  : (i == 2) ? hypercube[ci1][ci2][j][ci3]
-                                             : hypercube[ci1][ci2][ci3][j];
-
-            if ((i == 0) && (hypercube[j][ci1][ci2][ci3] < value)) {
-              number_points_below_value++;
+            switch (i) {
+              case 0:
+                hypercube_value = hypercube[j][ci1][ci2][ci3];
+                if (hypercube_value < value) {
+                  number_points_below_value++;
+                }
+                break;
+              case 1:
+                hypercube_value = hypercube[ci1][j][ci2][ci3];
+                break;
+              case 2:
+                hypercube_value = hypercube[ci1][ci2][j][ci3];
+                break;
+              default:
+                hypercube_value = hypercube[ci1][ci2][ci3][j];
+                break;
             }
+            cube[ci1][ci2][ci3] = hypercube_value;
           }
         }
       }
@@ -64,6 +78,10 @@ void Hypercube::construct_polyhedra(double value) {
     // Keep track of the used number of lines
     int used = 0;
     do {
+      // Ensure there's space in the vector
+      if (number_polyhedra >= polyhedra.size()) {
+        polyhedra.emplace_back();  // Add a new Polyhedron if needed
+      }
       polyhedra[number_polyhedra].init_polyhedron();
       // Go through all the polygons and try to add them to the polyhedron
       for (int i = 0; i < number_polygons; i++) {
@@ -82,6 +100,9 @@ void Hypercube::construct_polyhedra(double value) {
   } else {
     // Here surface cannot be ambiguous and all polygons can be added to
     // the polyhedron without ordering them
+    if (number_polyhedra >= polyhedra.size()) {
+      polyhedra.emplace_back();  // Add a new Polyhedron if needed
+    }
     polyhedra[number_polyhedra].init_polyhedron();
     for (int i = 0; i < number_polygons; i++) {
       polyhedra[number_polyhedra].add_polygon(polygons[i], true);

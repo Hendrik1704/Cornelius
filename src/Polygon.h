@@ -6,6 +6,7 @@
 #include <cmath>
 #include <fstream>
 #include <numeric>
+#include <vector>
 
 #include "GeneralGeometryElement.h"
 #include "Line.h"
@@ -16,15 +17,18 @@
  *
  * This class extends the GeneralGeometryElement class and provides methods
  * to manage and calculate properties related to polygons.
+ *
+ * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ *
  */
 class Polygon : public GeneralGeometryElement {
  protected:
   static constexpr int MAX_LINES =
-      24;                             ///< Maximum number of lines in a polygon
-  std::array<Line, MAX_LINES> lines;  ///< Array of lines in the polygon
-  int number_lines;                   ///< Number of lines in the polygon
-  int x1, x2, x3;  ///< Indices representing the polygon's dimensions
-  int const_i;     ///< Constant index for the polygon
+      24;                   ///< Maximum number of lines in a polygon
+  std::vector<Line> lines;  ///< Vector of lines in the polygon
+  int number_lines;         ///< Number of lines in the polygon
+  int x1, x2, x3;           ///< Indices representing the polygon's dimensions
+  int const_i;              ///< Constant index for the polygon
 
   // Arrays a and b to store the vectors of the triangles
   std::array<double, DIM> a;                  ///< Vector a of the triangle
@@ -94,7 +98,7 @@ class Polygon : public GeneralGeometryElement {
    *
    * @return A reference to the array of lines in the polygon.
    */
-  inline std::array<Line, MAX_LINES>& get_lines() { return lines; }
+  inline std::vector<Line>& get_lines() { return lines; }
 
   /**
    * @brief Prints the triangles formed from the polygon into a given file.

@@ -1,6 +1,9 @@
 #include "Polygon.h"
 
-Polygon::Polygon() {}
+Polygon::Polygon() {
+  lines.reserve(MAX_LINES);
+  lines.emplace_back();  // Default to construct 1 Line
+}
 
 Polygon::~Polygon() = default;
 
@@ -41,6 +44,10 @@ void Polygon::init_polygon(int new_const_i) {
 bool Polygon::add_line(Line& new_line, bool perform_no_check) {
   // For the first line, we don't need to check
   if (number_lines == 0 || perform_no_check) {
+    // Ensure there's space in the vector
+    if (number_lines >= lines.size()) {
+      lines.emplace_back();  // Add a new Line if needed
+    }
     lines[number_lines++] = new_line;
     return true;
   } else {
@@ -64,6 +71,10 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
       // flip the start and end in the new line if needed
       if (difference2 < EPSILON) {
         new_line.flip_start_end();
+      }
+      // Ensure there's space in the vector
+      if (number_lines >= lines.size()) {
+        lines.emplace_back();  // Add a new Line if needed
       }
       lines[number_lines++] = new_line;
       return true;

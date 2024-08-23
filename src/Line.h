@@ -15,6 +15,9 @@
  * segment in a geometric space. It provides methods to initialize the line,
  * flip its start and end points, and calculate various geometric properties
  * such as the normal and centroid.
+ *
+ * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ *
  */
 class Line : public GeneralGeometryElement {
  protected:
