@@ -39,6 +39,17 @@ add_library(Hypercube STATIC src/Hypercube.cpp)
 add_library(Cornelius STATIC src/Cornelius.cpp)
 add_library(CorneliusOld STATIC src_old/cornelius_old.cpp)
 
+# Apply -O1 optimization for all libraries
+set_target_properties(GeneralGeometryElement PROPERTIES COMPILE_OPTIONS "-O1")
+set_target_properties(Line PROPERTIES COMPILE_OPTIONS "-O1")
+set_target_properties(Polygon PROPERTIES COMPILE_OPTIONS "-O1")
+set_target_properties(Polyhedron PROPERTIES COMPILE_OPTIONS "-O1")
+set_target_properties(Square PROPERTIES COMPILE_OPTIONS "-O1")
+set_target_properties(Cube PROPERTIES COMPILE_OPTIONS "-O1")
+set_target_properties(Hypercube PROPERTIES COMPILE_OPTIONS "-O1")
+set_target_properties(Cornelius PROPERTIES COMPILE_OPTIONS "-O1")
+set_target_properties(CorneliusOld PROPERTIES COMPILE_OPTIONS "-O1")
+
 target_link_libraries(Line PUBLIC GeneralGeometryElement)
 target_link_libraries(Polygon PUBLIC GeneralGeometryElement Line)
 target_link_libraries(Polyhedron PUBLIC GeneralGeometryElement Polygon)
