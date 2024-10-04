@@ -57,7 +57,8 @@ TEST(CorneliusTest, apply_to_3D_surface) {
   // tau_local x_local y_local cube[0][0][0] cube[0][0][1] cube[0][1][0]
   // cube[0][1][1] cube[1][0][0] cube[1][0][1] cube[1][1][0] cube[1][1][1]
   // perform the test for each cube in the file
-  for (int cube_file = 0; cube_file < 10; cube_file++) {
+  std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
+  for (int cube_file = 0; cube_file < 50; cube_file++) {
     std::string filename =
         "cornelius_3D_input_" + std::to_string(cube_file) + ".dat";
     std::ifstream file("./cornelius_test_data_3D/" + filename);
@@ -77,7 +78,6 @@ TEST(CorneliusTest, apply_to_3D_surface) {
         }
       }
 
-      std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
       cornelius_ptr->init_cornelius(3, T_cut, dx);
       cornelius_ptr->find_surface_3d(cu);
 
@@ -152,7 +152,8 @@ TEST(CorneliusTest, apply_to_4D_surface) {
   // cube[1][0][1][0] cube[1][0][1][1] cube[1][1][0][0] cube[1][1][0][1]
   // cube[1][1][1][0] cube[1][1][1][1]
   // perform the test for each hypercube in the file
-  for (int cube_file = 0; cube_file < 10; cube_file++) {
+  std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
+  for (int cube_file = 0; cube_file < 50; cube_file++) {
     std::string filename =
         "cornelius_4D_input_" + std::to_string(cube_file) + ".dat";
     std::ifstream file("./cornelius_test_data_4D/" + filename);
@@ -174,7 +175,6 @@ TEST(CorneliusTest, apply_to_4D_surface) {
         }
       }
 
-      std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
       cornelius_ptr->init_cornelius(4, T_cut, dx);
       cornelius_ptr->find_surface_4d(cu);
 

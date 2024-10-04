@@ -2,7 +2,6 @@
 
 Hypercube::Hypercube() : number_polyhedra(0), ambiguous(false) {
   polyhedra.reserve(MAX_POLYHEDRONS);
-  polyhedra.emplace_back();  // Default to construct 1 Polyhedron
 }
 
 Hypercube::~Hypercube() = default;
@@ -15,6 +14,7 @@ void Hypercube::init_hypercube(
   dx = new_dx;
   number_polyhedra = 0;
   ambiguous = false;
+  polyhedra.clear();
 }
 
 int Hypercube::split_to_cubes(double value) {
@@ -78,10 +78,7 @@ void Hypercube::construct_polyhedra(double value) {
     // Keep track of the used number of lines
     int used = 0;
     do {
-      // Ensure there's space in the vector
-      if (number_polyhedra >= polyhedra.size()) {
-        polyhedra.emplace_back();  // Add a new Polyhedron if needed
-      }
+      polyhedra.emplace_back();  // Add a new Polyhedron object
       polyhedra[number_polyhedra].init_polyhedron();
       // Go through all the polygons and try to add them to the polyhedron
       for (int i = 0; i < number_polygons; i++) {
@@ -100,9 +97,7 @@ void Hypercube::construct_polyhedra(double value) {
   } else {
     // Here surface cannot be ambiguous and all polygons can be added to
     // the polyhedron without ordering them
-    if (number_polyhedra >= polyhedra.size()) {
-      polyhedra.emplace_back();  // Add a new Polyhedron if needed
-    }
+    polyhedra.emplace_back();  // Add a new Polyhedron object
     polyhedra[number_polyhedra].init_polyhedron();
     for (int i = 0; i < number_polygons; i++) {
       polyhedra[number_polyhedra].add_polygon(polygons[i], true);

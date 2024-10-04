@@ -2,7 +2,6 @@
 
 Cube::Cube() : number_lines(0), number_polygons(0), ambiguous(false) {
   polygons.reserve(MAX_POLYGONS);
-  polygons.emplace_back();  // Default to construct 1 Polygon
 }
 
 Cube::~Cube() = default;
@@ -40,6 +39,7 @@ void Cube::init_cube(
   }
   number_lines = number_polygons = 0;
   ambiguous = false;
+  polygons.clear();
 }
 
 void Cube::split_to_squares() {
@@ -97,10 +97,7 @@ void Cube::construct_polygons(double value) {
                   << number_lines - used << " lines" << std::endl;
         exit(1);
       }
-      // Ensure there's space in the vector
-      if (number_polygons >= polygons.size()) {
-        polygons.emplace_back();  // Add a new Polygon if needed
-      }
+      polygons.emplace_back();  // Add a new Polygon object
       // Initialize a new polygon
       polygons[number_polygons].init_polygon(const_i);
       // Go through all lines and try to add them to the polygon
@@ -121,9 +118,7 @@ void Cube::construct_polygons(double value) {
   } else {
     // Surface is not ambiguous, so we have only one polygon and all lines
     // can be added to it without ordering them
-    if (number_polygons >= polygons.size()) {
-      polygons.emplace_back();  // Add a new Polygon if needed
-    }
+    polygons.emplace_back();  // Add a new Polygon object
     polygons[number_polygons].init_polygon(const_i);
     for (int i = 0; i < number_lines; i++) {
       polygons[number_polygons].add_line(lines[i], true);

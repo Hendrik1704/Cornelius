@@ -4,7 +4,6 @@
 
 Polyhedron::Polyhedron() {
   polygons.reserve(MAX_POLYGONS);
-  polygons.emplace_back();  // Default to construct 1 Polygon
 }
 
 Polyhedron::~Polyhedron() = default;
@@ -14,15 +13,13 @@ void Polyhedron::init_polyhedron() {
   number_polygons = number_tetrahedrons = 0;
   // Set the flags for normal and centroid calculations to false
   normal_calculated = centroid_calculated = false;
+  polygons.clear();
 }
 
 bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
   // For the first polygon, we don't need to check
   if (number_polygons == 0 || perform_no_check) {
-    // Ensure there's space in the vector
-    if (number_polygons >= polygons.size()) {
-      polygons.emplace_back();  // Add a new Polygon if needed
-    }
+    polygons.emplace_back();  // Add a new Polygon object
     polygons[number_polygons++] = new_polygon;
     number_tetrahedrons += new_polygon.get_number_lines();
     return true;
@@ -36,10 +33,7 @@ bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
         for (int k = 0; k < polygons[i].get_number_lines(); k++) {
           if (lines_are_connected(new_polygon.get_lines()[j],
                                   polygons[i].get_lines()[k])) {
-            // Ensure there's space in the vector
-            if (number_polygons >= polygons.size()) {
-              polygons.emplace_back();  // Add a new Polygon if needed
-            }
+            polygons.emplace_back();  // Add a new Polygon object
             polygons[number_polygons++] = new_polygon;
             number_tetrahedrons += number_lines1;
             return true;
