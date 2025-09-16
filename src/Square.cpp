@@ -1,39 +1,19 @@
 #include "Square.h"
 
-Square::Square() : ambiguous(false) {}
+Square::Square() : ambiguous(false), number_cuts(0), number_lines(0) {}
 
 Square::~Square() = default;
 
-void Square::init_square(
-    std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>& sq,
-    std::array<int, DIM - SQUARE_DIM>& c_i,
-    std::array<double, DIM - SQUARE_DIM>& c_v, std::array<double, DIM>& dex) {
-  points = sq;
-  const_i = c_i;
-  const_value = c_v;
-  dx = dex;
-  x1 = x2 = -1;
-  for (int i = 0; i < DIM; i++) {
-    if (i != const_i[0] && i != const_i[1]) {
-      (x1 < 0 ? x1 : x2) = i;
-    }
-  }
-  number_cuts = number_lines = 0;
-  ambiguous = false;
-}
-
 void Square::construct_lines(double value) {
   // Check the corner points to see if there are lines
-  int above = 0;
-  for (int i = 0; i < DIM - SQUARE_DIM; i++) {
-    for (int j = 0; j < DIM - SQUARE_DIM; j++) {
-      if (points[i][j] >= value)
-        above++;
-    }
-  }
+  // Each comparison gives 0 or 1 → pack into a mask
+  unsigned mask = (points[0][0] >= value) | ((points[0][1] >= value) << 1) |
+                  ((points[1][0] >= value) << 2) |
+                  ((points[1][1] >= value) << 3);
   // If all corners are above or below this value, there are no lines in this
   // square
-  if (above == 0 || above == 4) {
+  // If all 0 (0000) or all 1s (1111 = 15), no cuts
+  if (mask == 0 || mask == 15) {
     number_lines = 0;
     return;
   }
@@ -45,73 +25,79 @@ void Square::construct_lines(double value) {
     find_outside(value);
   }
   // Then we go through the cut points and form the line elements
-  bool toggle = false;
-  for (int i = 0; i < number_cuts; i++) {
-    const int toggle_index = toggle ? 1 : 0;
+  number_lines = 0;
+  for (int i = 0; i < number_cuts; i += 2) {
+    // First endpoint
+    points_temp[0][x1] = cuts[i][0];
+    points_temp[0][x2] = cuts[i][1];
+    points_temp[0][const_i[0]] = const_value[0];
+    points_temp[0][const_i[1]] = const_value[1];
 
-    points_temp[toggle_index][x1] = cuts[i][0];
-    points_temp[toggle_index][x2] = cuts[i][1];
+    // Second endpoint
+    points_temp[1][x1] = cuts[i + 1][0];
+    points_temp[1][x2] = cuts[i + 1][1];
+    points_temp[1][const_i[0]] = const_value[0];
+    points_temp[1][const_i[1]] = const_value[1];
 
-    const int c0 = const_i[0];
-    const int c1 = const_i[1];
-    points_temp[toggle_index][c0] = const_value[0];
-    points_temp[toggle_index][c1] = const_value[1];
-    // If we inserted both endpoints we insert the outside point
-    // and we are ready to create the line element
-    if (toggle) {
-      out_temp[x1] = out[i / 2][0];
-      out_temp[x2] = out[i / 2][1];
-      out_temp[c0] = const_value[0];
-      out_temp[c1] = const_value[1];
-      lines[number_lines++].init_line(points_temp, out_temp, const_i);
-    }
-    toggle = !toggle;  // Toggle between 0 and 1
+    // Outside point (paired with i/2)
+    out_temp[x1] = out[i / 2][0];
+    out_temp[x2] = out[i / 2][1];
+    out_temp[const_i[0]] = const_value[0];
+    out_temp[const_i[1]] = const_value[1];
+
+    // Create the line
+    lines[number_lines++].init_line(points_temp, out_temp, const_i);
   }
 }
 
 void Square::ends_of_edge(double value) {
+  // Precompute values
   const double top_left = points[0][0] - value;
   const double top_right = points[0][1] - value;
   const double bottom_left = points[1][0] - value;
   const double bottom_right = points[1][1] - value;
+
+  // Fast add_cut lambda
+  auto add_cut = [this](double x, double y) {
+    cuts[number_cuts][0] = x;
+    cuts[number_cuts][1] = y;
+    ++number_cuts;
+  };
+
   // Edge 1
   if (top_left * bottom_left < 0) {
-    add_cut(std::array<double, SQUARE_DIM>{
-        top_left / (points[0][0] - points[1][0]) * dx[x1], 0});
+    add_cut(top_left / (points[0][0] - points[1][0]) * dx[x1], 0.0);
   } else if (points[0][0] == value && points[1][0] < value) {
-    add_cut(std::array<double, SQUARE_DIM>{ALMOST_ZERO * dx[x1], 0});
+    add_cut(ALMOST_ZERO * dx[x1], 0.0);
   } else if (points[1][0] == value && points[0][0] < value) {
-    add_cut(std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], 0});
+    add_cut(ALMOST_ONE * dx[x1], 0.0);
   }
 
   // Edge 2
   if (top_left * top_right < 0) {
-    add_cut(std::array<double, SQUARE_DIM>{
-        0, top_left / (points[0][0] - points[0][1]) * dx[x2]});
+    add_cut(0.0, top_left / (points[0][0] - points[0][1]) * dx[x2]);
   } else if (points[0][0] == value && points[0][1] < value) {
-    add_cut(std::array<double, SQUARE_DIM>{0, ALMOST_ZERO * dx[x2]});
+    add_cut(0.0, ALMOST_ZERO * dx[x2]);
   } else if (points[0][1] == value && points[0][0] < value) {
-    add_cut(std::array<double, SQUARE_DIM>{0, ALMOST_ONE * dx[x2]});
+    add_cut(0.0, ALMOST_ONE * dx[x2]);
   }
 
   // Edge 3
   if (bottom_left * bottom_right < 0) {
-    add_cut(std::array<double, SQUARE_DIM>{
-        dx[x1], bottom_left / (points[1][0] - points[1][1]) * dx[x2]});
+    add_cut(dx[x1], bottom_left / (points[1][0] - points[1][1]) * dx[x2]);
   } else if (points[1][0] == value && points[1][1] < value) {
-    add_cut(std::array<double, SQUARE_DIM>{dx[x1], ALMOST_ZERO * dx[x2]});
+    add_cut(dx[x1], ALMOST_ZERO * dx[x2]);
   } else if (points[1][1] == value && points[1][0] < value) {
-    add_cut(std::array<double, SQUARE_DIM>{dx[x1], ALMOST_ONE * dx[x2]});
+    add_cut(dx[x1], ALMOST_ONE * dx[x2]);
   }
 
   // Edge 4
   if (top_right * bottom_right < 0) {
-    add_cut(std::array<double, SQUARE_DIM>{
-        top_right / (points[0][1] - points[1][1]) * dx[x1], dx[x2]});
+    add_cut(top_right / (points[0][1] - points[1][1]) * dx[x1], dx[x2]);
   } else if (points[0][1] == value && points[1][1] < value) {
-    add_cut(std::array<double, SQUARE_DIM>{ALMOST_ZERO * dx[x1], dx[x2]});
+    add_cut(ALMOST_ZERO * dx[x1], dx[x2]);
   } else if (points[1][1] == value && points[0][1] < value) {
-    add_cut(std::array<double, SQUARE_DIM>{ALMOST_ONE * dx[x1], dx[x2]});
+    add_cut(ALMOST_ONE * dx[x1], dx[x2]);
   }
 
   if (number_cuts != 0 && number_cuts != 2 && number_cuts != 4) {
@@ -127,13 +113,8 @@ void Square::find_outside(double value) {
     ambiguous = true;
 
     // Compute the value in the middle of the square
-    double value_middle = 0.0;
-    for (const auto& row : points) {
-      for (double point : row) {
-        value_middle += point;
-      }
-    }
-    value_middle *= 0.25;
+    double value_middle =
+        0.25 * (points[0][0] + points[0][1] + points[1][0] + points[1][1]);
     // The default is that cuts are connected as \\ here.
     // If both value_middle and (0,0) are above or below the criterion
     // the cuts should be like // and we have to switch order in cuts
@@ -166,17 +147,30 @@ void Square::find_outside(double value) {
     }
   } else {
     // This is the normal case (not ambiguous)
+    out[0][0] = out[0][1] = out[1][0] = out[1][1] = 0.0;
     int number_out = 0;
-    for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < 2; j++) {
-        out[i][j] = 0.0;
-        if (points[i][j] < value) {
-          out[0][0] += i * dx[x1];
-          out[0][1] += j * dx[x2];
-          number_out++;
-        }
-      }
+
+    if (points[0][0] < value) {
+      out[0][0] += 0 * dx[x1];
+      out[0][1] += 0 * dx[x2];
+      number_out++;
     }
+    if (points[0][1] < value) {
+      out[0][0] += 0 * dx[x1];
+      out[0][1] += 1 * dx[x2];
+      number_out++;
+    }
+    if (points[1][0] < value) {
+      out[0][0] += 1 * dx[x1];
+      out[0][1] += 0 * dx[x2];
+      number_out++;
+    }
+    if (points[1][1] < value) {
+      out[0][0] += 1 * dx[x1];
+      out[0][1] += 1 * dx[x2];
+      number_out++;
+    }
+
     if (number_out > 0) {
       for (int i = 0; i < SQUARE_DIM; i++) {
         for (int j = 0; j < SQUARE_DIM; j++) {

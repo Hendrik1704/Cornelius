@@ -1,21 +1,11 @@
 #include "Hypercube.h"
 
 Hypercube::Hypercube() : number_polyhedra(0), ambiguous(false) {
+  polyhedra.clear();
   polyhedra.reserve(MAX_POLYHEDRONS);
-  polyhedra.emplace_back();  // Default to construct 1 Polyhedron
 }
 
 Hypercube::~Hypercube() = default;
-
-void Hypercube::init_hypercube(
-    std::array<std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
-               STEPS>& hc,
-    std::array<double, DIM>& new_dx) {
-  hypercube = hc;
-  dx = new_dx;
-  number_polyhedra = 0;
-  ambiguous = false;
-}
 
 int Hypercube::split_to_cubes(double value) {
   int number_points_below_value = 0;
@@ -74,7 +64,7 @@ void Hypercube::construct_polyhedra(double value) {
   if (ambiguous) {
     // The surface might be ambiguous and we need to connect the polygons and
     // see how many polyhedra we have
-    std::array<bool, NCUBES* 10> not_used = {true};
+    not_used.fill(1);
     // Keep track of the used number of lines
     int used = 0;
     do {
@@ -88,7 +78,7 @@ void Hypercube::construct_polyhedra(double value) {
         // add_polygon returns true if the polygon was added
         if (not_used[i] &&
             polyhedra[number_polyhedra].add_polygon(polygons[i], false)) {
-          not_used[i] = false;
+          not_used[i] = 0;
           used++;
           // If the polygon is successfully added we start the loop from the
           // beginning
@@ -108,24 +98,5 @@ void Hypercube::construct_polyhedra(double value) {
       polyhedra[number_polyhedra].add_polygon(polygons[i], true);
     }
     number_polyhedra++;
-  }
-}
-
-void Hypercube::check_ambiguity(int number_points_below_value) {
-  ambiguous = std::any_of(cubes.begin(), cubes.end(),
-                          [](Cube& cube) { return cube.is_ambiguous(); });
-
-  if (!ambiguous) {
-    int number_lines = 0;
-    for (auto& cube : cubes) {
-      number_lines += cube.get_number_lines();
-    }
-
-    if (number_points_below_value > 8) {
-      number_points_below_value = 16 - number_points_below_value;
-    }
-    if (number_lines == 24 && number_points_below_value == 2) {
-      ambiguous = true;
-    }
   }
 }

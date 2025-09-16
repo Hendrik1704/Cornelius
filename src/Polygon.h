@@ -59,7 +59,41 @@ class Polygon : public GeneralGeometryElement {
    *
    * @param new_const_i The constant index for the polygon's dimensions.
    */
-  void init_polygon(int new_const_i);
+  inline void init_polygon(int new_const_i) {
+    // Copy the new value into the class variable
+    const_i = new_const_i;
+    // Fix the indices which are not constant
+    switch (new_const_i) {
+      case 0:
+        x1 = 1;
+        x2 = 2;
+        x3 = 3;
+        break;
+      case 1:
+        x1 = 0;
+        x2 = 2;
+        x3 = 3;
+        break;
+      case 2:
+        x1 = 0;
+        x2 = 1;
+        x3 = 3;
+        break;
+      case 3:
+        x1 = 0;
+        x2 = 1;
+        x3 = 2;
+        break;
+      default:
+        break;
+    }
+    // Set the flags for normal and centroid calculations to false
+    normal_calculated = centroid_calculated = false;
+    // Reset the number of lines in the polygon
+    number_lines = 0;
+    lines.clear();
+    lines.reserve(MAX_LINES);
+  }
 
   /**
    * @brief Adds a line to the polygon.

@@ -3,18 +3,12 @@
 #include <iostream>
 
 Polyhedron::Polyhedron() {
+  polygons.clear();
   polygons.reserve(MAX_POLYGONS);
   polygons.emplace_back();  // Default to construct 1 Polygon
 }
 
 Polyhedron::~Polyhedron() = default;
-
-void Polyhedron::init_polyhedron() {
-  // Reset the number of polygons and tetrahedrons in the polyhedron
-  number_polygons = number_tetrahedrons = 0;
-  // Set the flags for normal and centroid calculations to false
-  normal_calculated = centroid_calculated = false;
-}
 
 bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
   // For the first polygon, we don't need to check
@@ -52,42 +46,6 @@ bool Polyhedron::add_polygon(Polygon& new_polygon, bool perform_no_check) {
   }
 }
 
-bool Polyhedron::lines_are_connected(Line& line1, Line& line2) {
-  // Get the start and end points of the lines
-  const auto& start_point1 = line1.get_start_point();
-  const auto& end_point1 = line1.get_end_point();
-  const auto& start_point2 = line2.get_start_point();
-
-  // Check if any point pairs are close enough
-  double difference1 = 0.0;
-  double difference2 = 0.0;
-  for (int i = 0; i < DIM; i++) {
-    difference1 += std::abs(start_point1[i] - start_point2[i]);
-    difference2 += std::abs(end_point1[i] - start_point2[i]);
-    if (difference1 > EPSILON && difference2 > EPSILON) {
-      return false;
-    }
-  }
-  return true;
-}
-
-void Polyhedron::tetrahedron_volume(std::array<double, DIM>& v1,
-                                    std::array<double, DIM>& v2,
-                                    std::array<double, DIM>& v3,
-                                    std::array<double, DIM>& n) {
-  // Calculate the volume of the tetrahedron
-  const double bc01 = v2[0] * v3[1] - v2[1] * v3[0];
-  const double bc02 = v2[0] * v3[2] - v2[2] * v3[0];
-  const double bc03 = v2[0] * v3[3] - v2[3] * v3[0];
-  const double bc12 = v2[1] * v3[2] - v2[2] * v3[1];
-  const double bc13 = v2[1] * v3[3] - v2[3] * v3[1];
-  const double bc23 = v2[2] * v3[3] - v2[3] * v3[2];
-  n[0] = (v1[1] * bc23 - v1[2] * bc13 + v1[3] * bc12) * INV_SIX;
-  n[1] = -(v1[0] * bc23 - v1[2] * bc03 + v1[3] * bc02) * INV_SIX;
-  n[2] = (v1[0] * bc13 - v1[1] * bc03 + v1[3] * bc01) * INV_SIX;
-  n[3] = -(v1[0] * bc12 - v1[1] * bc02 + v1[2] * bc01) * INV_SIX;
-}
-
 void Polyhedron::calculate_centroid() {
   // Array of 0s to store the mean values
   std::array<double, DIM> mean_values = {0};
@@ -95,7 +53,8 @@ void Polyhedron::calculate_centroid() {
   // Determine the mean values of the corner points, all points appear twice
   for (int i = 0; i < number_polygons; i++) {
     auto& lines = polygons[i].get_lines();
-    for (int j = 0; j < polygons[i].get_number_lines(); j++) {
+    const int n_lines = polygons[i].get_number_lines();
+    for (int j = 0; j < n_lines; j++) {
       const auto& start_point = lines[j].get_start_point();
       const auto& end_point = lines[j].get_end_point();
       for (int k = 0; k < DIM; k++) {
@@ -107,15 +66,15 @@ void Polyhedron::calculate_centroid() {
     mean_values[k] /= (2.0 * number_tetrahedrons);
   }
 
-  // Temporary arrays
   std::array<double, DIM> sum_up = {0};
   double sum_down = 0.0;
   // Loop over all polygons
   for (int i = 0; i < number_polygons; ++i) {
     auto& lines = polygons[i].get_lines();
+    const int n_lines = polygons[i].get_number_lines();
     const auto& cent = polygons[i].get_centroid();
     // Loop over all lines in the polygon
-    for (int j = 0; j < polygons[i].get_number_lines(); j++) {
+    for (int j = 0; j < n_lines; j++) {
       const auto& start_point = lines[j].get_start_point();
       const auto& end_point = lines[j].get_end_point();
       // Center of mass of the tetrahedron
@@ -129,8 +88,11 @@ void Polyhedron::calculate_centroid() {
       }
       // Calculate the volume of the tetrahedron
       tetrahedron_volume(a, b, c, n);
-      const double V_i =
-          std::sqrt(std::inner_product(n.begin(), n.end(), n.begin(), 0.0));
+      double V_i = 0.0;
+      for (int k = 0; k < DIM; ++k) {
+        V_i += n[k] * n[k];
+      }
+      V_i = std::sqrt(V_i);
       // Add the contribution to the sum
       for (int i = 0; i < DIM; i++) {
         sum_up[i] += V_i * cm_i[i];
@@ -164,7 +126,6 @@ void Polyhedron::calculate_normal() {
       const auto& o = lines[j].get_outside_point();
 
       // Compute the defining vectors of the tetrahedron
-      // Compute defining vectors of the tetrahedron
       for (int k = 0; k < DIM; ++k) {
         a[k] = start_point[k] - centroid[k];
         b[k] = end_point[k] - centroid[k];

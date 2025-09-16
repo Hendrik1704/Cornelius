@@ -1,48 +1,18 @@
 #include "Polygon.h"
 
+#include <iostream>
+
 Polygon::Polygon() {
+  lines.clear();
   lines.reserve(MAX_LINES);
-  lines.emplace_back();  // Default to construct 1 Line
 }
 
 Polygon::~Polygon() = default;
 
-void Polygon::init_polygon(int new_const_i) {
-  // Copy the new value into the class variable
-  const_i = new_const_i;
-  // Fix the indices which are not constant
-  switch (new_const_i) {
-    case 0:
-      x1 = 1;
-      x2 = 2;
-      x3 = 3;
-      break;
-    case 1:
-      x1 = 0;
-      x2 = 2;
-      x3 = 3;
-      break;
-    case 2:
-      x1 = 0;
-      x2 = 1;
-      x3 = 3;
-      break;
-    case 3:
-      x1 = 0;
-      x2 = 1;
-      x3 = 2;
-      break;
-    default:
-      break;
-  }
-  // Set the flags for normal and centroid calculations to false
-  normal_calculated = centroid_calculated = false;
-  // Reset the number of lines in the polygon
-  number_lines = 0;
-}
-
 bool Polygon::add_line(Line& new_line, bool perform_no_check) {
-  // For the first line, we don't need to check
+  // std::cout << "Polygon::add_line, size = " << lines.size() << ", " <<
+  // number_lines << std::endl;
+  //  For the first line, we don't need to check
   if (number_lines == 0 || perform_no_check) {
     // Ensure there's space in the vector
     if (number_lines >= lines.size()) {

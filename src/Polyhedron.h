@@ -61,7 +61,15 @@ class Polyhedron : public GeneralGeometryElement {
    * Sets the initial values for the indices, polygon count, tetrahedron count,
    * and flags.
    */
-  void init_polyhedron();
+  inline void init_polyhedron() {
+    // Reset the number of polygons and tetrahedrons in the polyhedron
+    number_polygons = number_tetrahedrons = 0;
+    // Set the flags for normal and centroid calculations to false
+    normal_calculated = centroid_calculated = false;
+    polygons.clear();
+    polygons.reserve(MAX_POLYGONS);
+    polygons.emplace_back();  // Default to construct 1 Polygon
+  }
 
   /**
    * @brief Adds a polygon to the polyhedron.
@@ -80,7 +88,26 @@ class Polyhedron : public GeneralGeometryElement {
    * @param line2 The second line.
    * @return True if the lines are connected, false otherwise.
    */
-  bool lines_are_connected(Line& line1, Line& line2);
+  inline bool lines_are_connected(Line& line1, Line& line2) {
+    // Get the start and end points of the lines
+    const auto& start_point1 = line1.get_start_point();
+    const auto& end_point1 = line1.get_end_point();
+    const auto& start_point2 = line2.get_start_point();
+
+    // Check if any point pairs are close enough
+    double difference1 = 0.0;
+    double difference2 = 0.0;
+    for (int i = 0; i < DIM; i++) {
+      if (difference1 <= EPSILON)
+        difference1 += std::abs(start_point1[i] - start_point2[i]);
+      if (difference2 <= EPSILON)
+        difference2 += std::abs(end_point1[i] - start_point2[i]);
+      if (difference1 > EPSILON && difference2 > EPSILON) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   /**
    * @brief Calculates the normal vector of a tetrahedron, which is also
@@ -91,10 +118,22 @@ class Polyhedron : public GeneralGeometryElement {
    * @param v3 Third vector defining the tetrahedron.
    * @param n Normal vector of the tetrahedron.
    */
-  void tetrahedron_volume(std::array<double, DIM>& v1,
-                          std::array<double, DIM>& v2,
-                          std::array<double, DIM>& v3,
-                          std::array<double, DIM>& n);
+  inline void tetrahedron_volume(std::array<double, DIM>& v1,
+                                 std::array<double, DIM>& v2,
+                                 std::array<double, DIM>& v3,
+                                 std::array<double, DIM>& n) {
+    // Calculate the volume of the tetrahedron
+    const double bc01 = v2[0] * v3[1] - v2[1] * v3[0];
+    const double bc02 = v2[0] * v3[2] - v2[2] * v3[0];
+    const double bc03 = v2[0] * v3[3] - v2[3] * v3[0];
+    const double bc12 = v2[1] * v3[2] - v2[2] * v3[1];
+    const double bc13 = v2[1] * v3[3] - v2[3] * v3[1];
+    const double bc23 = v2[2] * v3[3] - v2[3] * v3[2];
+    n[0] = (v1[1] * bc23 - v1[2] * bc13 + v1[3] * bc12) * INV_SIX;
+    n[1] = -(v1[0] * bc23 - v1[2] * bc03 + v1[3] * bc02) * INV_SIX;
+    n[2] = (v1[0] * bc13 - v1[1] * bc03 + v1[3] * bc01) * INV_SIX;
+    n[3] = -(v1[0] * bc12 - v1[1] * bc02 + v1[2] * bc01) * INV_SIX;
+  }
 
   /**
    * @brief Calculates the centroid of the polyhedron.
