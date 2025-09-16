@@ -13,16 +13,6 @@ Cornelius::~Cornelius() {
   }
 }
 
-void Cornelius::init_cornelius(int dimension, double new_value,
-                               std::array<double, DIM>& new_dx) {
-  cube_dimension = dimension;
-  value = new_value;
-  for (int i = 0; i < DIM; i++) {
-    dx[i] = (i < DIM - cube_dimension) ? 1 : new_dx[i - (DIM - cube_dimension)];
-  }
-  initialized = true;
-}
-
 void Cornelius::init_print_cornelius(std::string filename) {
   output_file.open(filename);
   print_initialized = true;
@@ -92,14 +82,17 @@ void Cornelius::surface_3d(
   cube_3d.construct_polygons(value);
   // Obtain the information about the elements
   number_elements = cube_3d.get_number_polygons();
+  auto& polys = cube_3d.get_polygons();
   for (int i = 0; i < number_elements; i++) {
+    auto& poly = polys[i];
+    auto& normal = poly.get_normal();
+    auto& centroid = poly.get_centroid();
     for (int j = 0; j < DIM; j++) {
-      normals[i][j] = cube_3d.get_polygons()[i].get_normal()[j];
-      centroids[i][j] = cube_3d.get_polygons()[i].get_centroid()[j];
-
+      normals[i][j] = normal[j];
+      centroids[i][j] = centroid[j];
       // If the triangles should be printed, print them
       if (print_initialized && do_print) {
-        cube_3d.get_polygons()[i].print(output_file, position);
+        poly.print(output_file, position);
       }
     }
   }
@@ -138,10 +131,14 @@ void Cornelius::find_surface_4d(
   cube_4d.construct_polyhedra(value);
   // Obtain the information about the elements
   number_elements = cube_4d.get_number_polyhedra();
+  auto& polys = cube_4d.get_polyhedra();
   for (int i = 0; i < number_elements; i++) {
+    auto& poly = polys[i];
+    auto& normal = poly.get_normal();
+    auto& centroid = poly.get_centroid();
     for (int j = 0; j < DIM; j++) {
-      normals[i][j] = cube_4d.get_polyhedra()[i].get_normal()[j];
-      centroids[i][j] = cube_4d.get_polyhedra()[i].get_centroid()[j];
+      normals[i][j] = normal[j];
+      centroids[i][j] = centroid[j];
     }
   }
 }

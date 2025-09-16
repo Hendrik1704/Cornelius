@@ -68,10 +68,23 @@ class Square : public GeneralGeometryElement {
    * @param c_v Values for the constant indices.
    * @param dex Delta values for lines.
    */
-  void init_square(std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>& sq,
-                   std::array<int, DIM - SQUARE_DIM>& c_i,
-                   std::array<double, DIM - SQUARE_DIM>& c_v,
-                   std::array<double, DIM>& dex);
+  inline void init_square(
+      std::array<std::array<double, SQUARE_DIM>, SQUARE_DIM>& sq,
+      std::array<int, DIM - SQUARE_DIM>& c_i,
+      std::array<double, DIM - SQUARE_DIM>& c_v, std::array<double, DIM>& dex) {
+    points = sq;
+    const_i = c_i;
+    const_value = c_v;
+    dx = dex;
+    x1 = x2 = -1;
+    for (int i = 0; i < DIM; i++) {
+      if (i != const_i[0] && i != const_i[1]) {
+        (x1 < 0 ? x1 : x2) = i;
+      }
+    }
+    number_cuts = number_lines = 0;
+    ambiguous = false;
+  }
 
   /**
    * @brief Constructs lines within the square based on a given value.

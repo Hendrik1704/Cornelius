@@ -2,6 +2,7 @@
 #define CUBE_H
 
 #include <array>
+#include <cstring>
 #include <iostream>
 #include <vector>
 
@@ -45,6 +46,7 @@ class Cube : public GeneralGeometryElement {
   double const_value;          ///< Value for the constant dimension.
   int x1, x2, x3;              ///< Indices for dimensions.
   std::array<double, DIM> dx;  ///< Delta values for discretization.
+  std::array<char, NSQUARES * 2> not_used;  ///< Array to track unused lines.
 
   // Temporary array for storing a square
   std::array<std::array<double, STEPS>, STEPS>
@@ -68,9 +70,44 @@ class Cube : public GeneralGeometryElement {
    * @param new_const_value Value for the constant dimension.
    * @param new_dx Delta values for discretization.
    */
-  void init_cube(
+  inline void init_cube(
       std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>& cu,
-      int new_const_i, double new_const_value, std::array<double, DIM>& new_dx);
+      int new_const_i, double new_const_value,
+      std::array<double, DIM>& new_dx) {
+    cube = cu;
+    const_i = new_const_i;
+    const_value = new_const_value;
+    dx = new_dx;
+    switch (new_const_i) {
+      case 0:
+        x1 = 1;
+        x2 = 2;
+        x3 = 3;
+        break;
+      case 1:
+        x1 = 0;
+        x2 = 2;
+        x3 = 3;
+        break;
+      case 2:
+        x1 = 0;
+        x2 = 1;
+        x3 = 3;
+        break;
+      case 3:
+        x1 = 0;
+        x2 = 1;
+        x3 = 2;
+        break;
+      default:
+        break;
+    }
+    number_lines = number_polygons = 0;
+    ambiguous = false;
+    polygons.clear();
+    polygons.reserve(MAX_POLYGONS);
+    polygons.emplace_back();  // Default to construct 1 Polygon
+  }
 
   /**
    * @brief Constructs polygons within the cube based on a given value.

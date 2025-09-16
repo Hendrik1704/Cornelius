@@ -115,8 +115,16 @@ class Cornelius : public GeneralGeometryElement {
    * @param new_dx Length of the sides of the cube. Must contain as many
    * elements as the dimension of the problem (dx1,dx2,...).
    */
-  void init_cornelius(int dimension, double new_value,
-                      std::array<double, DIM>& new_dx);
+  inline void init_cornelius(int dimension, double new_value,
+                             std::array<double, DIM>& new_dx) {
+    cube_dimension = dimension;
+    value = new_value;
+    for (int i = 0; i < DIM; i++) {
+      dx[i] =
+          (i < DIM - cube_dimension) ? 1 : new_dx[i - (DIM - cube_dimension)];
+    }
+    initialized = true;
+  }
 
   /**
    * @brief Initializes the output file for printing surface elements.

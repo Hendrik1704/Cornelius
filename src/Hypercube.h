@@ -41,6 +41,7 @@ class Hypercube : public GeneralGeometryElement {
   int number_polyhedra;        ///< Number of polyhedra in the hypercube.
   bool ambiguous;              ///< Indicates if the hypercube is ambiguous.
   std::array<double, DIM> dx;  ///< Delta values for discretization.
+  std::array<char, NCUBES * 10> not_used;  ///< Array to track unused polygons.
 
   // Temporary array for storing a cube
   std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>
@@ -62,11 +63,18 @@ class Hypercube : public GeneralGeometryElement {
    * @param hc 4D array representing the hypercube.
    * @param new_dx Delta values for discretization.
    */
-  void init_hypercube(
+  inline void init_hypercube(
       std::array<
           std::array<std::array<std::array<double, STEPS>, STEPS>, STEPS>,
           STEPS>& hc,
-      std::array<double, DIM>& new_dx);
+      std::array<double, DIM>& new_dx) {
+    hypercube = hc;
+    dx = new_dx;
+    number_polyhedra = 0;
+    ambiguous = false;
+    polyhedra.clear();
+    polyhedra.reserve(MAX_POLYHEDRONS);
+  }
 
   /**
    * @brief Splits the hypercube into cubes.
@@ -79,7 +87,24 @@ class Hypercube : public GeneralGeometryElement {
    * @brief Checks if the hypercube is ambiguous based on a given value.
    * @param number_points_below_value The number of points below the value.
    */
-  void check_ambiguity(int number_points_below_value);
+  inline void check_ambiguity(int number_points_below_value) {
+    ambiguous = std::any_of(cubes.begin(), cubes.end(),
+                            [](Cube& cube) { return cube.is_ambiguous(); });
+
+    if (!ambiguous) {
+      int number_lines = 0;
+      for (auto& cube : cubes) {
+        number_lines += cube.get_number_lines();
+      }
+
+      if (number_points_below_value > 8) {
+        number_points_below_value = 16 - number_points_below_value;
+      }
+      if (number_lines == 24 && number_points_below_value == 2) {
+        ambiguous = true;
+      }
+    }
+  }
 
   /**
    * @brief Constructs polyhedra within the hypercube based on a given value.
