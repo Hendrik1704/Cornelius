@@ -93,19 +93,6 @@ class Square : public GeneralGeometryElement {
   void construct_lines(double value);
 
   /**
-   * @brief Adds a new cut point to the square.
-   * @param cut A `std::array` of size `SQUARE_DIM` representing the cut point
-   * coordinates.
-   */
-  inline void add_cut(const std::array<double, SQUARE_DIM>& cut) {
-    if (number_cuts < MAX_POINTS) {
-      cuts[number_cuts++] = cut;
-    } else {
-      std::cerr << "Error: Maximum number of cuts exceeded." << std::endl;
-    }
-  }
-
-  /**
    * @brief Determines the ends of edges based on a given value.
    *
    * This finds the points from the edges where the surface crosses

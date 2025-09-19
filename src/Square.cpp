@@ -21,11 +21,31 @@ void Square::construct_lines(double value) {
   // surface. Also find_outside() arranges cuts so that first two cuts form
   // a line as defined in the algorithm (in case there are 4 cuts)
   ends_of_edge(value);
-  if (number_cuts > 0) {
+  if (number_cuts > 0)
     find_outside(value);
-  }
-  // Then we go through the cut points and form the line elements
   number_lines = 0;
+  // Unroll for the most common case: number_cuts == 2
+  if (number_cuts == 2) {
+    // First endpoint
+    points_temp[0][x1] = cuts[0][0];
+    points_temp[0][x2] = cuts[0][1];
+    points_temp[0][const_i[0]] = const_value[0];
+    points_temp[0][const_i[1]] = const_value[1];
+    // Second endpoint
+    points_temp[1][x1] = cuts[1][0];
+    points_temp[1][x2] = cuts[1][1];
+    points_temp[1][const_i[0]] = const_value[0];
+    points_temp[1][const_i[1]] = const_value[1];
+    // Outside point
+    out_temp[x1] = out[0][0];
+    out_temp[x2] = out[0][1];
+    out_temp[const_i[0]] = const_value[0];
+    out_temp[const_i[1]] = const_value[1];
+    lines[0].init_line(points_temp, out_temp, const_i);
+    number_lines = 1;
+    return;
+  }
+  // General case (number_cuts == 4)
   for (int i = 0; i < number_cuts; i += 2) {
     // First endpoint
     points_temp[0][x1] = cuts[i][0];

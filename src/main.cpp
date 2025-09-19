@@ -242,8 +242,8 @@ void cornelius_test_4D(int number_of_cubes_to_test, int number_of_tests,
 int main(int argc, char const *argv[]) {
   int number_of_cubes_to_test =
       10000;  // 10000 is the maximum, since there are only 10000 test files
-  int number_of_tests = 100;  // number of times the test is repeated for one
-                              // cube to get a more accurate time measurement
+  int number_of_tests = 1000;  // number of times the test is repeated for one
+                               // cube to get a more accurate time measurement
   bool print_intermediate_times = false;
 
   cornelius_test_3D(number_of_cubes_to_test, number_of_tests,

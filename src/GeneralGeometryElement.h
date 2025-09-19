@@ -71,9 +71,8 @@ class GeneralGeometryElement {
    * @return A constant array representing the normal vector.
    */
   inline std::array<double, DIM>& get_normal() {
-    if (!normal_calculated) {
+    if (!normal_calculated)
       calculate_normal();
-    }
     return normal;
   }
 
@@ -83,9 +82,8 @@ class GeneralGeometryElement {
    * @return A constant array representing the centroid.
    */
   inline std::array<double, DIM>& get_centroid() {
-    if (!centroid_calculated) {
+    if (!centroid_calculated)
       calculate_centroid();
-    }
     return centroid;
   }
 
@@ -100,15 +98,11 @@ class GeneralGeometryElement {
    */
   inline void flip_normal_if_needed(std::array<double, DIM>& normal,
                                     std::array<double, DIM>& reference_normal) {
-    // Compute the dot product of the two normals
     const double dot_product = std::inner_product(
         normal.begin(), normal.end(), reference_normal.begin(), 0.0);
-
-    // If the dot product is negative, flip the normal
     if (dot_product < 0) {
-      for (double& component : normal) {
-        component = -component;
-      }
+      std::transform(normal.begin(), normal.end(), normal.begin(),
+                     std::negate<double>());
     }
   }
 };

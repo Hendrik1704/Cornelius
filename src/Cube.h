@@ -78,30 +78,16 @@ class Cube : public GeneralGeometryElement {
     const_i = new_const_i;
     const_value = new_const_value;
     dx = new_dx;
-    switch (new_const_i) {
-      case 0:
-        x1 = 1;
-        x2 = 2;
-        x3 = 3;
-        break;
-      case 1:
-        x1 = 0;
-        x2 = 2;
-        x3 = 3;
-        break;
-      case 2:
-        x1 = 0;
-        x2 = 1;
-        x3 = 3;
-        break;
-      case 3:
-        x1 = 0;
-        x2 = 1;
-        x3 = 2;
-        break;
-      default:
-        break;
-    }
+    // Use a lookup table for x1/x2/x3 assignment
+    constexpr int x_lookup[4][3] = {
+        {1, 2, 3},  // new_const_i == 0
+        {0, 2, 3},  // new_const_i == 1
+        {0, 1, 3},  // new_const_i == 2
+        {0, 1, 2}   // new_const_i == 3
+    };
+    x1 = x_lookup[new_const_i][0];
+    x2 = x_lookup[new_const_i][1];
+    x3 = x_lookup[new_const_i][2];
     number_lines = number_polygons = 0;
     ambiguous = false;
     polygons.clear();

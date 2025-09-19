@@ -8,57 +8,34 @@ Cube::Cube() : number_lines(0), number_polygons(0), ambiguous(false) {
 
 Cube::~Cube() = default;
 
-/*void Cube::split_to_squares() {
-  std::array<int, STEPS> c_i = {const_i, 0};
-  std::array<double, STEPS> c_v = {const_value, 0.0};
-  int number_squares = 0;
-  for (int i = 0; i < DIM; i++) {
-    // i is the index which is kept constant, thus we ignore the index which
-    // is constant in this cube
-    if (i != const_i) {
-      c_i[1] = i;
-      for (int j = 0; j < STEPS; j++) {
-        c_v[1] = j * dx[i];
-        for (int ci1 = 0; ci1 < STEPS; ci1++) {
-          for (int ci2 = 0; ci2 < STEPS; ci2++) {
-            square[ci1][ci2] = (i == x1)   ? cube[j][ci1][ci2]
-                               : (i == x2) ? cube[ci1][j][ci2]
-                                           : cube[ci1][ci2][j];
-          }
-        }
-        squares[number_squares++].init_square(square, c_i, c_v, dx);
-      }
-    }
-  }
-}*/
-
 void Cube::split_to_squares() {
-  std::array<int, STEPS> c_i = {const_i, 0};
-  std::array<double, STEPS> c_v = {const_value, 0.0};
   int number_squares = 0;
-  for (int i = 0; i < DIM; i++) {
+  for (int i = 0; i < DIM; ++i) {
     if (i == const_i)
       continue;
 
-    c_i[1] = i;
-    for (int j = 0; j < STEPS; j++) {
-      c_v[1] = j * dx[i];
+    std::array<int, STEPS> c_i = {const_i, i};
+    for (int j = 0; j < STEPS; ++j) {
+      std::array<double, STEPS> c_v = {const_value, j * dx[i]};
 
+      // Optimize all cases with memcpy if possible
       if (i == x1) {
-        for (int ci1 = 0; ci1 < STEPS; ci1++) {
+        for (int ci1 = 0; ci1 < STEPS; ++ci1) {
           std::memcpy(&square[ci1][0], &cube[j][ci1][0],
                       STEPS * sizeof(double));
         }
       } else if (i == x2) {
-        for (int ci1 = 0; ci1 < STEPS; ci1++)
-          for (int ci2 = 0; ci2 < STEPS; ci2++)
-            square[ci1][ci2] = cube[ci1][j][ci2];
+        for (int ci1 = 0; ci1 < STEPS; ++ci1) {
+          std::memcpy(&square[ci1][0], &cube[ci1][j][0],
+                      STEPS * sizeof(double));
+        }
       } else {  // i == x3
-        for (int ci1 = 0; ci1 < STEPS; ci1++)
-          for (int ci2 = 0; ci2 < STEPS; ci2++)
+        for (int ci1 = 0; ci1 < STEPS; ++ci1) {
+          for (int ci2 = 0; ci2 < STEPS; ++ci2) {
             square[ci1][ci2] = cube[ci1][ci2][j];
+          }
+        }
       }
-
       squares[number_squares++].init_square(square, c_i, c_v, dx);
     }
   }

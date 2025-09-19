@@ -63,37 +63,28 @@ void Cornelius::surface_3d(
   for (const auto& array2d : cu) {
     for (const auto& array1d : array2d) {
       for (double element : array1d) {
-        if (element >= this->value) {
-          ++value_greater;
-        }
+        value_greater += (element >= this->value);
       }
     }
   }
   if (value_greater == 0 || value_greater == 8) {
-    // No elements in this cube
     number_elements = 0;
     return;
   }
-  // This cube has surface elements, start constructing the cube
   const int c_i = 0;
   const double c_v = 0.0;
   cube_3d.init_cube(cu, c_i, c_v, dx);
-  // Find the elements
   cube_3d.construct_polygons(value);
-  // Obtain the information about the elements
   number_elements = cube_3d.get_number_polygons();
   auto& polys = cube_3d.get_polygons();
-  for (int i = 0; i < number_elements; i++) {
+  for (int i = 0; i < number_elements; ++i) {
     auto& poly = polys[i];
     auto& normal = poly.get_normal();
     auto& centroid = poly.get_centroid();
-    for (int j = 0; j < DIM; j++) {
-      normals[i][j] = normal[j];
-      centroids[i][j] = centroid[j];
-      // If the triangles should be printed, print them
-      if (print_initialized && do_print) {
-        poly.print(output_file, position);
-      }
+    std::copy(normal.begin(), normal.end(), normals[i].begin());
+    std::copy(centroid.begin(), centroid.end(), centroids[i].begin());
+    if (print_initialized && do_print) {
+      poly.print(output_file, position);
     }
   }
 }
@@ -113,33 +104,25 @@ void Cornelius::find_surface_4d(
     for (const auto& array2d : array3d) {
       for (const auto& array1d : array2d) {
         for (double element : array1d) {
-          if (element >= this->value) {
-            ++value_greater;
-          }
+          value_greater += (element >= this->value);
         }
       }
     }
   }
   if (value_greater == 0 || value_greater == 16) {
-    // No elements in this cube
     number_elements = 0;
     return;
   }
-  // This cube has surface elements, start constructing the cube
   cube_4d.init_hypercube(cu, dx);
-  // Find the elements
   cube_4d.construct_polyhedra(value);
-  // Obtain the information about the elements
   number_elements = cube_4d.get_number_polyhedra();
   auto& polys = cube_4d.get_polyhedra();
-  for (int i = 0; i < number_elements; i++) {
+  for (int i = 0; i < number_elements; ++i) {
     auto& poly = polys[i];
     auto& normal = poly.get_normal();
     auto& centroid = poly.get_centroid();
-    for (int j = 0; j < DIM; j++) {
-      normals[i][j] = normal[j];
-      centroids[i][j] = centroid[j];
-    }
+    std::copy(normal.begin(), normal.end(), normals[i].begin());
+    std::copy(centroid.begin(), centroid.end(), centroids[i].begin());
   }
 }
 
