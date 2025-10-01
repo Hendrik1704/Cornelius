@@ -81,8 +81,8 @@ void Cornelius::surface_3d(
     auto& poly = polys[i];
     auto& normal = poly.get_normal();
     auto& centroid = poly.get_centroid();
-    std::copy(normal.begin(), normal.end(), normals[i].begin());
-    std::copy(centroid.begin(), centroid.end(), centroids[i].begin());
+    normals[i] = normal;
+    centroids[i] = centroid;
     if (print_initialized && do_print) {
       poly.print(output_file, position);
     }
