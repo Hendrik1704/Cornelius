@@ -33,10 +33,8 @@ class Hypercube : public GeneralGeometryElement {
              STEPS>
       hypercube;                      ///< 4D array representing the hypercube.
   std::vector<Polyhedron> polyhedra;  ///< Vector to store the polyhedra.
-  std::array<Cube, NCUBES>
-      cubes;  ///< Array to store the cubes in the hypercube.
-  std::array<Polygon, NCUBES * 10>
-      polygons;  ///< Array to store the polygons in the hypercube.
+  std::array<Cube, NCUBES> cubes;  ///< Array to store the cubes in the hypercube.
+  std::array<const Polygon*, NCUBES * 10> polygon_refs;  ///< Array to hold the polygon refs.
 
   int number_polyhedra;        ///< Number of polyhedra in the hypercube.
   bool ambiguous;              ///< Indicates if the hypercube is ambiguous.
