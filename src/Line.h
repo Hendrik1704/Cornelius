@@ -16,7 +16,7 @@
  * flip its start and end points, and calculate various geometric properties
  * such as the normal and centroid.
  *
- * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ * 01.10.2025 Hendrik Roch, Haydar Mehryar, Joe Latessa
  *
  */
 class Line : public GeneralGeometryElement {

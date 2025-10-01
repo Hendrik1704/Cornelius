@@ -18,7 +18,7 @@
  * correct direction for normal vector.
  *
  * 13.10.2011 Hannu Holopainen
- * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ * 01.10.2025 Hendrik Roch, Haydar Mehryar, Joe Latessa
  *
  */
 class Square : public GeneralGeometryElement {

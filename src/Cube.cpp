@@ -45,12 +45,14 @@ void Cube::construct_polygons(double value) {
   // Start by splitting the cube to squares and finding the lines
   split_to_squares();
 
-  // Then we make a table which contains references to the lines
+  // Store the reference to the lines
   number_lines = 0;
   for (int i = 0; i < NSQUARES; i++) {
     squares[i].construct_lines(value);
-    for (int j = 0; j < squares[i].get_number_lines(); j++) {
-      lines[number_lines++] = squares[i].get_lines()[j];
+    auto& lines_square = squares[i].get_lines();
+    const int n_local = squares[i].get_number_lines();
+    for (int j = 0; j < n_local; ++j) {
+      line_refs[number_lines++] = &lines_square[j];
     }
   }
 
@@ -81,13 +83,15 @@ void Cube::construct_polygons(double value) {
       // Go through all lines and try to add them to the polygon
       for (int i = 0; i < number_lines; i++) {
         // add_line returns true if line is successfully added
-        if (not_used[i] &&
-            polygons[number_polygons].add_line(lines[i], false)) {
-          not_used[i] = 0;
-          used++;
-          // If line is successfully added we start the loop from the
-          // beginning
-          i = 0;
+        if (not_used[i]) {
+          Line* line_ptr = const_cast<Line*>(line_refs[i]);
+          if (polygons[number_polygons].add_line(*line_ptr, false)) {
+            not_used[i] = 0;
+            used++;
+            // If line is successfully added we start the loop from the
+            // beginning
+            i = 0;
+          }
         }
       }
       // When we have reached this point one complete polygon is formed
@@ -101,7 +105,8 @@ void Cube::construct_polygons(double value) {
     }
     polygons[number_polygons].init_polygon(const_i);
     for (int i = 0; i < number_lines; i++) {
-      polygons[number_polygons].add_line(lines[i], true);
+      Line* line_ptr = const_cast<Line*>(line_refs[i]);
+      polygons[number_polygons].add_line(*line_ptr, true);
     }
     number_polygons++;
   }

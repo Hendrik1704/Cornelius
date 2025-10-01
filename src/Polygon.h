@@ -18,7 +18,7 @@
  * This class extends the GeneralGeometryElement class and provides methods
  * to manage and calculate properties related to polygons.
  *
- * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ * 01.10.2025 Hendrik Roch, Haydar Mehryar, Joe Latessa
  *
  */
 class Polygon : public GeneralGeometryElement {

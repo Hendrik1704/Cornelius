@@ -22,7 +22,7 @@
  * ambiguity.
  *
  * 13.10.2011 Hannu Holopainen
- * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ * 01.10.2025 Hendrik Roch, Haydar Mehryar, Joe Latessa
  *
  */
 class Cube : public GeneralGeometryElement {
@@ -38,6 +38,8 @@ class Cube : public GeneralGeometryElement {
   std::vector<Polygon> polygons;  ///< Vector to store the polygons in the cube.
   std::array<Square, NSQUARES> squares;  ///< Array of squares in the cube.
   std::array<Line, NSQUARES * 2> lines;  ///< Array of lines in the squares.
+  std::array<const Line*, NSQUARES * 2>
+      line_refs;  ///< Array to hold the line refs.
 
   int number_lines;            ///< Number of lines in the cube.
   int number_polygons;         ///< Number of polygons in the cube.
