@@ -121,8 +121,8 @@ void Cornelius::find_surface_4d(
     auto& poly = polys[i];
     auto& normal = poly.get_normal();
     auto& centroid = poly.get_centroid();
-    std::copy(normal.begin(), normal.end(), normals[i].begin());
-    std::copy(centroid.begin(), centroid.end(), centroids[i].begin());
+    normals[i] = normal;
+    centroids[i] = centroid;
   }
 }
 
