@@ -20,7 +20,7 @@
  * equality, calculating the volume of tetrahedrons, and calculating the
  * centroid and normal.
  *
- * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ * 01.10.2025 Hendrik Roch, Haydar Mehryar, Joe Latessa
  *
  */
 class Polyhedron : public GeneralGeometryElement {

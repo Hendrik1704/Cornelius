@@ -14,7 +14,7 @@
  * elements, including methods for calculating normals and centroids, and
  * flipping the orientation of the normal if needed.
  *
- * 23.08.2024 Hendrik Roch, Haydar Mehryar
+ * 01.10.2025 Hendrik Roch, Haydar Mehryar, Joe Latessa
  *
  */
 class GeneralGeometryElement {

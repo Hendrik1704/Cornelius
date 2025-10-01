@@ -7,6 +7,30 @@
 #include "Cornelius.h"
 #include "cornelius_old.h"
 
+/**
+ * @file main.cpp
+ * @brief Main file to test and compare the performance of the Cornelius class.
+ *
+ * This file contains functions to test the Cornelius class in 3D and 4D,
+ * comparing its performance with an older version of the Cornelius algorithm.
+ * It reads input data from files, performs surface detection, and measures
+ * execution time for both the new and old implementations.
+ *
+ * 01.10.2025 Hendrik Roch, Haydar Mehryar, Joe Latessa
+ */
+
+/**
+ * @brief Test the Cornelius class in 3D and compare with the old version.
+ *
+ * This function initializes the Cornelius class, reads input data from files,
+ * performs surface detection in 3D, and compares the performance with an older
+ * version of the Cornelius algorithm. It measures execution time for both
+ * implementations and prints the results.
+ *
+ * @param number_of_cubes_to_test Number of cubes to test from input files.
+ * @param number_of_tests Number of times to repeat each test for averaging.
+ * @param print_intermediate_times Flag to print intermediate timing results.
+ */
 void cornelius_test_3D(int number_of_cubes_to_test, int number_of_tests,
                        bool print_intermediate_times) {
   // Initialize all the variables for the comparison
@@ -121,6 +145,18 @@ void cornelius_test_3D(int number_of_cubes_to_test, int number_of_tests,
             << "\n";
 }
 
+/**
+ * @brief Test the Cornelius class in 4D and compare with the old version.
+ *
+ * This function initializes the Cornelius class, reads input data from files,
+ * performs surface detection in 4D, and compares the performance with an older
+ * version of the Cornelius algorithm. It measures execution time for both
+ * implementations and prints the results.
+ *
+ * @param number_of_cubes_to_test Number of cubes to test from input files.
+ * @param number_of_tests Number of times to repeat each test for averaging.
+ * @param print_intermediate_times Flag to print intermediate timing results.
+ */
 void cornelius_test_4D(int number_of_cubes_to_test, int number_of_tests,
                        bool print_intermediate_times) {
   // Initialize all the variables for the comparison
@@ -239,6 +275,18 @@ void cornelius_test_4D(int number_of_cubes_to_test, int number_of_tests,
             << "\n";
 }
 
+/**
+ * @brief Main function to execute the Cornelius tests.
+ *
+ * This function sets up parameters for the tests and calls the test functions
+ * for both 3D and 4D Cornelius implementations. It specifies the number of
+ * cubes to test, the number of repetitions for averaging, and whether to print
+ * intermediate timing results.
+ *
+ * @param argc Argument count (not used).
+ * @param argv Argument vector (not used).
+ * @return int Exit status of the program.
+ */
 int main(int argc, char const *argv[]) {
   int number_of_cubes_to_test =
       10000;  // 10000 is the maximum, since there are only 10000 test files

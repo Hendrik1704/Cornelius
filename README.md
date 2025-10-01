@@ -17,5 +17,5 @@ The speed test comparing the old and the new version is implemented in the `main
 executable. It performs the surface finding for 10000 different cubes and repeats 
 this 1000 times for each cube to obtain a better time measurement. 
 The average total execution time is then printed to the terminal.
-In the 3D case the new version needs roughly 62% of the execution time of the old
-version. The 4D case is currently 5% slower compared to the old version.
+In the 3D case the new version is ~40% faster than the old one and
+in the 4D case the new version is ~8% faster than the old one.
