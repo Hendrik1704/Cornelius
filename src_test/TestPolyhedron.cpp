@@ -77,12 +77,12 @@ TEST(PolyhedronTest, add_polygon) {
       {{2, 2, 2, 2}, {3, 3, 3, 3}}};
   line3.init_line(corners3, out, const_i);
 
-  polygon1.add_line(line1, false);
-  polygon1.add_line(line2, false);
-  polygon1.add_line(line3, false);
+  polygon1.add_line(&line1, false);
+  polygon1.add_line(&line2, false);
+  polygon1.add_line(&line3, false);
 
   ASSERT_EQ(polyhedron.get_number_polygons(), 0);
-  bool b1 = polyhedron.add_polygon(polygon1, false);
+  bool b1 = polyhedron.add_polygon(&polygon1, false);
   ASSERT_EQ(polyhedron.get_number_polygons(), 1);
   ASSERT_TRUE(b1);
 }
@@ -115,12 +115,12 @@ TEST(PolyhedronTest, calculate_centroid) {
   std::array<std::array<double, 4>, 2> corners4 = {
       {{5, 1, 2, 3}, {7, 2, 4, 9}}};
 
-  polygon1.add_line(line1, false);
-  polygon1.add_line(line2, false);
-  polygon1.add_line(line3, false);
-  polygon1.add_line(line3, false);
+  polygon1.add_line(&line1, false);
+  polygon1.add_line(&line2, false);
+  polygon1.add_line(&line3, false);
+  polygon1.add_line(&line3, false);
 
-  polyhedron.add_polygon(polygon1, false);
+  polyhedron.add_polygon(&polygon1, false);
   polyhedron.calculate_centroid();
 
   std::array<double, 4> centroid = polyhedron.get_centroid();
@@ -158,12 +158,12 @@ TEST(PolyhedronTest, calculate_normal) {
   std::array<std::array<double, 4>, 2> corners4 = {
       {{5, 1, 2, 3}, {7, 2, 4, 9}}};
 
-  polygon1.add_line(line1, false);
-  polygon1.add_line(line2, false);
-  polygon1.add_line(line3, false);
-  polygon1.add_line(line3, false);
+  polygon1.add_line(&line1, false);
+  polygon1.add_line(&line2, false);
+  polygon1.add_line(&line3, false);
+  polygon1.add_line(&line3, false);
 
-  polyhedron.add_polygon(polygon1, false);
+  polyhedron.add_polygon(&polygon1, false);
   polyhedron.calculate_normal();
 
   std::array<double, 4> normal = polyhedron.get_normal();

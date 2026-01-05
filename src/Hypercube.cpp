@@ -55,7 +55,13 @@ void Hypercube::construct_polyhedra(double value) {
       polygon_refs[number_polygons++] = &polygons_cube[j];
     }
   }
-  check_ambiguity(value);
+
+  check_ambiguity(number_points_below_value);
+
+  if (number_polygons == 0) {
+    return;
+  }
+
   if (ambiguous) {
     // The surface might be ambiguous and we need to connect the polygons and
     // see how many polyhedra we have
@@ -71,8 +77,8 @@ void Hypercube::construct_polyhedra(double value) {
       // Go through all the polygons and try to add them to the polyhedron
       for (int i = 0; i < number_polygons; i++) {
         if (not_used[i]) {
-          Polygon* poly_ptr = const_cast<Polygon*>(polygon_refs[i]);
-          if (polyhedra[number_polyhedra].add_polygon(*poly_ptr, false)) {
+          if (polyhedra[number_polyhedra].add_polygon(polygon_refs[i],
+                                                      false)) {
             not_used[i] = 0;
             used++;
             // If the polygon is successfully added we start the loop from the
@@ -91,8 +97,7 @@ void Hypercube::construct_polyhedra(double value) {
     }
     polyhedra[number_polyhedra].init_polyhedron();
     for (int i = 0; i < number_polygons; i++) {
-      Polygon* poly_ptr = const_cast<Polygon*>(polygon_refs[i]);
-      polyhedra[number_polyhedra].add_polygon(*poly_ptr, true);
+      polyhedra[number_polyhedra].add_polygon(polygon_refs[i], true);
     }
     number_polyhedra++;
   }
