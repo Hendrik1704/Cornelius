@@ -17,7 +17,7 @@ bool Polyhedron::add_polygon(const Polygon* new_polygon,
     if (number_polygons >= polygons.size()) {
       polygons.emplace_back(nullptr);
     }
-                      polygons[number_polygons++] = new_polygon;  // Assign new polygon
+    polygons[number_polygons++] = new_polygon;  // Assign new polygon
     number_tetrahedrons += new_polygon->get_number_lines();
     return true;
   }

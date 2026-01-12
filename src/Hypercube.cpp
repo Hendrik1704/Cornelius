@@ -77,8 +77,7 @@ void Hypercube::construct_polyhedra(double value) {
       // Go through all the polygons and try to add them to the polyhedron
       for (int i = 0; i < number_polygons; i++) {
         if (not_used[i]) {
-          if (polyhedra[number_polyhedra].add_polygon(polygon_refs[i],
-                                                      false)) {
+          if (polyhedra[number_polyhedra].add_polygon(polygon_refs[i], false)) {
             not_used[i] = 0;
             used++;
             // If the polygon is successfully added we start the loop from the

@@ -23,19 +23,21 @@
  */
 class Polygon : public GeneralGeometryElement {
  protected:
-    static constexpr int MAX_LINES =
-      24;  ///< Maximum number of lines in a polygon
-    std::vector<const Line*> lines;  ///< Pointers to lines in the polygon
-    int number_lines;                 ///< Number of lines in the polygon
-  int x1, x2, x3;           ///< Indices representing the polygon's dimensions
-  int const_i;              ///< Constant index for the polygon
+  static constexpr int MAX_LINES =
+      24;                          ///< Maximum number of lines in a polygon
+  std::vector<const Line*> lines;  ///< Pointers to lines in the polygon
+  int number_lines;                ///< Number of lines in the polygon
+  int x1, x2, x3;  ///< Indices representing the polygon's dimensions
+  int const_i;     ///< Constant index for the polygon
 
   // Arrays a and b to store the vectors of the triangles
-  mutable std::array<double, DIM> a;                  ///< Vector a of the triangle
-  mutable std::array<double, DIM> b;                  ///< Vector b of the triangle
-  mutable std::array<double, DIM> triangle_centroid;  ///< Centroid of the triangle
+  mutable std::array<double, DIM> a;  ///< Vector a of the triangle
+  mutable std::array<double, DIM> b;  ///< Vector b of the triangle
+  mutable std::array<double, DIM>
+      triangle_centroid;  ///< Centroid of the triangle
 
-  mutable std::array<std::array<double, DIM>, MAX_LINES> normals;  ///< Normal vectors
+  mutable std::array<std::array<double, DIM>, MAX_LINES>
+      normals;  ///< Normal vectors
 
   static constexpr double EPSILON = 1e-10;  ///< Small value for epsilon.
 

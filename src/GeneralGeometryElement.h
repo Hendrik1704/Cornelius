@@ -96,9 +96,9 @@ class GeneralGeometryElement {
    * @param normal The normal vector to be checked and maybe adjusted.
    * @param reference_normal The reference normal vector used for comparison.
    */
-  inline void flip_normal_if_needed(std::array<double, DIM>& normal,
-                                    std::array<double, DIM>& reference_normal)
-      const {
+  inline void flip_normal_if_needed(
+      std::array<double, DIM>& normal,
+      std::array<double, DIM>& reference_normal) const {
     const double dot_product = std::inner_product(
         normal.begin(), normal.end(), reference_normal.begin(), 0.0);
     if (dot_product < 0) {

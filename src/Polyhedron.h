@@ -29,7 +29,7 @@ class Polyhedron : public GeneralGeometryElement {
       24;  ///< Maximum number of polygons in a polyhedron
   static constexpr double INV_SIX = 1.0 / 6.0;  ///< Inverse of six.
   static constexpr double EPSILON = 1e-10;  ///< Epsilon value for comparison
-    std::vector<const Polygon*>
+  std::vector<const Polygon*>
       polygons;             ///< Pointers to polygons in the polyhedron
   int number_polygons;      ///< Number of polygons in the polyhedron
   int number_tetrahedrons;  ///< Number of tetrahedrons in the polyhedron
