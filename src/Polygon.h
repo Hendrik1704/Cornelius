@@ -18,24 +18,26 @@
  * This class extends the GeneralGeometryElement class and provides methods
  * to manage and calculate properties related to polygons.
  *
- * 01.10.2025 Hendrik Roch, Haydar Mehryar, Joe Latessa
+ * 13.01.2026 Hendrik Roch, Haydar Mehryar, Joe Latessa
  *
  */
 class Polygon : public GeneralGeometryElement {
  protected:
   static constexpr int MAX_LINES =
-      24;                   ///< Maximum number of lines in a polygon
-  std::vector<Line> lines;  ///< Vector of lines in the polygon
-  int number_lines;         ///< Number of lines in the polygon
-  int x1, x2, x3;           ///< Indices representing the polygon's dimensions
-  int const_i;              ///< Constant index for the polygon
+      24;                          ///< Maximum number of lines in a polygon
+  std::vector<const Line*> lines;  ///< Pointers to lines in the polygon
+  int number_lines;                ///< Number of lines in the polygon
+  int x1, x2, x3;  ///< Indices representing the polygon's dimensions
+  int const_i;     ///< Constant index for the polygon
 
   // Arrays a and b to store the vectors of the triangles
-  std::array<double, DIM> a;                  ///< Vector a of the triangle
-  std::array<double, DIM> b;                  ///< Vector b of the triangle
-  std::array<double, DIM> triangle_centroid;  ///< Centroid of the triangle
+  mutable std::array<double, DIM> a;  ///< Vector a of the triangle
+  mutable std::array<double, DIM> b;  ///< Vector b of the triangle
+  mutable std::array<double, DIM>
+      triangle_centroid;  ///< Centroid of the triangle
 
-  std::array<std::array<double, DIM>, MAX_LINES> normals;  ///< Normal vectors
+  mutable std::array<std::array<double, DIM>, MAX_LINES>
+      normals;  ///< Normal vectors
 
   static constexpr double EPSILON = 1e-10;  ///< Small value for epsilon.
 
@@ -103,14 +105,14 @@ class Polygon : public GeneralGeometryElement {
    * checks.
    * @return True if the line was successfully added, otherwise false.
    */
-  bool add_line(Line& new_line, bool perform_no_check);
+  bool add_line(const Line* new_line, bool perform_no_check);
 
   /**
    * @brief Gets the number of lines in the polygon.
    *
    * @return The number of lines in the polygon.
    */
-  inline int get_number_lines() { return number_lines; }
+  inline int get_number_lines() const { return number_lines; }
 
   /**
    * @brief Calculates the normal vector of the polygon.
@@ -118,21 +120,21 @@ class Polygon : public GeneralGeometryElement {
    * This method calculates the normal vector based on the lines and centroid of
    * the polygon.
    */
-  void calculate_normal() override;
+  void calculate_normal() const override;
 
   /**
    * @brief Calculates the centroid of the polygon.
    *
    * This method calculates the centroid based on the vertices of the polygon.
    */
-  void calculate_centroid() override;
+  void calculate_centroid() const override;
 
   /**
    * @brief Gets the lines that form the polygon.
    *
    * @return A reference to the array of lines in the polygon.
    */
-  inline std::vector<Line>& get_lines() { return lines; }
+  inline const std::vector<const Line*>& get_lines() const { return lines; }
 
   /**
    * @brief Prints the triangles formed from the polygon into a given file.

@@ -39,10 +39,10 @@ TEST(PolygonTest, add_line) {
   Line line4;
   line4.init_line(corners4, out, const_i);
 
-  bool b1 = polygon.add_line(line1, false);
-  bool b2 = polygon.add_line(line2, false);
-  bool b3 = polygon.add_line(line3, false);
-  bool b4 = polygon.add_line(line4, false);
+  bool b1 = polygon.add_line(&line1, false);
+  bool b2 = polygon.add_line(&line2, false);
+  bool b3 = polygon.add_line(&line3, false);
+  bool b4 = polygon.add_line(&line4, false);
 
   ASSERT_TRUE(b1);
   ASSERT_TRUE(b2);
@@ -74,9 +74,9 @@ TEST(PolygonTest, calculate_centroid) {
   line3.init_line(corners3, out, const_i);
 
   // Case with 3 lines
-  polygon.add_line(line1, false);
-  polygon.add_line(line2, false);
-  polygon.add_line(line3, false);
+  polygon.add_line(&line1, false);
+  polygon.add_line(&line2, false);
+  polygon.add_line(&line3, false);
 
   polygon.calculate_centroid();
 
@@ -91,7 +91,7 @@ TEST(PolygonTest, calculate_centroid) {
   Line line4;
   line4.init_line(corners4, out, const_i);
 
-  polygon.add_line(line4, false);
+  polygon.add_line(&line4, false);
 
   polygon.calculate_centroid();
 
@@ -124,9 +124,9 @@ TEST(PolygonTest, calculate_normal) {
   Line line3;
   line3.init_line(corners3, out, const_i);
 
-  polygon.add_line(line1, false);
-  polygon.add_line(line2, false);
-  polygon.add_line(line3, false);
+  polygon.add_line(&line1, false);
+  polygon.add_line(&line2, false);
+  polygon.add_line(&line3, false);
 
   polygon.calculate_normal();
 
@@ -159,56 +159,56 @@ TEST(PolygonTest, get_lines) {
   Line line3;
   line3.init_line(corners3, out, const_i);
 
-  polygon.add_line(line1, false);
-  polygon.add_line(line2, false);
-  polygon.add_line(line3, false);
+  polygon.add_line(&line1, false);
+  polygon.add_line(&line2, false);
+  polygon.add_line(&line3, false);
 
   auto lines = polygon.get_lines();
 
-  ASSERT_EQ(lines[0].get_start_point()[0], 0);
-  ASSERT_EQ(lines[0].get_start_point()[1], 0);
-  ASSERT_EQ(lines[0].get_start_point()[2], 0);
-  ASSERT_EQ(lines[0].get_start_point()[3], 0);
+  ASSERT_EQ(lines[0]->get_start_point()[0], 0);
+  ASSERT_EQ(lines[0]->get_start_point()[1], 0);
+  ASSERT_EQ(lines[0]->get_start_point()[2], 0);
+  ASSERT_EQ(lines[0]->get_start_point()[3], 0);
 
-  ASSERT_EQ(lines[0].get_end_point()[0], 1);
-  ASSERT_EQ(lines[0].get_end_point()[1], 1);
-  ASSERT_EQ(lines[0].get_end_point()[2], 1);
-  ASSERT_EQ(lines[0].get_end_point()[3], 1);
+  ASSERT_EQ(lines[0]->get_end_point()[0], 1);
+  ASSERT_EQ(lines[0]->get_end_point()[1], 1);
+  ASSERT_EQ(lines[0]->get_end_point()[2], 1);
+  ASSERT_EQ(lines[0]->get_end_point()[3], 1);
 
-  ASSERT_EQ(lines[0].get_outside_point()[0], 2);
-  ASSERT_EQ(lines[0].get_outside_point()[1], 1);
-  ASSERT_EQ(lines[0].get_outside_point()[2], 1);
-  ASSERT_EQ(lines[0].get_outside_point()[3], 1);
+  ASSERT_EQ(lines[0]->get_outside_point()[0], 2);
+  ASSERT_EQ(lines[0]->get_outside_point()[1], 1);
+  ASSERT_EQ(lines[0]->get_outside_point()[2], 1);
+  ASSERT_EQ(lines[0]->get_outside_point()[3], 1);
 
-  ASSERT_EQ(lines[1].get_start_point()[0], 1);
-  ASSERT_EQ(lines[1].get_start_point()[1], 1);
-  ASSERT_EQ(lines[1].get_start_point()[2], 1);
-  ASSERT_EQ(lines[1].get_start_point()[3], 1);
+  ASSERT_EQ(lines[1]->get_start_point()[0], 1);
+  ASSERT_EQ(lines[1]->get_start_point()[1], 1);
+  ASSERT_EQ(lines[1]->get_start_point()[2], 1);
+  ASSERT_EQ(lines[1]->get_start_point()[3], 1);
 
-  ASSERT_EQ(lines[1].get_end_point()[0], 2);
-  ASSERT_EQ(lines[1].get_end_point()[1], 2);
-  ASSERT_EQ(lines[1].get_end_point()[2], 2);
-  ASSERT_EQ(lines[1].get_end_point()[3], 2);
+  ASSERT_EQ(lines[1]->get_end_point()[0], 2);
+  ASSERT_EQ(lines[1]->get_end_point()[1], 2);
+  ASSERT_EQ(lines[1]->get_end_point()[2], 2);
+  ASSERT_EQ(lines[1]->get_end_point()[3], 2);
 
-  ASSERT_EQ(lines[1].get_outside_point()[0], 2);
-  ASSERT_EQ(lines[1].get_outside_point()[1], 1);
-  ASSERT_EQ(lines[1].get_outside_point()[2], 1);
-  ASSERT_EQ(lines[1].get_outside_point()[3], 1);
+  ASSERT_EQ(lines[1]->get_outside_point()[0], 2);
+  ASSERT_EQ(lines[1]->get_outside_point()[1], 1);
+  ASSERT_EQ(lines[1]->get_outside_point()[2], 1);
+  ASSERT_EQ(lines[1]->get_outside_point()[3], 1);
 
-  ASSERT_EQ(lines[2].get_start_point()[0], 2);
-  ASSERT_EQ(lines[2].get_start_point()[1], 2);
-  ASSERT_EQ(lines[2].get_start_point()[2], 2);
-  ASSERT_EQ(lines[2].get_start_point()[3], 2);
+  ASSERT_EQ(lines[2]->get_start_point()[0], 2);
+  ASSERT_EQ(lines[2]->get_start_point()[1], 2);
+  ASSERT_EQ(lines[2]->get_start_point()[2], 2);
+  ASSERT_EQ(lines[2]->get_start_point()[3], 2);
 
-  ASSERT_EQ(lines[2].get_end_point()[0], 3);
-  ASSERT_EQ(lines[2].get_end_point()[1], 2);
-  ASSERT_EQ(lines[2].get_end_point()[2], 3);
-  ASSERT_EQ(lines[2].get_end_point()[3], 3);
+  ASSERT_EQ(lines[2]->get_end_point()[0], 3);
+  ASSERT_EQ(lines[2]->get_end_point()[1], 2);
+  ASSERT_EQ(lines[2]->get_end_point()[2], 3);
+  ASSERT_EQ(lines[2]->get_end_point()[3], 3);
 
-  ASSERT_EQ(lines[2].get_outside_point()[0], 2);
-  ASSERT_EQ(lines[2].get_outside_point()[1], 1);
-  ASSERT_EQ(lines[2].get_outside_point()[2], 1);
-  ASSERT_EQ(lines[2].get_outside_point()[3], 1);
+  ASSERT_EQ(lines[2]->get_outside_point()[0], 2);
+  ASSERT_EQ(lines[2]->get_outside_point()[1], 1);
+  ASSERT_EQ(lines[2]->get_outside_point()[2], 1);
+  ASSERT_EQ(lines[2]->get_outside_point()[3], 1);
 }
 
 TEST(PolygonTest, print) {
@@ -234,9 +234,9 @@ TEST(PolygonTest, print) {
   Line line3;
   line3.init_line(corners3, out, const_i);
 
-  polygon.add_line(line1, false);
-  polygon.add_line(line2, false);
-  polygon.add_line(line3, false);
+  polygon.add_line(&line1, false);
+  polygon.add_line(&line2, false);
+  polygon.add_line(&line3, false);
 
   std::ofstream file;
   file.open("test_polygon_print.txt");
