@@ -20,7 +20,7 @@
  * elements.
  *
  * 13.10.2011 Hannu Holopainen
- * 01.10.2025 Hendrik Roch, Haydar Mehryar, Joe Latessa
+ * 13.01.2026 Hendrik Roch, Haydar Mehryar, Joe Latessa
  */
 class Hypercube : public GeneralGeometryElement {
  private:
